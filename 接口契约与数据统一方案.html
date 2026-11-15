@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>五人协作：接口契约与数据统一方案</title>
+<style>
+:root{
+  --ink:#1b1f24; --ink-soft:#4a545e; --line:#e3e8ef; --bg:#f5f7fa;
+  --accent:#0b5fff; --accent-soft:#eaf1ff; --warn:#b45309; --ok:#0a7a45;
+}
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font-family:"Microsoft YaHei","PingFang SC","Hiragino Sans GB","Segoe UI",system-ui,sans-serif;
+  font-size:16.5px; line-height:1.85; -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:1000px;margin:0 auto;padding:40px 22px 90px}
+.card{background:#fff;border:1px solid var(--line);border-radius:16px;
+  box-shadow:0 1px 2px rgba(16,24,40,.04),0 12px 32px -18px rgba(16,24,40,.18);
+  padding:52px 56px 60px}
+h1{font-size:30px;line-height:1.35;margin:0 0 6px;letter-spacing:-.3px}
+h1+blockquote{margin-top:18px}
+h2{font-size:22px;margin:52px 0 16px;padding-top:18px;border-top:1px solid var(--line);letter-spacing:-.2px}
+h2:first-of-type{border-top:0}
+h3{font-size:18.5px;margin:34px 0 12px;color:#0b1b3a}
+h3::before{content:"";display:inline-block;width:4px;height:16px;background:var(--accent);
+  border-radius:2px;margin-right:10px;vertical-align:-2px}
+p{margin:12px 0}
+strong{color:#0b1b3a}
+a{color:var(--accent);text-decoration:none;border-bottom:1px solid #bcd0ff}
+ul,ol{margin:12px 0;padding-left:26px}
+li{margin:7px 0}
+li::marker{color:var(--accent)}
+hr{border:0;border-top:1px dashed var(--line);margin:36px 0}
+blockquote{margin:20px 0;padding:16px 20px;background:var(--accent-soft);
+  border-left:4px solid var(--accent);border-radius:0 10px 10px 0;color:#123;font-size:15.5px}
+blockquote strong{color:var(--accent)}
+code{background:#f2f5f9;border:1px solid var(--line);border-radius:5px;
+  padding:1.5px 6px;font-family:"Cascadia Mono",Consolas,monospace;font-size:13.5px;color:#0b3d91}
+pre.code{overflow-x:auto;margin:18px 0;padding:16px 18px;background:#0b1220;color:#dbe6f6;
+  border-radius:10px;font-family:"Cascadia Mono",Consolas,"Courier New",monospace;
+  font-size:13px;line-height:1.6;white-space:pre}
+pre.code code{background:none;border:0;padding:0;color:inherit;font-size:inherit}
+.table-wrap{overflow-x:auto;margin:18px 0;border:1px solid var(--line);border-radius:10px}
+table{border-collapse:collapse;width:100%;font-size:14.8px;background:#fff}
+thead th{background:#f0f4fa;text-align:left;font-weight:700;color:#0b1b3a;
+  padding:11px 14px;border-bottom:1px solid var(--line);white-space:nowrap}
+tbody td{padding:11px 14px;border-bottom:1px solid #eef2f7;vertical-align:top;color:var(--ink-soft)}
+tbody tr:last-child td{border-bottom:0}
+tbody tr:nth-child(even){background:#fafbfd}
+tbody tr:hover{background:#f3f7ff}
+@media (max-width:720px){
+  .card{padding:28px 20px 36px;border-radius:12px}
+  .wrap{padding:16px 10px 60px}
+  h1{font-size:24px} h2{font-size:19px} body{font-size:15.5px}
+}
+</style>
+</head>
+<body>
+<div class="wrap"><article class="card">
+<h1 id="五人协作-接口契约与数据统一方案">五人协作：接口契约与数据统一方案</h1>
+<blockquote>项目：运动生理闭环智能体（赛道三）　｜　适用：P1–P5 五人小组<br>一句话：<strong>先定契约，再写代码。</strong> 五个人不是靠"多沟通"统一，是靠<strong>三个存进仓库的东西</strong>统一——schema 文件、黄金样例、校验脚本。</blockquote>
+<hr>
+<h2 id="一-核心思路-把-接口统一-变成一件可以自动检查的事">一、核心思路：把"接口统一"变成一件可以自动检查的事</h2>
+<p>口头约定会漂移，文档会过期，只有<strong>能被程序验证的东西</strong>不会骗人。所以规则是：</p>
+<ol>
+<li>每个人只产出<strong>一种</strong> JSON（P2 出 activity、P3 出 metrics、P4 出 report、P5 只消费 report）；</li>
+<li>每种 JSON 有对应的 <strong>schema 文件</strong>，字段名、类型、取值范围、枚举值全部写死；</li>
+<li>仓库里放一份<strong>黄金样例</strong>（真实脱敏数据），五个人都拿它跑；</li>
+<li>每次提交前跑 <code>validate_contract.py</code>，<strong>校验不通过就不能合并</strong>。</li>
+</ol>
+<p>这样"统一"不靠人记，靠 CI 兜底：谁偷偷把 <code>avg_hr</code> 改成 <code>average_heart_rate</code>，脚本当场报错。</p>
+<hr>
+<h2 id="二-数据流-谁生产-谁消费-怎么验">二、数据流：谁生产、谁消费、怎么验</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>数据产物</th><th>生产者</th><th>消费者</th><th>契约文件</th><th>校验</th></tr></thead>
+<tbody>
+<tr><td>手表/CSV 原始记录</td><td>用户导出</td><td>P2</td><td>—</td><td>—</td></tr>
+<tr><td><code>activity.json</code></td><td><strong>P2 解析器</strong></td><td>P3、P4</td><td><code>activity.schema.json</code></td><td>schema + 跨字段规则</td></tr>
+<tr><td><code>metrics.json</code></td><td><strong>P3 指标模块</strong></td><td>P4</td><td><code>metrics.schema.json</code></td><td>schema + 三法一致性</td></tr>
+<tr><td><code>plan.json</code></td><td><strong>P4 agent（generate_plan）</strong></td><td>P4、P5</td><td><code>plan.schema.json</code></td><td>schema + R19/R20 自校验</td></tr>
+<tr><td><code>report.json</code></td><td><strong>P4 agent（explain）</strong></td><td><strong>P5 唯一输入</strong></td><td><code>report.schema.json</code></td><td>schema + 依据链完整性</td></tr>
+<tr><td>报告页 / 看板</td><td>P5</td><td>用户</td><td>只读 <code>report.json</code></td><td>mock 数据先跑通</td></tr>
+</tbody></table></div>
+<p>三条边界：</p>
+<ul>
+<li><strong>P2 不碰业务规则</strong>（只管把 CSV 变成干净数字）；</li>
+<li><strong>P3 不写报告文案</strong>（只管算出指标，不做判断）；</li>
+<li><strong>P5 不做任何计算</strong>（ACWR、TRIMP 一律不自己算，页面上每个数字都必须能在 <code>report.json</code> 里找到出处）。</li>
+</ul>
+<p>最后一条是五人协作里最容易出事的地方：前端自己算一遍，后端也算一遍，两个数字对不上，答辩现场就露馅。</p>
+<hr>
+<h2 id="三-四条铁律-先背下来再开工">三、四条铁律（先背下来再开工）</h2>
+<h3 id="铁律-1-单位统一-不许-看情况">铁律 1：单位统一，不许"看情况"</h3>
+<div class="table-wrap"><table>
+<thead><tr><th>量</th><th>单位</th><th>示例</th><th>错误写法</th></tr></thead>
+<tbody>
+<tr><td>时长</td><td>秒（<code>_s</code>）</td><td><code>duration_s: 2880</code></td><td><code>duration: "48分钟"</code></td></tr>
+<tr><td>距离</td><td>米（<code>_m</code>）</td><td><code>distance_m: 8000</code></td><td><code>distance_km: 8</code></td></tr>
+<tr><td>配速</td><td><strong>秒/公里</strong></td><td><code>avg_pace_s_per_km: 360</code></td><td><code>pace: "6'00""</code></td></tr>
+<tr><td>心率</td><td>bpm 整数</td><td><code>avg_hr: 152</code></td><td><code>avg_hr: 152.0</code> / <code>"152"</code></td></tr>
+<tr><td>负重/体重</td><td>千克（<code>_kg</code>）</td><td><code>weight_kg: 68.5</code></td><td><code>weight: 68.5斤</code></td></tr>
+<tr><td>温度</td><td>摄氏度</td><td><code>temp_c: 26</code></td><td><code>temp: 26°</code></td></tr>
+<tr><td>占比</td><td>百分比 0–100</td><td><code>long_run_max_pct: 30</code></td><td><code>0.3</code></td></tr>
+<tr><td>比率</td><td>小数（不是百分比）</td><td><code>acwr_rolling: 1.62</code></td><td><code>162%</code></td></tr>
+<tr><td>日期</td><td><code>YYYY-MM-DD</code></td><td><code>2026-11-12</code></td><td><code>2026/11/12</code></td></tr>
+<tr><td>时间戳</td><td>ISO 8601 带时区</td><td><code>2026-11-15T10:05:00+08:00</code></td><td><code>2026-11-15 10:05</code></td></tr>
+<tr><td>文件编码</td><td>UTF-8（无 BOM）</td><td>—</td><td>Excel 另存的 GBK / 带 BOM</td></tr>
+</tbody></table></div>
+<blockquote>配速是最容易出错的一个：手表导出常见 <code>6'00"/km</code>，一定要转成 <code>360</code>；前端展示时再转回去。转换函数只允许写一次，放在 P2 的 <code>format.py</code> 里。</blockquote>
+<h3 id="铁律-2-缺失就是-null-不是-0-不是-不是-1">铁律 2：缺失就是 <code>null</code>，不是 <code>0</code>、不是 <code>""</code>、不是 <code>-1</code></h3>
+<ul>
+<li>心率没测到 → <code>avg_hr: null</code>，不能写 0（0 bpm 会污染所有平均值）</li>
+<li>没有 RPE → <code>rpe: null</code>（RPE=0 是"完全不费力"，是有效数据）</li>
+<li>没有海拔 → <code>elevation_gain_m: null</code></li>
+</ul>
+<p>配套要求：只要字段是 <code>null</code>，下游必须<strong>显式降级</strong>并写进 <code>missing_data</code>，而不是静默按 0 算。这正是答辩时"你怎么保证结果可信"的答案之一。</p>
+<h3 id="铁律-3-字段名-snake_case-枚举值写死">铁律 3：字段名 snake_case，枚举值写死</h3>
+<ul>
+<li>字段名：<code>avg_hr</code>、<code>resting_hr_delta</code>、<code>long_run_max_pct</code>（不用 <code>avgHR</code>、<code>Avg_HR</code>）</li>
+<li>布尔字段用 <code>is_</code> / <code>has_</code> 前缀：<code>consistency_ok</code>、<code>device_anomaly</code></li>
+<li>枚举必须来自固定表，不允许自由文本：</li>
+</ul>
+<div class="table-wrap"><table>
+<thead><tr><th>字段</th><th>允许值</th></tr></thead>
+<tbody>
+<tr><td><code>sport</code></td><td><code>run</code> / <code>bike</code> / <code>swim</code> / <code>strength</code> / <code>other</code></td></tr>
+<tr><td><code>kind</code>（计划日类型）</td><td><code>rest</code> / <code>easy</code> / <code>tempo</code> / <code>interval</code> / <code>long</code> / <code>race</code> / <code>cross</code> / <code>other</code></td></tr>
+<tr><td><code>level</code>（风险等级）</td><td><code>low</code> / <code>medium</code> / <code>high</code></td></tr>
+<tr><td><code>acwr_status</code></td><td><code>undertrained</code> / <code>optimal</code> / <code>high</code> / <code>danger</code></td></tr>
+<tr><td><code>rule_id</code></td><td>正则 <code>^R\d{2}$</code>（R01–R20）</td></tr>
+<tr><td><code>tool</code>（agent 工具名）</td><td><code>load_activities</code> / <code>compute_load</code> / <code>estimate_vo2max</code> / <code>check_risk</code> / <code>retrieve_evidence</code> / <code>ask_athlete</code> / <code>generate_plan</code> / <code>explain</code></td></tr>
+</tbody></table></div>
+<h3 id="铁律-4-禁止-加字段不打招呼">铁律 4：禁止"加字段不打招呼"</h3>
+<p>schema 里每个对象都写了 <code>additionalProperties: false</code>——<strong>多一个字段就校验失败</strong>。这不是刁难，是为了让"P2 临时加了个字段给 P5 用"这种暗箱操作当场暴露。</p>
+<p>要加字段，走第六节的变更流程。</p>
+<hr>
+<h2 id="四-后端接口-HTTP-层">四、后端接口（HTTP 层）</h2>
+<p>报告页只有一个数据源：</p>
+<div class="table-wrap"><table>
+<thead><tr><th>方法</th><th>路径</th><th>返回</th><th>说明</th></tr></thead>
+<tbody>
+<tr><td>GET</td><td><code>/api/report</code></td><td><code>report.json</code></td><td><strong>前端只调这一个</strong>（含 metrics / risks / plan / evidence / agent_trace）</td></tr>
+<tr><td>GET</td><td><code>/api/report?week=2026-11-16</code></td><td>同上</td><td>按周取历史报告（可选）</td></tr>
+<tr><td>GET</td><td><code>/api/metrics</code></td><td><code>metrics.json</code></td><td>调试用，页面不直接依赖</td></tr>
+<tr><td>GET</td><td><code>/api/plan</code></td><td><code>plan.json</code></td><td>调试用</td></tr>
+<tr><td>GET</td><td><code>/api/activity</code></td><td><code>activity.json</code></td><td>调试用（注意：这是个人健康数据，线上要限权）</td></tr>
+<tr><td>GET</td><td><code>/api/health</code></td><td><code>{"ok":true,"schema_version":"1.0"}</code></td><td>联调前先 ping 这个</td></tr>
+</tbody></table></div>
+<p>错误统一格式（前端只需写一套处理）：</p>
+<pre class="code"><code>{"error": "not_found", "path": "/api/foo", "available": ["/api/health", "/api/report"]}</code></pre>
+<p><strong>关键工程动作</strong>：<code>contracts/mock_api.py</code> 现在就能起，P5 不用等任何后端代码。</p>
+<pre class="code"><code>python contracts/mock_api.py --port 8080 --delay 300</code></pre>
+<p>它按真实接口的响应形状返回黄金样例，<code>--delay 300</code> 还能模拟 300ms 网络延迟，逼着前端把加载态写对。</p>
+<hr>
+<h2 id="五-五个保障机制-这才是-保证-的部分">五、五个保障机制（这才是"保证"的部分）</h2>
+<h3 id="机制-1-schema-是唯一真源">机制 1：schema 是唯一真源</h3>
+<p><code>contracts/*.schema.json</code> 进仓库，改它 = 改所有人的约定，所以要 PR + 两人 review。<strong>代码可以重写，schema 不许悄悄变。</strong></p>
+<h3 id="机制-2-黄金样例当-公分母">机制 2：黄金样例当"公分母"</h3>
+<p><code>samples/</code> 下四份 JSON 就是全队的共同语言：P2 要能产出与 <code>activity_sample.json</code> <strong>同构</strong>的数据；P3 吃它出 <code>metrics_sample.json</code>；P4 吃它出 <code>report_sample.json</code>；P5 只吃最后一份。</p>
+<p>判定标准很硬：<strong>同一份 samples，四个人各自跑，diff 必须为空</strong>（允许浮点容差 1e-6）。</p>
+<h3 id="机制-3-提交前自动校验">机制 3：提交前自动校验</h3>
+<pre class="code"><code>python contracts/validate_contract.py            # 校验 samples 四件套
+python contracts/validate_contract.py --dir out/ # 校验自己产出的目录</code></pre>
+<p>校验器做两件事：</p>
+<ol>
+<li><strong>schema 校验</strong>：类型、必填、枚举、正则、数值范围、未定义字段；</li>
+<li><strong>跨字段校验</strong>：JSON Schema 表达不了的业务一致性（见第七节）。</li>
+</ol>
+<p>失败退出码 1，直接卡住合并。可以让 P4 配个 git pre-commit hook，一次配好全队受益。</p>
+<h3 id="机制-4-快照回归-防-改一处崩三处">机制 4：快照回归（防"改一处崩三处"）</h3>
+<p>把当前 <code>report_sample.json</code> 存成 <code>baseline/report_v1.json</code>。每次改完代码重跑，用 <code>diff</code> 看变化：</p>
+<ul>
+<li>变化是<strong>预期内</strong>（比如新增 <code>hrv_rmssd</code> 字段）→ 更新 baseline，并在 CHANGELOG 记一行；</li>
+<li>变化是<strong>意外</strong>（<code>acwr_rolling</code> 从 1.62 变成 16.2）→ 说明有人改了单位或算法，立刻查。</li>
+</ul>
+<h3 id="机制-5-契约变更必须-四处同步">机制 5：契约变更必须"四处同步"</h3>
+<p>改 schema 时，<strong>四处一起改，缺一不可</strong>：schema 文件、samples、生产代码、消费代码。只改前两处 = 埋雷。</p>
+<hr>
+<h2 id="六-契约变更流程-照做-不要凭感觉">六、契约变更流程（照做，不要凭感觉）</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>步骤</th><th>谁</th><th>动作</th></tr></thead>
+<tbody>
+<tr><td>1 提出</td><td>任何人</td><td>在群里写清：加/改/删哪个字段，为什么，谁受影响</td></tr>
+<tr><td>2 定级</td><td>P4</td><td>只加可选字段 = <strong>小版本</strong>（1.0 → 1.1）；改类型/改单位/删字段/改必填 = <strong>大版本</strong>（1.0 → 2.0）</td></tr>
+<tr><td>3 改契约</td><td>P4</td><td>改 <code>*.schema.json</code> + 同步 <code>samples/</code> + 更新 <code>CHANGELOG.md</code></td></tr>
+<tr><td>4 自证</td><td>提出人</td><td>跑 <code>validate_contract.py</code>，全绿才提 PR</td></tr>
+<tr><td>5 审查</td><td>P2 或 P5 任一人</td><td>重点看：消费方是否已同步、是否破坏历史数据</td></tr>
+<tr><td>6 通知</td><td>P4</td><td>群里 @全体，附一行 diff 摘要 + 生效时间</td></tr>
+</tbody></table></div>
+<p><strong>大版本的特殊规矩</strong>：不删旧字段，只标 <code>deprecated</code>，保留一个阶段；且只在阶段交界处合并（避免并行开发期互相踩脚）。</p>
+<hr>
+<h2 id="七-跨字段校验规则-写在-validate_contract-py-里的业务一致性">七、跨字段校验规则（写在 <code>validate_contract.py</code> 里的业务一致性）</h2>
+<p>这些规则 JSON Schema 写不了，但恰恰是"数据真的统一"的证据：</p>
+<div class="table-wrap"><table>
+<thead><tr><th>编号</th><th>规则</th><th>抓什么错</th></tr></thead>
+<tbody>
+<tr><td>C1</td><td><code>activity_id</code> 全局唯一</td><td>重复导入同一条记录</td></tr>
+<tr><td>C2</td><td><code>max_hr ≥ avg_hr</code></td><td>字段填反</td></tr>
+<tr><td>C3</td><td>配速与 <code>duration_s / distance_m</code> 推算值偏差 &gt; 15s/km 报警</td><td>配速与原始数据不同源</td></tr>
+<tr><td>C4</td><td><code>acwr_rolling</code> 与 <code>acwr_ewma</code> 差 &gt; 1.0 报警</td><td>两个人用了不同口径（滚动 vs EWMA）</td></tr>
+<tr><td>C5</td><td>VO₂max 三法差异 &gt; 5% 却标 <code>consistency_ok: true</code></td><td>一致性检查被写死成 true</td></tr>
+<tr><td>C6</td><td><code>plan.days</code> 日期不重复、<code>kind: rest</code> 的 <code>duration_min</code> 必须为 0</td><td>计划生成有 bug</td></tr>
+<tr><td>C7</td><td>每天必须至少挂一个 <code>rule_id</code></td><td>违反 R20 依据覆盖率（答辩必问）</td></tr>
+<tr><td>C8</td><td><code>report</code> 里 plan 引用的 <code>rule_id</code> 必须在 <code>risks</code>/<code>evidence</code> 中找得到；反之依据不能空挂</td><td>依据链断裂——<strong>本项目最致命的一类错</strong></td></tr>
+</tbody></table></div>
+<p>C8 尤其重要：如果报告里写了"ACWR 1.62 超标"却拿不出对应条款，这个项目在赛道三就失去了全部说服力。</p>
+<hr>
+<h2 id="八-开工第一天-90-分钟就位">八、开工第一天：90 分钟就位</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>时间</th><th>谁</th><th>做什么</th><th>产出</th></tr></thead>
+<tbody>
+<tr><td>0–30min</td><td>全员</td><td>把 <code>contracts/</code> 拷进 Git 仓库，各自跑一遍 <code>validate_contract.py</code>，必须看到 4 个 PASS</td><td>环境就绪</td></tr>
+<tr><td>30–60min</td><td>P1 + P2</td><td>打开真实手表导出文件，逐字段对照 <code>activity.schema.json</code>：手表没有的字段一律 <code>null</code>；对不上的当场拍板（改字段名还是加映射）</td><td>字段映射表</td></tr>
+<tr><td>60–80min</td><td>P5</td><td>起 <code>mock_api.py</code>，打开 <code>http://127.0.0.1:8080/api/report</code>，把报告页骨架（摘要卡 / 负荷曲线 / 风险列表 / 周计划表）先画出来</td><td>静态页面</td></tr>
+<tr><td>80–90min</td><td>P4</td><td>冻结 <code>schema_version: 1.0</code>，写进仓库 README；以后每次改动都要升版本号</td><td>契约 v1.0 冻结</td></tr>
+</tbody></table></div>
+<p>散会时的验收标准：<strong>P5 的页面已经在渲染 mock 数据，P2 的解析器已经在产出符合 schema 的 JSON，两边还没写过一行联调代码。</strong></p>
+<hr>
+<h2 id="九-这个项目最容易踩的-8-个坑">九、这个项目最容易踩的 8 个坑</h2>
+<ol>
+<li><strong>配速格式</strong>：<code>6'00"/km</code> → 360 秒，转换只写一处，别每个模块各写一遍。</li>
+<li><strong>CSV 带 BOM</strong>：Excel 另存的 CSV 开头有 <code>\ufeff</code>，Python 用 <code>encoding="utf-8-sig"</code> 读，否则第一个字段名变成 <code>\ufeffdate</code>，全部校验失败。</li>
+<li><strong>心率 0 当真值</strong>：手表没戴/没测到常导 0，直接进平均会把心率拉到 60，ACWR 全错。</li>
+<li><strong>跨零点跑步</strong>：按<strong>开始时间</strong>归属日期，写进约定，别一个模块按结束时间、一个按开始时间。</li>
+<li><strong>TRIMP 男女系数不同</strong>（0.64/1.92 vs 0.86/1.67）：<code>metrics.json</code> 里必须能追溯用了哪个公式，否则两个人算出两个数值。</li>
+<li><strong>浮点直接比较</strong>：<code>acwr == 1.62</code> 永远为假，用 <code>abs(a-b) &lt; 1e-6</code>。</li>
+<li><strong>Excel 手工改数据</strong>：数字会变成文本（<code>"152"</code>），校验器能抓到类型错——这也是为什么必须跑校验器。</li>
+<li><strong>前端自己算指标</strong>：一算就和后端对不上。记住：<strong>页面上的每个数字都要能在 <code>report.json</code> 里找到出处</strong>。</li>
+</ol>
+<hr>
+<h2 id="十-验收清单-Definition-of-Done-10-条">十、验收清单（Definition of Done，10 条）</h2>
+<ul>
+<li>[ ] 1. <code>python contracts/validate_contract.py</code> 全绿（4 个 PASS）</li>
+<li>[ ] 2. 四份 samples 都能被各自模块读取，无字段名适配代码</li>
+<li>[ ] 3. <code>report.json</code> 里每个数字都能在前端页面上找到对应位置（无前端自算）</li>
+<li>[ ] 4. 每个风险项都能顺着 <code>rule_id → evidence.source</code> 找到条款出处</li>
+<li>[ ] 5. 所有 <code>null</code> 字段在下游有显式降级路径，并写进 <code>missing_data</code></li>
+<li>[ ] 6. 所有枚举值来自固定表，没有自由文本塞进枚举字段</li>
+<li>[ ] 7. 单位全部符合第三节的表格（尤其配速、百分比、比率）</li>
+<li>[ ] 8. <code>schema_version</code> 与代码一致，<code>CHANGELOG.md</code> 有最近一次变更记录</li>
+<li>[ ] 9. mock 环境与真实环境返回同构 JSON（P5 换 base URL 就能切）</li>
+<li>[ ] 10. 数据里不含真实姓名/位置轨迹/照片（脱敏后才进仓库）</li>
+</ul>
+<hr>
+<h2 id="十一-仓库里现在有什么-可直接用">十一、仓库里现在有什么（可直接用）</h2>
+<pre class="code"><code>contracts/
+├─ activity.schema.json     # P2 产出契约
+├─ metrics.schema.json      # P3 产出契约
+├─ plan.schema.json         # P4 计划契约
+├─ report.schema.json       # 前端唯一消费契约
+├─ samples/
+│  ├─ activity_sample.json  # 黄金样例（含 2 条活动记录）
+│  ├─ metrics_sample.json   # ACWR 1.62 / VO2max 三法 / 恢复指标
+│  ├─ plan_sample.json      # 一周 7 天，含 R19/R20 自校验结果
+│  └─ report_sample.json    # 完整报告（含 agent_trace 6 步）
+├─ validate_contract.py     # 校验器（仅标准库，无需联网安装）
+└─ mock_api.py              # 假后端，P5 当天就能开发</code></pre>
+<p>三条命令，全队统一：</p>
+<pre class="code"><code>python contracts/validate_contract.py          # 校验契约与样例
+python contracts/mock_api.py --port 8080       # 起假后端
+python contracts/validate_contract.py --dir out/  # 校验自己产出的数据</code></pre>
+<hr>
+<h2 id="十二-一句话收尾">十二、一句话收尾</h2>
+<p>五个人做同一个系统，<strong>统一靠的不是开会，而是把"什么算对"写进代码里</strong>。schema 说形状、样例说数值、校验器说对错——三样齐了，接口就不会在第五周爆炸。</p>
+</article></div>
+</body>
+</html>

@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>运动生理闭环智能体 · 工作流程与五人分工</title>
+<style>
+:root{
+  --ink:#1b1f24; --ink-soft:#4a545e; --line:#e3e8ef; --bg:#f5f7fa;
+  --accent:#0b5fff; --accent-soft:#eaf1ff; --warn:#b45309; --ok:#0a7a45;
+}
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font-family:"Microsoft YaHei","PingFang SC","Hiragino Sans GB","Segoe UI",system-ui,sans-serif;
+  font-size:16.5px; line-height:1.85; -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:1000px;margin:0 auto;padding:40px 22px 90px}
+.card{background:#fff;border:1px solid var(--line);border-radius:16px;
+  box-shadow:0 1px 2px rgba(16,24,40,.04),0 12px 32px -18px rgba(16,24,40,.18);
+  padding:52px 56px 60px}
+h1{font-size:30px;line-height:1.35;margin:0 0 6px;letter-spacing:-.3px}
+h1+blockquote{margin-top:18px}
+h2{font-size:22px;margin:52px 0 16px;padding-top:18px;border-top:1px solid var(--line);letter-spacing:-.2px}
+h2:first-of-type{border-top:0}
+h3{font-size:18.5px;margin:34px 0 12px;color:#0b1b3a}
+h3::before{content:"";display:inline-block;width:4px;height:16px;background:var(--accent);
+  border-radius:2px;margin-right:10px;vertical-align:-2px}
+p{margin:12px 0}
+strong{color:#0b1b3a}
+a{color:var(--accent);text-decoration:none;border-bottom:1px solid #bcd0ff}
+ul,ol{margin:12px 0;padding-left:26px}
+li{margin:7px 0}
+li::marker{color:var(--accent)}
+hr{border:0;border-top:1px dashed var(--line);margin:36px 0}
+blockquote{margin:20px 0;padding:16px 20px;background:var(--accent-soft);
+  border-left:4px solid var(--accent);border-radius:0 10px 10px 0;color:#123;font-size:15.5px}
+blockquote strong{color:var(--accent)}
+code{background:#f2f5f9;border:1px solid var(--line);border-radius:5px;
+  padding:1.5px 6px;font-family:"Cascadia Mono",Consolas,monospace;font-size:13.5px;color:#0b3d91}
+pre.code{overflow-x:auto;margin:18px 0;padding:16px 18px;background:#0b1220;color:#dbe6f6;
+  border-radius:10px;font-family:"Cascadia Mono",Consolas,"Courier New",monospace;
+  font-size:13px;line-height:1.6;white-space:pre}
+pre.code code{background:none;border:0;padding:0;color:inherit;font-size:inherit}
+.table-wrap{overflow-x:auto;margin:18px 0;border:1px solid var(--line);border-radius:10px}
+table{border-collapse:collapse;width:100%;font-size:14.8px;background:#fff}
+thead th{background:#f0f4fa;text-align:left;font-weight:700;color:#0b1b3a;
+  padding:11px 14px;border-bottom:1px solid var(--line);white-space:nowrap}
+tbody td{padding:11px 14px;border-bottom:1px solid #eef2f7;vertical-align:top;color:var(--ink-soft)}
+tbody tr:last-child td{border-bottom:0}
+tbody tr:nth-child(even){background:#fafbfd}
+tbody tr:hover{background:#f3f7ff}
+@media (max-width:720px){
+  .card{padding:28px 20px 36px;border-radius:12px}
+  .wrap{padding:16px 10px 60px}
+  h1{font-size:24px} h2{font-size:19px} body{font-size:15.5px}
+}
+</style>
+</head>
+<body>
+<div class="wrap"><article class="card">
+<h1 id="运动生理闭环智能体-工作流程与五人分工">运动生理闭环智能体 · 工作流程与五人分工</h1>
+<blockquote>方向：AI＋跨学科融合创新（赛道三）<br>学科交叉：软件工程 × 运动人体科学（运动生理学 / 训练学）<br>团队规模：5 人 · 目标：可运行原型 + 计划书 + 演示视频</blockquote>
+<hr>
+<h2 id="一-先把这个项目说清楚-六句话模板">一、先把这个项目说清楚（六句话模板）</h2>
+<ol>
+<li><strong>服务对象</strong>：有规律跑步习惯的大学生跑者（每周 3–5 次，正在备战体测、半马或全马）。</li>
+<li><strong>场景</strong>：每周训练结束后，不知道该不该加量、这次心率偏高是正常还是过度、下周该怎么排。</li>
+<li><strong>输入与输出</strong>：输入是手表/App 导出的跑步记录（配速、心率、距离、时长、海拔）＋ 一次比赛或体测成绩；输出是本周训练负荷评估、有氧能力水平、伤病风险等级、下周训练安排，以及<strong>每一条结论背后的生理学依据</strong>。</li>
+<li><strong>第一版范围</strong>：单跑者、单项目（跑步）、8 周历史数据、5 类指标、20 条规则；不做饮食、不做力量训练、不做实时佩戴设备联动。</li>
+<li><strong>资料与工具规则</strong>：所有阈值必须挂到公开依据（ACSM 指南、Gabbett 2016、Banister TRIMP、Foster sRPE、Daniels 跑力表等）；资料里没有的（比如个人病史、伤病史）<strong>明确追问，不猜测、不编造</strong>。</li>
+<li><strong>验证案例与依据</strong>：用队长本人 12 个月真实跑步数据回测 + 5 名跑友 4 周对照 + 体育老师评审 10 份训练计划。</li>
+</ol>
+<hr>
+<h2 id="二-为什么这个方向能拿分-对着评分表说">二、为什么这个方向能拿分（对着评分表说）</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>评分项</th><th>分值</th><th>本项目的得分逻辑</th></tr></thead>
+<tbody>
+<tr><td>创新与选题价值</td><td>30</td><td>市面跑步 App 只给"计划"和"数据"，不给<strong>依据</strong>、不做<strong>风险联动</strong>、更不会在你说"膝盖疼"时把计划推翻重排。本项目做的是"生理状态 → 训练决策"的可解释闭环</td></tr>
+<tr><td>作品完成度与技术实现</td><td>30</td><td>单 agent + 8 工具 + 每周闭环迭代，5 人规模可做出真能跑的版本；验证有数字（检出率、一致性误差、提前预警天数）</td></tr>
+<tr><td>落地应用前景</td><td>20</td><td>大学生体测、马拉松备赛是刚需；数据来源就是手机和手表，零硬件成本</td></tr>
+<tr><td>文档与答辩展示</td><td>20</td><td>演示极直观：投进一份数据，30 秒出"负荷+风险+下周计划+依据"；故事是"我自己就是被测者"</td></tr>
+</tbody></table></div>
+<p><strong>一句话卖点</strong>：不是"AI 帮你排训练计划"，而是"<strong>把你的生理状态翻译成可执行、可解释、可调整的训练决策</strong>"。</p>
+<hr>
+<h2 id="三-专业内核-五组指标与依据-这是赛道三的命根子">三、专业内核：五组指标与依据（这是赛道三的命根子）</h2>
+<p>外行的做法是"这周跑了 40 公里，下周跑 44 公里"。专业的做法是先算清楚<strong>负荷、能力、风险</strong>三件事。</p>
+<h3 id="3-1-训练负荷-TRIMP-训练冲量">3.1 训练负荷：TRIMP（训练冲量）</h3>
+<p>不是把公里数相加，而是按强度加权：</p>
+<pre class="code"><code>ΔHR = (HR_运动 − HR_静息) / (HR_最大 − HR_静息)
+TRIMP = 时长(min) × ΔHR × 0.64 × e^(1.92 × ΔHR)     # 男性
+TRIMP = 时长(min) × ΔHR × 0.86 × e^(1.67 × ΔHR)     # 女性</code></pre>
+<p>依据：Banister 1991 经典 TRIMP 模型。<strong>为什么重要</strong>：同样 60 分钟，轻松跑和高强度间歇的生理代价差 3–5 倍，里程相加完全看不出来。</p>
+<h3 id="3-2-负荷变化-ACWR-急慢性负荷比">3.2 负荷变化：ACWR（急慢性负荷比）</h3>
+<pre class="code"><code>ACWR = 近 7 天负荷 / 近 28 天平均负荷</code></pre>
+<ul>
+<li>0.8 – 1.3：安全区（"sweet spot"）</li>
+<li>&gt; 1.5：伤病风险显著上升</li>
+<li>&lt; 0.8：训练不足，能力会掉</li>
+</ul>
+<p>依据：Gabbett 2016（BJSM）训练-伤病悖论；Williams 2017 指出<strong>滚动平均法有数学耦合缺陷</strong>，建议改用指数加权（EWMA）。</p>
+<blockquote><strong>这是一个极好的专业点</strong>：绝大多数 App 用的是滚动平均，我们做 EWMA 对照，并说明为什么。答辩时这一条就能拉开差距。</blockquote>
+<h3 id="3-3-有氧能力-VO₂max-三法交叉估算">3.3 有氧能力：VO₂max 三法交叉估算</h3>
+<div class="table-wrap"><table>
+<thead><tr><th>方法</th><th>公式/依据</th><th>用什么时候</th></tr></thead>
+<tbody>
+<tr><td>Uth–Sørensen</td><td>VO₂max ≈ 15.3 × HR_max / HR_静息</td><td>有静息心率和最大心率</td></tr>
+<tr><td>Riegel 反推</td><td>T₂ = T₁ × (D₂/D₁)^1.06，再由 Daniels 跑力表换算</td><td>有比赛成绩</td></tr>
+<tr><td>Cooper 12 分钟跑</td><td>距离(m) 换算</td><td>有场地测试</td></tr>
+</tbody></table></div>
+<p><strong>专业点</strong>：三种方法结果<strong>必须交叉验证</strong>，差异超过 5% 就说明某一项数据有问题（比如最大心率是"220−年龄"猜的，不是真测的）。单用一种就叫"套公式"。</p>
+<h3 id="3-4-疲劳与恢复">3.4 疲劳与恢复</h3>
+<ul>
+<li><strong>sRPE 负荷</strong>：主观疲劳度(1–10) × 时长(min)，Foster 2001</li>
+<li><strong>静息心率</strong>：连续 3 天比个人基线高 7 bpm 以上 → 恢复不足</li>
+<li><strong>HRV（RMSSD）</strong>：若设备支持，连续下降 → 自主神经疲劳</li>
+<li><strong>心率漂移（有氧解耦）</strong>：恒速跑前后半程心率差 &gt; 5% → 有氧基础不足（Friel 判据）</li>
+</ul>
+<h3 id="3-5-伤病风险信号">3.5 伤病风险信号</h3>
+<ul>
+<li>周跑量增幅 &gt; 10%（"10% 法则"）</li>
+<li>连续高强度天数 ≥ 3</li>
+<li>长距离（&gt; 周跑量 30%）占比过高</li>
+<li>ACWR 单周突增 &gt; 0.5</li>
+<li>步频下降 / 触地时间上升（有高阶数据时）</li>
+</ul>
+<hr>
+<h2 id="四-规则库-第一版-20-条-直接可开发">四、规则库（第一版 20 条，直接可开发）</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>rule_id</th><th>判据</th><th>阈值</th><th>依据</th><th>等级</th><th>处置动作</th></tr></thead>
+<tbody>
+<tr><td>R01</td><td>数据完整性</td><td>缺时长/心率/距离任一项</td><td>数据规范</td><td>低</td><td>标记，走估算或追问</td></tr>
+<tr><td>R02</td><td>心率合理性</td><td>静息 HR &lt; 30 或 &gt; 110</td><td>生理常识</td><td>中</td><td>判为设备异常，不入库</td></tr>
+<tr><td>R03</td><td>最大心率来源</td><td>用 220−年龄 推算</td><td>ACSM</td><td>中</td><td>标"估算值"，提示实测</td></tr>
+<tr><td>R04</td><td>TRIMP 计算</td><td>—</td><td>Banister 1991</td><td>—</td><td>输出周负荷</td></tr>
+<tr><td>R05</td><td>ACWR 安全区</td><td>0.8 ≤ ACWR ≤ 1.3</td><td>Gabbett 2016</td><td>低</td><td>维持当前安排</td></tr>
+<tr><td>R06</td><td>ACWR 高危</td><td>ACWR &gt; 1.5</td><td>Gabbett 2016</td><td>高</td><td>下周减量 30%，取消强度课</td></tr>
+<tr><td>R07</td><td>ACWR 不足</td><td>ACWR &lt; 0.8</td><td>Gabbett 2016</td><td>低</td><td>可渐进加量（≤10%）</td></tr>
+<tr><td>R08</td><td>周跑量增幅</td><td>本周 / 近 4 周均值 &gt; 1.10</td><td>10% 法则</td><td>中</td><td>下周上限 = 本周 × 1.10</td></tr>
+<tr><td>R09</td><td>连续高强度</td><td>连续 ≥ 3 天含强度课</td><td>训练学</td><td>中</td><td>强制插入低强度日</td></tr>
+<tr><td>R10</td><td>长距离占比</td><td>单次 &gt; 周跑量 35%</td><td>训练学</td><td>低</td><td>提示拆分或调整</td></tr>
+<tr><td>R11</td><td>静息心率异常</td><td>连续 3 天 &gt; 基线 + 7 bpm</td><td>运动医学</td><td>高</td><td>降级本周计划，建议休息</td></tr>
+<tr><td>R12</td><td>心率漂移</td><td>恒速跑前后半程心率差 &gt; 5%</td><td>Friel</td><td>中</td><td>判定有氧基础不足，加有氧课</td></tr>
+<tr><td>R13</td><td>VO₂max 一致性</td><td>三法差异 &gt; 5%</td><td>本方案</td><td>中</td><td>标"数据可疑"，追问最大心率来源</td></tr>
+<tr><td>R14</td><td>配速-心率失配</td><td>同配速心率比 4 周前高 &gt; 8 bpm</td><td>训练学</td><td>中</td><td>判疲劳累积，安排恢复周</td></tr>
+<tr><td>R15</td><td>疼痛主诉</td><td>用户报告疼痛</td><td>运动医学</td><td>高</td><td><strong>强制暂停计划</strong>，输出就医/康复建议</td></tr>
+<tr><td>R16</td><td>睡眠不足</td><td>睡眠 &lt; 6h 连续 2 天</td><td>运动医学</td><td>中</td><td>强度课降级为轻松跑</td></tr>
+<tr><td>R17</td><td>高温环境</td><td>气温 &gt; 30℃ 或湿度 &gt; 80%</td><td>ACSM</td><td>中</td><td>配速目标下调 3–5%，补水提示</td></tr>
+<tr><td>R18</td><td>比赛临近</td><td>距目标赛事 ≤ 7 天</td><td>训练学</td><td>高</td><td>进入减量期，禁止长距离</td></tr>
+<tr><td>R19</td><td>计划自查</td><td>新计划周负荷增幅 &gt; 10%</td><td>本方案</td><td>—</td><td><strong>打回重排</strong>（agent 自校验）</td></tr>
+<tr><td>R20</td><td>依据覆盖率</td><td>计划中无依据支撑的条目 &gt; 0</td><td>本方案</td><td>—</td><td><strong>打回补充依据</strong>（agent 自校验）</td></tr>
+</tbody></table></div>
+<blockquote>R19、R20 是给 agent 自己用的<strong>自校验规则</strong>，不是给用户的。有这两条，它才不是流水线。</blockquote>
+<hr>
+<h2 id="五-系统架构-单-agent-8-工具-不要做多-Agent">五、系统架构：单 agent + 8 工具（不要做多 Agent）</h2>
+<pre class="code"><code>                ┌─────────────────────────────┐
+                │   Agent 主循环（Plan-Act-Observe-Self-check）│
+                └──────────────┬──────────────┘
+                               │
+   ┌───────────┬───────────┬───┴────┬───────────┬───────────┬───────────┐
+   │ load_data │ compute   │estimate│ check     │ retrieve  │ ask_user  │
+   │           │ _load     │ _vo2   │ _risk     │ _evidence │           │
+   └───────────┴───────────┴────────┴───────────┴───────────┴───────────┘
+                               │
+                    ┌──────────┴──────────┐
+                    │ generate_plan       │  explain
+                    └─────────────────────┘</code></pre>
+<p><strong>8 个工具</strong></p>
+<div class="table-wrap"><table>
+<thead><tr><th>工具</th><th>作用</th><th>输入 → 输出</th></tr></thead>
+<tbody>
+<tr><td><code>load_activities</code></td><td>读入跑步记录</td><td>文件/接口 → 结构化活动列表</td></tr>
+<tr><td><code>compute_load</code></td><td>算 TRIMP / ACWR / sRPE</td><td>活动列表 → 负荷时序</td></tr>
+<tr><td><code>estimate_vo2max</code></td><td>三法估算 + 一致性校验</td><td>活动 + 比赛成绩 → VO₂max 区间</td></tr>
+<tr><td><code>check_risk</code></td><td>跑 20 条规则</td><td>负荷 + 生理指标 → 风险清单</td></tr>
+<tr><td><code>retrieve_evidence</code></td><td>查规则依据原文</td><td>rule_id → 条款/文献出处</td></tr>
+<tr><td><code>ask_athlete</code></td><td>追问缺失信息</td><td>缺项 → 问题（睡眠/疼痛/RPE/最大心率来源）</td></tr>
+<tr><td><code>generate_plan</code></td><td>生成下周计划</td><td>状态 + 风险 → 每日安排</td></tr>
+<tr><td><code>explain</code></td><td>生成可读报告</td><td>全部状态 → 报告</td></tr>
+</tbody></table></div>
+<p><strong>三处必须让评委看见的"智能体行为"</strong></p>
+<ol>
+<li><strong>缺信息会追问，不会硬算</strong>：没有 RPE 就问 RPE；最大心率是猜的就标出来并要求实测；用户没报疼痛不会自己编。</li>
+<li><strong>数据矛盾会判断，不会照单全收</strong>：心率 210 但配速 7 分/公里 → 判为手表异常，不入库，而不是算出一个荒谬的负荷。</li>
+<li><strong>计划生成后会自查打回</strong>：算完下周计划，自己跑 R19/R20——负荷增幅超 10% 或有无依据条目，就打回重排。<strong>这一步是"智能体"和"流水线"的分水岭。</strong></li>
+</ol>
+<hr>
+<h2 id="六-闭环-一周是怎么跑起来的">六、闭环：一周是怎么跑起来的</h2>
+<pre class="code"><code>周一：用户导入上周数据
+  ↓
+① 数据体检（R01-R03）→ 有问题就问（ask_athlete）
+  ↓
+② 算负荷（R04）→ 看变化（R05-R07）
+  ↓
+③ 估能力（R13）+ 查风险（R08-R18）
+  ↓
+④ 生成下周计划（generate_plan）
+  ↓
+⑤ 自校验（R19-R20）── 不通过 → 回 ④ 重排
+  ↓
+⑥ 出报告 + 依据（explain + retrieve_evidence）
+  ↓
+周日：用户反馈"膝盖有点疼" → R15 触发 → 推翻计划，重排降级版
+  ↓
+（下周回到 ①）</code></pre>
+<p><strong>闭环的证明</strong>：同一份数据，第一周和第四周给出的计划必须不同，因为状态变了。答辩时展示两条曲线——"用户实际负荷"与"系统建议负荷"——贴合度越来越高，这就是闭环生效的证据。</p>
+<hr>
+<h2 id="七-数据从哪来">七、数据从哪来</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>来源</th><th>内容</th><th>说明</th></tr></thead>
+<tbody>
+<tr><td>队长本人</td><td>12 个月跑步记录（配速/心率/距离/时长）</td><td>主力数据，真实、量大、可回测</td></tr>
+<tr><td>4 名队友</td><td>各 2–3 个月记录</td><td>做对照实验和鲁棒性测试</td></tr>
+<tr><td>手表/App 导出</td><td>Garmin / Coros / 华为运动健康 / Keep / 悦跑圈</td><td>统一转成 CSV 中间格式</td></tr>
+<tr><td>公开数据</td><td>马拉松赛事成绩、公开跑者数据集</td><td>补充样本、验证配速分布</td></tr>
+<tr><td>手动录入</td><td>睡眠、RPE、疼痛、天气</td><td>补齐生理维度</td></tr>
+</tbody></table></div>
+<p><strong>隐私处理</strong>：只保留匿名 ID + 生理指标，删除姓名、位置轨迹、照片；报告中不出现真实姓名。</p>
+<hr>
+<h2 id="八-验证方案-每一条都要出数字">八、验证方案（每一条都要出数字）</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>层</th><th>做法</th><th>产出指标</th><th>通过标准</th></tr></thead>
+<tbody>
+<tr><td>L1 回测</td><td>用队长 12 个月历史数据，逐周回放</td><td>风险预警提前量（天）</td><td>至少命中 1 次真实"掉速/不适"事件，提前 ≥ 3 天</td></tr>
+<tr><td>L2 一致性</td><td>VO₂max 三法交叉</td><td>三法最大差异（%）</td><td>&lt; 5%</td></tr>
+<tr><td>L3 对抗测试</td><td>注入 20 组脏数据（心率漂移、GPS 跳点、重复记录、单位错误）</td><td>检出率 / 误报率</td><td>检出率 ≥ 90%，误报 ≤ 10%</td></tr>
+<tr><td>L4 对照</td><td>5 名跑友，4 周，系统建议 vs 自己练</td><td>负荷合理性评分、伤情</td><td>实验组 ACWR 落在安全区比例更高</td></tr>
+<tr><td>L5 专家评审</td><td>体育老师/校队教练盲评 10 份计划</td><td>合理性评分（1–5）</td><td>均分 ≥ 4.0</td></tr>
+</tbody></table></div>
+<p><strong>L1 是最有说服力的一条</strong>：如果能说"系统在我半马前两周就报了 ACWR 1.62 的高危，我当时没听，结果比赛崩了"——这比任何技术指标都打动人。</p>
+<hr>
+<h2 id="九-第一版边界-做什么-不做什么">九、第一版边界（做什么 / 不做什么）</h2>
+<p><strong>v1 做</strong></p>
+<ul>
+<li>单跑者、跑步一项</li>
+<li>CSV 导入（不接手表 API）</li>
+<li>5 类指标、20 条规则</li>
+<li>周计划生成 + 每周闭环调整</li>
+<li>一条完整的报告链（结论 → rule_id → 依据原文）</li>
+<li>网页界面 + 演示脚本</li>
+</ul>
+<p><strong>v1 不做（写清楚，反而是加分）</strong></p>
+<ul>
+<li>不接实时心率带、不做硬件</li>
+<li>不做饮食/力量/游泳/骑行</li>
+<li>不做医疗诊断（明确写"不替代医生"）</li>
+<li>不做个性化生理建模（不做乳酸阈实测）</li>
+<li>不做多用户 SaaS</li>
+</ul>
+<hr>
+<h2 id="十-五人分工">十、五人分工</h2>
+<h3 id="角色总表">角色总表</h3>
+<div class="table-wrap"><table>
+<thead><tr><th>编号</th><th>角色</th><th>核心职责</th><th>关键交付物</th></tr></thead>
+<tbody>
+<tr><td>P1</td><td><strong>队长 / 领域与规则</strong></td><td>生理规则库、找专业背书、计划书、答辩</td><td>规则库 20 条（带依据）、计划书、答辩稿</td></tr>
+<tr><td>P2</td><td><strong>数据工程</strong></td><td>数据导入解析、清洗、特征计算、数据集</td><td>解析器、CSV 中间格式、数据字典、脏数据注入脚本</td></tr>
+<tr><td>P3</td><td><strong>算法 / 指标</strong></td><td>TRIMP、ACWR、VO₂max、风险模型、回测评估</td><td>指标模块、回测报告（带数字）</td></tr>
+<tr><td>P4</td><td><strong>Agent 编排 / 后端</strong></td><td>工具定义、主循环、状态管理、自校验、API</td><td>agent 服务、8 工具、自校验逻辑</td></tr>
+<tr><td>P5</td><td><strong>前端 / 演示</strong></td><td>界面、可视化、演示视频、PPT</td><td>Web 界面、负荷与风险图表、3–5 分钟视频</td></tr>
+</tbody></table></div>
+<blockquote><strong>P1 必须是技术也懂一点的人</strong>，因为他要同时和体育老师、队友、评委三边对话。如果队长纯技术，就配一个"领域联络人"，但不能没人。</blockquote>
+<h3 id="P1-队长-领域与规则-工作量约-14-人天">P1 队长 / 领域与规则（工作量约 14 人天）</h3>
+<ul>
+<li>阶段一：确定 5 类指标与 20 条规则，逐条挂依据；联系体育部老师/校田径队教练做专业背书</li>
+<li>阶段二：写规则库正式文档（rule_id / 判据 / 阈值 / 依据 / 等级 / 动作）；确定"不做什么"边界</li>
+<li>阶段三：与 P3 对齐算法口径（TRIMP 系数男女差异、ACWR 用 EWMA 还是滚动）</li>
+<li>阶段四：写计划书主体（选题背景、跨学科说明、技术方案、创新点）</li>
+<li>阶段五：组织 L5 专家评审，收集 10 份计划的评分与意见</li>
+<li>阶段六：答辩稿 + 5 分钟路演排练；视频脚本终审</li>
+</ul>
+<h3 id="P2-数据工程-工作量约-13-人天">P2 数据工程（工作量约 13 人天）</h3>
+<ul>
+<li>阶段一：调研各手表/App 导出格式，定义统一 CSV 中间格式（字段：时间、距离、时长、平均/最大心率、配速、海拔、温度、RPE、备注）</li>
+<li>阶段二：写解析器（先支持 2 种格式：Garmin CSV + 华为/Keep 导出），做字段映射与单位归一</li>
+<li>阶段三：数据清洗（去重、GPS 跳点、心率异常剔除、断点补全策略）；产出数据字典</li>
+<li>阶段四：写脏数据注入脚本（20 组变体，给 L3 对抗测试用）</li>
+<li>阶段五：配合 P3 做回测数据准备；整理 5 名跑友的对照数据</li>
+<li>阶段六：数据附录（匿名化说明、字段说明），供技术核验</li>
+</ul>
+<h3 id="P3-算法-指标-工作量约-15-人天">P3 算法 / 指标（工作量约 15 人天）</h3>
+<ul>
+<li>阶段一：实现 TRIMP（男女两套系数）+ sRPE，用队长数据跑通，出第一条负荷曲线</li>
+<li>阶段二：实现 ACWR（滚动平均 + EWMA 双版本），做两者对比分析</li>
+<li>阶段三：实现 VO₂max 三法（Uth / Riegel+Daniels / Cooper），写一致性校验</li>
+<li>阶段四：实现风险规则 R05–R18 的计算内核；做 L2 一致性 + L1 回测</li>
+<li>阶段五：出回测报告（风险预警提前量、命中事件）、L3 对抗测试结果（检出率/误报率）</li>
+<li>阶段六：整理算法说明文档（公式、参数、边界），供技术核验</li>
+</ul>
+<h3 id="P4-Agent-编排-后端-工作量约-16-人天">P4 Agent 编排 / 后端（工作量约 16 人天）</h3>
+<ul>
+<li>阶段一：定工具契约（8 个工具的输入输出 JSON Schema）；搭服务骨架（FastAPI 或 Node）</li>
+<li>阶段二：接 P3 的指标模块，实现 <code>load_activities</code> / <code>compute_load</code> / <code>estimate_vo2max</code></li>
+<li>阶段三：实现主循环（Plan-Act-Observe-Self-check）+ <code>ask_athlete</code> 追问逻辑</li>
+<li>阶段四：实现 <code>check_risk</code> / <code>retrieve_evidence</code> / <code>generate_plan</code>；接规则库</li>
+<li>阶段五：实现 R19/R20 自校验（打回重排）；做"流水线版 vs agent 版"对照 demo</li>
+<li>阶段六：稳定性收尾、接口文档、部署说明（本地一键跑）</li>
+</ul>
+<h3 id="P5-前端-演示-工作量约-14-人天">P5 前端 / 演示（工作量约 14 人天）</h3>
+<ul>
+<li>阶段一：出界面原型（3 个页面：数据导入、状态看板、周计划）</li>
+<li>阶段二：搭前端框架，做数据导入页</li>
+<li>阶段三：做状态看板（负荷曲线、ACWR 仪表盘、风险灯）</li>
+<li>阶段四：做周计划页（每日安排 + 点击展开依据）</li>
+<li>阶段五：做演示模式（一键载入预置数据，30 秒出结果）；录 3–5 分钟视频</li>
+<li>阶段六：PPT 制作、路演视觉材料、界面打磨</li>
+</ul>
+<h3 id="依赖关系-谁等谁">依赖关系（谁等谁）</h3>
+<pre class="code"><code>P2 数据格式 ──→ P3 指标计算 ──→ P4 agent 编排 ──→ P5 界面展示
+                    ↑                                    ↓
+P1 规则库 ──────────┘                              P1 计划书/答辩</code></pre>
+<p><strong>关键路径</strong>：P2 的 CSV 格式必须在第一阶段结束前定死，否则 P3、P4 全部堵住。<strong>第一阶段开一次 30 分钟对齐会，只定一件事：数据格式。</strong></p>
+<h3 id="协作机制-避免五个人各干各的">协作机制（避免五个人各干各的）</h3>
+<ul>
+<li><strong>固定站会</strong>（20 分钟）：上一阶段产出、下一阶段计划、卡点</li>
+<li><strong>接口先定后写</strong>：工具契约、CSV 格式、API 返回结构，先写文档再写代码</li>
+<li><strong>一个 Git 仓库 + 分支策略</strong>：main 保护，每人一个 feature 分支</li>
+<li><strong>每个阶段结束出可运行版本</strong>，哪怕很丑——"能跑"优先于"好看"</li>
+</ul>
+<hr>
+<h2 id="十一-推进顺序-按依赖排-不设固定期限">十一、推进顺序（按依赖排，不设固定期限）</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>阶段</th><th>主题</th><th>全队目标</th><th>阶段验收</th></tr></thead>
+<tbody>
+<tr><td>阶段一</td><td>定框架</td><td>规则库 v1、CSV 格式定死、工具契约定死</td><td>能读到一份真实数据</td></tr>
+<tr><td>阶段二</td><td>算得出</td><td>TRIMP/ACWR 跑通、解析器可用、界面原型</td><td>出第一条负荷曲线</td></tr>
+<tr><td>阶段三</td><td>会判断</td><td>VO₂max 三法、风险规则、主循环、看板</td><td>输入数据能吐风险清单</td></tr>
+<tr><td>阶段四</td><td>会决策</td><td>周计划生成、依据链、计划页</td><td>输入数据能吐下周计划</td></tr>
+<tr><td>阶段五</td><td>能证明</td><td>回测、对抗测试、对照实验、专家评审、agent 自校验</td><td>五个验证层都有数字</td></tr>
+<tr><td>阶段六</td><td>能讲清</td><td>计划书、视频、PPT、部署说明、排练</td><td>初赛材料齐</td></tr>
+</tbody></table></div>
+<p><strong>里程碑检查点</strong>：阶段三结束如果还吐不出"风险清单"，立刻砍范围——把 5 类指标砍到 3 类，保住 R05–R11 这 7 条核心规则。</p>
+<hr>
+<h2 id="十二-交付物清单与验收标准">十二、交付物清单与验收标准</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>交付物</th><th>负责</th><th>验收标准</th></tr></thead>
+<tbody>
+<tr><td>规则库文档（20 条）</td><td>P1</td><td>每条有依据出处，可点击回查</td></tr>
+<tr><td>数据解析器</td><td>P2</td><td>支持 ≥ 2 种导出格式，字段对齐无丢失</td></tr>
+<tr><td>指标模块</td><td>P3</td><td>单元测试通过；与手算样例一致</td></tr>
+<tr><td>回测报告</td><td>P3</td><td>有提前量天数、命中事件、一致性误差</td></tr>
+<tr><td>agent 服务</td><td>P4</td><td>一键启动；三个可见的 agent 行为可复现</td></tr>
+<tr><td>Web 界面</td><td>P5</td><td>三页面可走通；演示模式 30 秒出结果</td></tr>
+<tr><td>计划书 PDF</td><td>P1+P5</td><td>对齐官方模板四段式</td></tr>
+<tr><td>演示视频（3–5 分钟）</td><td>P5</td><td>有真实数据、有闭环对比、有依据回查</td></tr>
+<tr><td>技术核验包</td><td>P4+P2</td><td>源码、workflow 配置、运行说明、数据说明</td></tr>
+</tbody></table></div>
+<hr>
+<h2 id="十三-风险与应对">十三、风险与应对</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>风险</th><th>概率</th><th>应对</th></tr></thead>
+<tbody>
+<tr><td>没有运动科学背景，规则站不住</td><td>高</td><td>找体育部老师/校队教练背书；用 ACSM 指南、Gabbett 2016 等公开文献做依据；规则库里每条都标来源</td></tr>
+<tr><td>评委说"这不就是个训练计划生成器"</td><td>中</td><td>三个差异化必须演示出来：闭环（每周变）、风险联动（疼了就推翻）、依据可查（每条挂来源）</td></tr>
+<tr><td>手表数据格式五花八门，解析耗死</td><td>中</td><td>v1 只支持 2 种 + CSV 手工导入；不做 API 对接</td></tr>
+<tr><td>五个人接口对不上，后期集成爆炸</td><td>高</td><td>开工就把三个契约定死（CSV、工具 JSON、API 返回）；每个阶段结束必须有一个能跑的版本</td></tr>
+<tr><td>数据隐私</td><td>低</td><td>匿名 ID、删轨迹、报告不出现真名</td></tr>
+<tr><td>医疗合规</td><td>中</td><td>界面和文档都写明"辅助参考，不替代医生诊断"；R15 疼痛触发的是"建议就医"不是"诊断"</td></tr>
+</tbody></table></div>
+<hr>
+<h2 id="十四-答辩必答三问-提前背好">十四、答辩必答三问（提前背好）</h2>
+<p><strong>Q1：这和市面上的跑步 App 有什么区别？</strong></p>
+<blockquote>App 告诉你"本周跑了 42 公里，建议下周 46 公里"。我们告诉你"你这周 ACWR 是 1.62，超过 1.5 的高危线（Gabbett 2016），下周不是加到 46，是减到 30 并取消间歇课；依据是这里"。差别不是数据多少，是<strong>它会不会因为你的生理状态改变而改变决策</strong>。</blockquote>
+<p><strong>Q2：你怎么证明它是对的？</strong></p>
+<blockquote>五层验证：12 个月真实数据回测（提前 3 天预警真实事件）、VO₂max 三法一致性 &lt; 5%、20 组脏数据检出率 ≥ 90%、5 名跑友 4 周对照、体育老师盲评 10 份计划均分 ≥ 4。</blockquote>
+<p><strong>Q3：真有人会用吗？</strong></p>
+<blockquote>大学生体测和半马备赛是刚需，数据就在手机里，零硬件成本。我们的第一个用户是队长自己——他半马前两周的 ACWR 已经到高危区，但当时没人告诉他。</blockquote>
+<hr>
+<h2 id="十五-下一步-开工就能动">十五、下一步（开工就能动）</h2>
+<ol>
+<li><strong>第一步</strong>：队长导出自己 12 个月的跑步数据，看格式长什么样（这决定了 P2 的全部工作）</li>
+<li><strong>第二步</strong>：P1 把 20 条规则表填完（可以先用本文档的版本改）</li>
+<li><strong>第三步</strong>：找一位体育部老师或校田径队教练聊 30 分钟，问三个问题：ACWR 用滚动还是 EWMA、TRIMP 系数该用哪套、训练计划合理性怎么判</li>
+<li><strong>第四步</strong>：定死 CSV 格式，开第一次站会</li>
+</ol>
+<hr>
+<h2 id="附-依据出处">附：依据出处</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>依据</th><th>用途</th><th>出处</th></tr></thead>
+<tbody>
+<tr><td>Banister TRIMP 模型</td><td>训练负荷计算</td><td>Banister EW, 1991, *J Sports Sci*</td></tr>
+<tr><td>ACWR 安全区 0.8–1.3</td><td>伤病风险评估</td><td>Gabbett TJ, 2016, *Br J Sports Med*, 50:273–280</td></tr>
+<tr><td>EWMA 替代滚动平均</td><td>ACWR 方法学改进</td><td>Williams S et al., 2017, *Br J Sports Med*</td></tr>
+<tr><td>sRPE 训练负荷</td><td>主观负荷量化</td><td>Foster C et al., 2001, *Med Sci Sports Exerc*</td></tr>
+<tr><td>VO₂max ≈ 15.3 × HRmax/HRrest</td><td>有氧能力估算</td><td>Uth N et al., 2004, *Eur J Appl Physiol*</td></tr>
+<tr><td>Riegel 公式 T₂=T₁×(D₂/D₁)^1.06</td><td>成绩换算</td><td>Riegel PS, 1981, *Runner's World*</td></tr>
+<tr><td>Daniels 跑力表（VDOT）</td><td>配速与能力对应</td><td>Daniels J, *Daniels' Running Formula*</td></tr>
+<tr><td>心率漂移 &gt; 5% 判有氧解耦</td><td>有氧基础评估</td><td>Friel J, *The Triathlete's Training Bible*</td></tr>
+<tr><td>ACSM 运动测试与处方指南</td><td>运动量/强度建议</td><td>ACSM's Guidelines for Exercise Testing and Prescription, 11th ed.</td></tr>
+<tr><td>10% 法则</td><td>周跑量增幅控制</td><td>训练学通行实践（非严格 RCT 结论，需注明）</td></tr>
+</tbody></table></div>
+</article></div>
+</body>
+</html>

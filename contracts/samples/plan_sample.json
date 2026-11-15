@@ -1,0 +1,125 @@
+{
+  "schema_version": "1.0",
+  "athlete_id": "ATH-001",
+  "week_start": "2026-11-16",
+  "weekly_targets": {
+    "load_target_trimp": 430.0,
+    "sessions": 4,
+    "long_run_max_pct": 30.0,
+    "intensity_days": 1
+  },
+  "days": [
+    {
+      "date": "2026-11-16",
+      "kind": "rest",
+      "duration_min": 0,
+      "distance_m": 0,
+      "target_pace_s_per_km": null,
+      "hr_zone": null,
+      "purpose": "完全休息，处理膝部不适",
+      "rules": [
+        "R15"
+      ]
+    },
+    {
+      "date": "2026-11-17",
+      "kind": "easy",
+      "duration_min": 40,
+      "distance_m": 7000,
+      "target_pace_s_per_km": 400,
+      "hr_zone": "Z2",
+      "purpose": "有氧维持",
+      "rules": [
+        "R05",
+        "R14"
+      ]
+    },
+    {
+      "date": "2026-11-18",
+      "kind": "cross",
+      "duration_min": 45,
+      "distance_m": 0,
+      "target_pace_s_per_km": null,
+      "hr_zone": "Z1",
+      "purpose": "交叉训练，减冲击",
+      "rules": [
+        "R15"
+      ]
+    },
+    {
+      "date": "2026-11-19",
+      "kind": "rest",
+      "duration_min": 0,
+      "distance_m": 0,
+      "target_pace_s_per_km": null,
+      "hr_zone": null,
+      "purpose": "恢复",
+      "rules": [
+        "R07"
+      ]
+    },
+    {
+      "date": "2026-11-20",
+      "kind": "easy",
+      "duration_min": 35,
+      "distance_m": 6000,
+      "target_pace_s_per_km": 405,
+      "hr_zone": "Z2",
+      "purpose": "有氧维持",
+      "rules": [
+        "R05"
+      ]
+    },
+    {
+      "date": "2026-11-21",
+      "kind": "long",
+      "duration_min": 70,
+      "distance_m": 12000,
+      "target_pace_s_per_km": 420,
+      "hr_zone": "Z2",
+      "purpose": "长距离耐力（占比 28%）",
+      "rules": [
+        "R10"
+      ]
+    },
+    {
+      "date": "2026-11-22",
+      "kind": "rest",
+      "duration_min": 0,
+      "distance_m": 0,
+      "target_pace_s_per_km": null,
+      "hr_zone": null,
+      "purpose": "恢复",
+      "rules": [
+        "R07"
+      ]
+    }
+  ],
+  "adjustments": [
+    {
+      "rule_id": "R05",
+      "reason": "ACWR 1.62 > 1.5",
+      "action": "本周总负荷由 540 下调到 430"
+    },
+    {
+      "rule_id": "R15",
+      "reason": "用户反馈右膝外侧不适",
+      "action": "取消两次强度课，长距离缩到 12km"
+    }
+  ],
+  "self_check": {
+    "passed": true,
+    "checks": [
+      {
+        "code": "R19",
+        "passed": true,
+        "detail": "周负荷变化 -20.4%，未超 +10% 上限"
+      },
+      {
+        "code": "R20",
+        "passed": true,
+        "detail": "7 天全部挂 rule_id，依据覆盖率 100%"
+      }
+    ]
+  }
+}

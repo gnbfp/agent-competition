@@ -1,0 +1,65 @@
+{
+  "schema_version": "1.0",
+  "athlete_id": "ATH-001",
+  "window": {
+    "start": "2026-10-18",
+    "end": "2026-11-14",
+    "days": 28
+  },
+  "load": {
+    "trimp_daily": [
+      {
+        "date": "2026-11-12",
+        "trimp": 96.0
+      },
+      {
+        "date": "2026-11-14",
+        "trimp": 214.0
+      }
+    ],
+    "trimp_week": 540.0,
+    "acwr_rolling": 1.62,
+    "acwr_ewma": 1.44,
+    "acwr_status": "high",
+    "week_load_change_pct": 22.0
+  },
+  "capacity": {
+    "vo2max": {
+      "value": 51.2,
+      "unit": "ml/kg/min",
+      "method": "uth_sorensen",
+      "ci_low": 48.0,
+      "ci_high": 54.4
+    },
+    "methods": [
+      {
+        "method": "uth_sorensen",
+        "value": 51.2
+      },
+      {
+        "method": "riegel",
+        "value": 50.1
+      },
+      {
+        "method": "cooper",
+        "value": 52.4
+      }
+    ],
+    "consistency_ok": true,
+    "max_spread_pct": 4.5
+  },
+  "recovery": {
+    "resting_hr_baseline": 52,
+    "resting_hr_delta": 4.0,
+    "hr_drift_pct": 6.2,
+    "hrv_rmssd": 48.0,
+    "sleep_h_avg": 6.6
+  },
+  "flags": [
+    {
+      "code": "LOAD_HIGH",
+      "level": "high",
+      "message": "ACWR 1.62 超过 1.5 高危线"
+    }
+  ]
+}

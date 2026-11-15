@@ -1,0 +1,144 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "activity.json — 原始活动数据（P2 解析器产出）",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "athlete_id",
+    "timezone",
+    "activities"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "enum": [
+        "1.0"
+      ]
+    },
+    "athlete_id": {
+      "type": "string"
+    },
+    "timezone": {
+      "type": "string",
+      "enum": [
+        "Asia/Shanghai"
+      ]
+    },
+    "generated_at": {
+      "type": "string"
+    },
+    "activities": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "activity_id",
+          "date",
+          "sport",
+          "duration_s",
+          "distance_m",
+          "avg_hr",
+          "max_hr"
+        ],
+        "properties": {
+          "activity_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_\\-]+$"
+          },
+          "date": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+          },
+          "start_time": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "pattern": "^\\d{2}:\\d{2}$"
+          },
+          "sport": {
+            "type": "string",
+            "enum": [
+              "run",
+              "bike",
+              "swim",
+              "strength",
+              "other"
+            ]
+          },
+          "duration_s": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "distance_m": {
+            "type": "number",
+            "minimum": 0
+          },
+          "avg_hr": {
+            "type": "integer",
+            "minimum": 30,
+            "maximum": 230
+          },
+          "max_hr": {
+            "type": "integer",
+            "minimum": 30,
+            "maximum": 250
+          },
+          "elevation_gain_m": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "minimum": 0
+          },
+          "avg_pace_s_per_km": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "minimum": 120,
+            "maximum": 1200
+          },
+          "rpe": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "minimum": 0,
+            "maximum": 10
+          },
+          "sleep_h": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "minimum": 0,
+            "maximum": 24
+          },
+          "pain": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "source": {
+            "type": "string",
+            "enum": [
+              "garmin",
+              "coros",
+              "huawei",
+              "keep",
+              "manual",
+              "csv"
+            ]
+          },
+          "device_anomaly": {
+            "type": "boolean"
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "files.encoding": "utf8",
+  "files.eol": "\n",
+  "files.insertFinalNewline": true,
+  "files.trimTrailingWhitespace": true,
+  "files.autoGuessEncoding": false,
+  "editor.tabSize": 4,
+  "editor.insertSpaces": true,
+  "editor.rulers": [100],
+  "editor.formatOnSave": false,
+  "editor.renderWhitespace": "boundary",
+  "python.defaultInterpreterPath": "python",
+  "python.analysis.typeCheckingMode": "basic",
+  "python.analysis.extraPaths": ["."],
+  "python.terminal.activateEnvironment": false,
+  "files.associations": {
+    "*.schema.json": "json"
+  },
+  "[json]": {
+    "editor.tabSize": 2
+  },
+  "[html]": {
+    "editor.tabSize": 2
+  },
+  "[markdown]": {
+    "editor.tabSize": 2,
+    "files.trimTrailingWhitespace": false
+  },
+  "search.exclude": {
+    "**/__pycache__": true,
+    "data/raw": true,
+    "*.docx": true
+  }
+}

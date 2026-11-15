@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI＋石油化工方向建议（赛道三）</title>
+<style>
+:root{
+  --ink:#1b1f24; --ink-soft:#4a545e; --line:#e3e8ef; --bg:#f5f7fa;
+  --accent:#0b5fff; --accent-soft:#eaf1ff; --warn:#b45309; --ok:#0a7a45;
+}
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font-family:"Microsoft YaHei","PingFang SC","Hiragino Sans GB","Segoe UI",system-ui,sans-serif;
+  font-size:16.5px; line-height:1.85; -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:1000px;margin:0 auto;padding:40px 22px 90px}
+.card{background:#fff;border:1px solid var(--line);border-radius:16px;
+  box-shadow:0 1px 2px rgba(16,24,40,.04),0 12px 32px -18px rgba(16,24,40,.18);
+  padding:52px 56px 60px}
+h1{font-size:30px;line-height:1.35;margin:0 0 6px;letter-spacing:-.3px}
+h1+blockquote{margin-top:18px}
+h2{font-size:22px;margin:52px 0 16px;padding-top:18px;border-top:1px solid var(--line);letter-spacing:-.2px}
+h2:first-of-type{border-top:0}
+h3{font-size:18.5px;margin:34px 0 12px;color:#0b1b3a}
+h3::before{content:"";display:inline-block;width:4px;height:16px;background:var(--accent);
+  border-radius:2px;margin-right:10px;vertical-align:-2px}
+p{margin:12px 0}
+strong{color:#0b1b3a}
+a{color:var(--accent);text-decoration:none;border-bottom:1px solid #bcd0ff}
+ul,ol{margin:12px 0;padding-left:26px}
+li{margin:7px 0}
+li::marker{color:var(--accent)}
+hr{border:0;border-top:1px dashed var(--line);margin:36px 0}
+blockquote{margin:20px 0;padding:16px 20px;background:var(--accent-soft);
+  border-left:4px solid var(--accent);border-radius:0 10px 10px 0;color:#123;font-size:15.5px}
+blockquote strong{color:var(--accent)}
+code{background:#f2f5f9;border:1px solid var(--line);border-radius:5px;
+  padding:1.5px 6px;font-family:"Cascadia Mono",Consolas,monospace;font-size:13.5px;color:#0b3d91}
+.table-wrap{overflow-x:auto;margin:18px 0;border:1px solid var(--line);border-radius:10px}
+table{border-collapse:collapse;width:100%;font-size:14.8px;background:#fff}
+thead th{background:#f0f4fa;text-align:left;font-weight:700;color:#0b1b3a;
+  padding:11px 14px;border-bottom:1px solid var(--line);white-space:nowrap}
+tbody td{padding:11px 14px;border-bottom:1px solid #eef2f7;vertical-align:top;color:var(--ink-soft)}
+tbody tr:last-child td{border-bottom:0}
+tbody tr:nth-child(even){background:#fafbfd}
+tbody tr:hover{background:#f3f7ff}
+@media (max-width:720px){
+  .card{padding:28px 20px 36px;border-radius:12px}
+  .wrap{padding:16px 10px 60px}
+  h1{font-size:24px} h2{font-size:19px} body{font-size:15.5px}
+}
+</style>
+</head>
+<body>
+<div class="wrap"><article class="card">
+<h1 id="AI-石油化工方向建议-赛道三">AI＋石油化工方向建议（赛道三）</h1>
+<blockquote>你的问题：想做 AI＋石油化工。<br>结论先行：<strong>主推「化工过程 HAZOP 分析助手」</strong>——把化工安全分析的标准方法（IEC 61882）做成能对话、能自查、能出工作表的智能体。它是石油化工里少数<strong>不依赖企业私有数据</strong>、又同时踩中常大两个最强学科的方向。</blockquote>
+<hr>
+<h2 id="零-先认清这个方向真正的障碍">零、先认清这个方向真正的障碍</h2>
+<p>石油化工的知识不缺，缺的是<strong>数据</strong>：真实装置的 DCS 数据、原油评价数据（assay）、催化剂配方、操作经验，全是企业私有。学生队拿不到，也不该拿。</p>
+<p>所以选题的第一道筛子不是"哪个题目高级"，而是：</p>
+<blockquote><strong>这个任务，能不能只靠"工艺知识 + 公开规范 + 文本描述"就做出有专业价值的结果？</strong></blockquote>
+<p>按这条一划，一堆看起来诱人的题目直接出局：</p>
+<div class="table-wrap"><table>
+<thead><tr><th>看起来很好</th><th>为什么做不了</th></tr></thead>
+<tbody>
+<tr><td>炼厂全流程优化</td><td>需要企业级流程模拟软件与真实数据</td></tr>
+<tr><td>催化剂配方/反应条件优化</td><td>数据私有，且需要实验验证</td></tr>
+<tr><td>管道泄漏检测</td><td>真实泄漏数据私有（和示功图同一个坑）</td></tr>
+<tr><td>装置故障预测</td><td>没有历史 DCS 数据，做出来是自欺欺人</td></tr>
+</tbody></table></div>
+<p>留下的，是<strong>规则密集、输入可文本化、结果可对照检查</strong>的任务。HAZOP 正是其中最典型的一个。</p>
+<hr>
+<h2 id="一-主推方向-化工过程-HAZOP-分析助手">一、主推方向：化工过程 HAZOP 分析助手</h2>
+<h3 id="HAZOP-是什么-一句话讲给评委听">HAZOP 是什么（一句话讲给评委听）</h3>
+<p><strong>危险与可操作性分析</strong>：把工艺过程拆成若干"节点"，对每个节点用<strong>引导词 × 工艺参数</strong>逐条追问"如果这里流量没了会怎样、压力过高会怎样"，系统性地找出偏差、原因、后果和现有防护。它是化工安全分析的国际标准方法（IEC 61882），也是新建/改扩建装置必须做的合规工作。</p>
+<h3 id="痛点是真的">痛点是真的</h3>
+<ul>
+<li>一次完整 HAZOP 要组织工艺、设备、仪表、安全多专业专家开会，<strong>几天到几周</strong></li>
+<li>中小企业、教学场景做不起，常常<strong>照抄模板、漏掉偏差</strong>——而事故往往就出在被漏掉的那一条</li>
+<li>分析质量高度依赖主持人经验，<strong>新人无从下手</strong></li>
+</ul>
+<h3 id="输入-输出">输入 / 输出</h3>
+<div class="table-wrap"><table>
+<thead><tr><th></th><th>内容</th></tr></thead>
+<tbody>
+<tr><td>输入</td><td>工艺流程描述：节点划分、设备与物料、操作条件（温度/压力/流量/液位）、控制回路、已有安全设施（报警、联锁、泄放、围堰）</td></tr>
+<tr><td>输出</td><td><strong>HAZOP 工作表</strong>：节点 × 引导词 × 参数的偏差表，每行含 原因 / 后果 / 现有防护 / 建议措施 / 风险等级 / <strong>信息缺口标注</strong></td></tr>
+</tbody></table></div>
+<h3 id="规则内核-这是作品的核心资产">规则内核（这是作品的核心资产）</h3>
+<p><strong>引导词 × 参数矩阵</strong>是 HAZOP 的形式化骨架：</p>
+<div class="table-wrap"><table>
+<thead><tr><th>引导词</th><th>含义</th><th>常见参数组合</th></tr></thead>
+<tbody>
+<tr><td>无 / 空白（NO）</td><td>完全没有</td><td>流量无、冷却水中断</td></tr>
+<tr><td>过多（MORE）</td><td>超过设计值</td><td>压力过高、温度过高、液位过高</td></tr>
+<tr><td>过少（LESS）</td><td>低于设计值</td><td>流量过低、液位过低</td></tr>
+<tr><td>部分（PART OF）</td><td>组分缺失</td><td>原料配比异常</td></tr>
+<tr><td>相反（REVERSE）</td><td>方向相反</td><td>逆流、倒灌</td></tr>
+<tr><td>伴随（AS WELL AS）</td><td>额外混入</td><td>杂质、空气、水进入</td></tr>
+<tr><td>其他（OTHER THAN）</td><td>完全不同的工况</td><td>开停车、异常工况</td></tr>
+</tbody></table></div>
+<p>每个"引导词×参数"格子里，再按<strong>固定推理链</strong>展开：</p>
+<p><code>偏差 → 可能原因（设备/仪表/操作/外部） → 后果（人员/设备/环境/停产） → 现有防护层（BPCS→报警→SIS 联锁→泄放/围堰→应急） → 建议措施 → 风险等级</code></p>
+<p>这条推理链就是你要写成规则表的东西，字段建议：</p>
+<p><code>rule_id / 节点类型 / 引导词 / 参数 / 偏差 / 原因类别 / 后果类型 / 防护层要求 / 依据（标准条款/工程实践）/ 需补充信息</code></p>
+<p><strong>规则表示例行</strong>（精馏塔回流罐，参数=液位，引导词=无）：</p>
+<div class="table-wrap"><table>
+<thead><tr><th>项</th><th>内容</th></tr></thead>
+<tbody>
+<tr><td>偏差</td><td>回流罐液位过低/无液</td></tr>
+<tr><td>原因</td><td>回流泵抽空、液位计失灵、塔顶冷凝器冷却不足、回流量控制阀卡开</td></tr>
+<tr><td>后果</td><td>回流中断 → 塔顶产品不合格；泵干转损坏；严重时塔压波动</td></tr>
+<tr><td>现有防护</td><td>液位低报警、回流泵联锁停、塔顶温度高报警</td></tr>
+<tr><td>建议</td><td>增设液位低低联锁、液位计冗余（双法兰+雷达）、泵最小流量保护</td></tr>
+<tr><td>依据</td><td>IEC 61882 分析流程；GB/T 21109 安全仪表系统功能安全思路</td></tr>
+</tbody></table></div>
+<h3 id="AI-在哪-规则在哪">AI 在哪、规则在哪</h3>
+<div class="table-wrap"><table>
+<thead><tr><th>环节</th><th>谁做</th></tr></thead>
+<tbody>
+<tr><td>把自然语言工艺描述拆成节点并识别设备/物料/参数</td><td>LLM ＋ 结构化模板</td></tr>
+<tr><td>生成 7×N 偏差矩阵</td><td>规则引擎（确定性，不允许漏项）</td></tr>
+<tr><td>逐条推理原因/后果/防护</td><td>规则库为主，LLM 补充表述与同义扩展</td></tr>
+<tr><td>判断"这条分析成立吗"</td><td>规则引擎 ＋ 证据检索</td></tr>
+<tr><td>识别信息缺口并追问（"这台的泄放去哪？有无联锁？"）</td><td>Agent 循环</td></tr>
+<tr><td>出表后自查"矩阵覆盖度是否 100%"</td><td>Agent 自校验</td></tr>
+</tbody></table></div>
+<p><strong>关键设计</strong>：偏差矩阵必须是<strong>穷举生成</strong>的，不允许 AI 自由发挥。这一条既是质量保证，也是答辩时最好讲的点——"我们不靠模型想，我们靠矩阵逼它不漏。"</p>
+<h3 id="Agent-形态-为什么它是智能体而不是表格工具">Agent 形态（为什么它是智能体而不是表格工具）</h3>
+<p>主循环：<strong>解析工艺 → 划分节点 → 穷举偏差矩阵 → 逐格分析 → 覆盖度自查（发现空格打回重做或追问）→ 缺信息追问 → 输出工作表</strong></p>
+<p>必须可见的三处智能体行为：</p>
+<ol>
+<li><strong>主动追问</strong>：工艺描述里没写"反应器有无温度高联锁"，它不会默认"有"，而是标注"防护层未知，需确认"并追问</li>
+<li><strong>换路重试</strong>：某条偏差查不到依据时，先查同义表述、再查上位标准，都失败才标"无依据"</li>
+<li><strong>自校验打回</strong>：生成后统计"42 格中已分析/待确认/无法判定"的数量，覆盖度不足就重跑，不达标不给结论</li>
+</ol>
+<h3 id="怎么验证-这是它能赢的关键">怎么验证（这是它能赢的关键）</h3>
+<ol>
+<li><strong>公开案例回放</strong>：用教材/公开的 HAZOP 报告（储罐区、换热器、精馏塔这类经典案例）做对照，算<strong>偏差覆盖率</strong>与<strong>原因命中率</strong></li>
+<li><strong>专家评审</strong>：请化工/安全方向老师评 10 个节点，记录"漏掉的分析"并补进规则库——<strong>修正记录就是答辩材料</strong></li>
+<li><strong>信息缺口测试</strong>：故意给一份缺联锁、缺泄放去向的工艺描述，看它是否追问而不是编造</li>
+<li><strong>一致性测试</strong>：同一工艺描述跑两次，结果应稳定（规则引擎保证确定性）</li>
+</ol>
+<h3 id="第一版边界-六周能做完">第一版边界（六周能做完）</h3>
+<ul>
+<li>3 类典型节点：储罐区、换热器、精馏塔（不做全流程）</li>
+<li>7 个引导词 × 4 个参数（流量/压力/温度/液位）</li>
+<li>只出"分析与待确认项"，<strong>不判定装置是否安全</strong>（责任边界）</li>
+<li>P&amp;ID 不做图像识别，v1 用文本化工艺描述或表格输入</li>
+<li>规则库 40–60 条，每条带依据</li>
+</ul>
+<h3 id="为什么这个方向最稳">为什么这个方向最稳</h3>
+<ul>
+<li><strong>踩中常大最深的根</strong>：学校前身是江苏化工学院 / 江苏石油化工学院，石油化工与化工是传统强势；化学工程与技术是省优势学科（第四轮 B-，化学 ESI 全球 1.28‰），安全科学与工程是一级博士点——<strong>化工＋安全两个学科同时支撑</strong></li>
+<li><strong>不需要企业数据</strong>：输入是工艺描述，规则来自国际标准与工程实践</li>
+<li><strong>规则密度极高</strong>：7×N 矩阵天然就是"可展示的规则表"，正是赛道三要的</li>
+<li><strong>和你已有的设计同构</strong>：危化品核查、BSL 核查、HAZOP 三者都是"规则表＋条款依据＋覆盖度自查"，文档与代码可复用</li>
+<li><strong>答辩抗问</strong>：专家问"这条为什么这么分析"，你有推理链和依据；问"会不会漏"，你有矩阵穷举和覆盖度自查</li>
+</ul>
+<h3 id="风险与化解">风险与化解</h3>
+<div class="table-wrap"><table>
+<thead><tr><th>风险</th><th>化解</th></tr></thead>
+<tbody>
+<tr><td>"你们有化工背景吗"</td><td>必须有化工/安全队友主导规则表；没有就不选这个方向</td></tr>
+<tr><td>"HAZOP 要专家开会，你凭什么做"</td><td>定位为<strong>教学与预分析工具</strong>：帮新手建框架、查遗漏，正式分析仍由持证专家完成</td></tr>
+<tr><td>"是不是查表填空"</td><td>展示推理链、信息缺口识别、覆盖度自查与失败案例修正；查表工具不会追问"泄放去哪了"</td></tr>
+<tr><td>责任边界</td><td>明确"分析辅助，不替代有资质机构的安全评价"</td></tr>
+</tbody></table></div>
+<hr>
+<h2 id="二-备选-A-化工原理衡算核查助手-验证最容易">二、备选 A：化工原理衡算核查助手（验证最容易）</h2>
+<p><strong>定位</strong>：输入工艺参数，校核物料平衡、能量平衡、设备能力（泵 NPSH 余量、换热器面积、精馏塔回流比/塔板数）。</p>
+<ul>
+<li><strong>最大优势</strong>：<strong>验证天然</strong>——教材习题和设计手册算例都有标准答案，一致率可算、可复现</li>
+<li><strong>最大劣势</strong>：容易被评成"高级计算器"，创新分低，AI 价值弱</li>
+<li><strong>建议</strong>：作为 HAZOP 方向的配套模块（"先算对不对，再问危不危险"），不单独成题</li>
+</ul>
+<hr>
+<h2 id="三-备选-B-油品性质与调和合规核查">三、备选 B：油品性质与调和合规核查</h2>
+<p><strong>定位</strong>：输入调和组分与配比，判断是否满足国 VI 标准（GB 17930 车用汽油、GB 19147 车用柴油），并给出调整建议。</p>
+<ul>
+<li><strong>优势</strong>：产业味最浓，标准限值明确（硫、烯烃、芳烃、蒸气压、辛烷值/十六烷值），"合规判定"好讲</li>
+<li><strong>劣势</strong>：调和交互作用复杂（非线性、组分敏感），预测精度难保证；assay 数据难获得；容易变成"算配方"</li>
+<li><strong>适合</strong>：队里有炼油/油品分析背景，且能拿到组分数据</li>
+</ul>
+<hr>
+<h2 id="四-备选-C-油气储运管道泄漏识别">四、备选 C：油气储运管道泄漏识别</h2>
+<p><strong>定位</strong>：基于质量平衡/负压波原理，从压力流量数据中识别泄漏并定位。</p>
+<ul>
+<li><strong>优势</strong>：常大油气储运是一流本科专业；工业需求真实</li>
+<li><strong>劣势</strong>：<strong>数据是生死线</strong>——真实泄漏数据私有，公开数据集少；没有数据就只能仿真，仿真结论说服力弱（和示功图同一个坑）</li>
+<li><strong>结论</strong>：除非能找到公开泄漏数据集或老师提供数据，否则不选</li>
+</ul>
+<hr>
+<h2 id="五-对比与推荐">五、对比与推荐</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>方向</th><th>规则密度</th><th>数据依赖</th><th>学生可做</th><th>学科支撑</th><th>差异化</th><th>推荐度</th></tr></thead>
+<tbody>
+<tr><td>HAZOP 分析助手</td><td>5</td><td>无（文本输入）</td><td>4</td><td>化工＋安全双强</td><td>5</td><td>★★★★★</td></tr>
+<tr><td>化工原理衡算核查</td><td>4</td><td>无</td><td>5</td><td>化工</td><td>2</td><td>★★★（做配套）</td></tr>
+<tr><td>油品调和合规</td><td>3</td><td>中</td><td>3</td><td>化工</td><td>3</td><td>★★★</td></tr>
+<tr><td>管道泄漏识别</td><td>3</td><td>高</td><td>2</td><td>油气储运</td><td>3</td><td>★★（数据不定别碰）</td></tr>
+</tbody></table></div>
+<hr>
+<h2 id="六-六句话模板-HAZOP-方向">六、六句话模板（HAZOP 方向）</h2>
+<ol>
+<li>我准备帮助的用户是：<strong>化工专业学生、中小企业工艺安全工程师、HAZOP 分析的新手主持人</strong>。</li>
+<li>他在<strong>新建或改造装置的安全分析</strong>场景中，需要解决<strong>HAZOP 分析门槛高、易漏偏差、依赖资深专家</strong>的问题。</li>
+<li>用户输入<strong>工艺流程描述与已有安全设施</strong>，作品输出<strong>逐条带原因的 HAZOP 工作表、信息缺口清单与整改建议</strong>。</li>
+<li>第一版先实现<strong>储罐区/换热器/精馏塔三类节点、7 个引导词×4 个参数的分析与覆盖度自查</strong>，主要贡献对应<strong>赛道三（AI＋跨学科融合创新）</strong>。</li>
+<li>我们能获得的资料、工具与规则是<strong>IEC 61882、GB/T 21109、化工安全教材案例，以及化工/安全方向老师核定的推理规则</strong>。</li>
+<li>我们将用<strong>公开 HAZOP 案例回放、老师评审的 10 个节点和缺信息测试</strong>检查效果，并如实报告无法判定的情形。</li>
+</ol>
+<hr>
+<h2 id="七-放在你已经看过的几个方向里比一比">七、放在你已经看过的几个方向里比一比</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>方向</th><th>专业硬度</th><th>数据门槛</th><th>需要什么队友</th><th>风险</th></tr></thead>
+<tbody>
+<tr><td>石油化工（HAZOP）</td><td>最高</td><td>低</td><td>化工/安全</td><td>没有专业队友就写不出规则</td></tr>
+<tr><td>AI＋生物（引物设计）</td><td>高</td><td>低</td><td>生物/制药</td><td>被判"Primer3 套壳"</td></tr>
+<tr><td>生活（室内空气）</td><td>中高</td><td>低</td><td>环境/材料</td><td>被判"算数工具"</td></tr>
+<tr><td>储能电池安全</td><td>高</td><td>中</td><td>材料/电化学</td><td>数据与判据都要专业核定</td></tr>
+</tbody></table></div>
+<p><strong>一句话选法</strong>：<strong>队里有化工或安全的人 → 选石油化工；有生物的人 → 选引物设计；都没有、也不想找人 → 选室内空气核查。</strong></p>
+<hr>
+<h2 id="八-还需要你确认">八、还需要你确认</h2>
+<ol>
+<li>队里<strong>有没有化工、安全、油气储运背景的同学</strong>？（这是这个方向能不能选的前提）</li>
+<li>能否拿到<strong>化工工艺教材里的 HAZOP 案例</strong>，或认识做过 HAZOP 的老师/研究生？</li>
+<li>你更在意<strong>专业深度</strong>（选 HAZOP），还是<strong>工作量可控、好演示</strong>（选室内空气或生物引物）？</li>
+</ol>
+<p>确认后我可以直接给：项目计划书目录、HAZOP 规则表 60 条全表（带推理链与依据）、agent 工具清单与主循环、3 分钟演示脚本。</p>
+</article></div>
+</body>
+</html>

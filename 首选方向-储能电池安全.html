@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>首选方向：锂电池储能安全「风险核查 + 热失控前兆识别」助手</title>
+<style>
+:root{
+  --ink:#1b1f24; --ink-soft:#4a545e; --line:#e3e8ef; --bg:#f5f7fa;
+  --accent:#0b5fff; --accent-soft:#eaf1ff; --warn:#b45309; --ok:#0a7a45;
+}
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font-family:"Microsoft YaHei","PingFang SC","Hiragino Sans GB","Segoe UI",system-ui,sans-serif;
+  font-size:16.5px; line-height:1.85; -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:1000px;margin:0 auto;padding:40px 22px 90px}
+.card{background:#fff;border:1px solid var(--line);border-radius:16px;
+  box-shadow:0 1px 2px rgba(16,24,40,.04),0 12px 32px -18px rgba(16,24,40,.18);
+  padding:52px 56px 60px}
+h1{font-size:30px;line-height:1.35;margin:0 0 6px;letter-spacing:-.3px}
+h1+blockquote{margin-top:18px}
+h2{font-size:22px;margin:52px 0 16px;padding-top:18px;border-top:1px solid var(--line);letter-spacing:-.2px}
+h2:first-of-type{border-top:0}
+h3{font-size:18.5px;margin:34px 0 12px;color:#0b1b3a}
+h3::before{content:"";display:inline-block;width:4px;height:16px;background:var(--accent);
+  border-radius:2px;margin-right:10px;vertical-align:-2px}
+p{margin:12px 0}
+strong{color:#0b1b3a}
+a{color:var(--accent);text-decoration:none;border-bottom:1px solid #bcd0ff}
+ul,ol{margin:12px 0;padding-left:26px}
+li{margin:7px 0}
+li::marker{color:var(--accent)}
+hr{border:0;border-top:1px dashed var(--line);margin:36px 0}
+blockquote{margin:20px 0;padding:16px 20px;background:var(--accent-soft);
+  border-left:4px solid var(--accent);border-radius:0 10px 10px 0;color:#123;font-size:15.5px}
+blockquote strong{color:var(--accent)}
+code{background:#f2f5f9;border:1px solid var(--line);border-radius:5px;
+  padding:1.5px 6px;font-family:"Cascadia Mono",Consolas,monospace;font-size:13.5px;color:#0b3d91}
+.table-wrap{overflow-x:auto;margin:18px 0;border:1px solid var(--line);border-radius:10px}
+table{border-collapse:collapse;width:100%;font-size:14.8px;background:#fff}
+thead th{background:#f0f4fa;text-align:left;font-weight:700;color:#0b1b3a;
+  padding:11px 14px;border-bottom:1px solid var(--line);white-space:nowrap}
+tbody td{padding:11px 14px;border-bottom:1px solid #eef2f7;vertical-align:top;color:var(--ink-soft)}
+tbody tr:last-child td{border-bottom:0}
+tbody tr:nth-child(even){background:#fafbfd}
+tbody tr:hover{background:#f3f7ff}
+@media (max-width:720px){
+  .card{padding:28px 20px 36px;border-radius:12px}
+  .wrap{padding:16px 10px 60px}
+  h1{font-size:24px} h2{font-size:19px} body{font-size:15.5px}
+}
+</style>
+</head>
+<body>
+<div class="wrap"><article class="card">
+<h1 id="首选方向-锂电池储能安全-风险核查-热失控前兆识别-助手">首选方向：锂电池储能安全「风险核查 + 热失控前兆识别」助手</h1>
+<blockquote>面向赛道三「AI＋跨学科融合创新」<br>一句话：<strong>输入一座储能舱/电池测试间的运行数据与现场检查记录，输出"哪一项不符合规程、哪一颗电芯出现热失控前兆、依据哪条标准、下一步该做什么"。</strong><br>为什么选它：它同时踩中常州大学三个一级博士点里的两个（安全科学与工程、材料科学与工程），踩中常州 8500 亿新能源产业，而且<strong>有公开的国家标准和公开的事故调查报告可以做验证</strong>——这三点凑齐的方向，几乎没有第二个。</blockquote>
+<hr>
+<h2 id="一-为什么说它-专业性强">一、为什么说它"专业性强"</h2>
+<p>判断一个 AI+学科方向专不专业，看三件事：<strong>专业内核能不能讲出机理、判断依据是不是可查的硬条款、效果能不能用真实事件检验。</strong> 这个方向三样都齐。</p>
+<p><strong>1）学科上，它正好落在本校最强的两个博士点交集</strong><br>常州大学只有三个一级学科博士点：材料科学与工程、安全科学与工程、石油与天然气工程。储能电池安全 = 材料/电化学（电池本体）＋ 安全工程（事故链、防护、应急）。化学、工程、材料三个 ESI 学科均进全球前 1%，化工/材料/安全同为本省优势学科。找指导老师、找真实场景、答辩时挂学科，都不缺。</p>
+<p><strong>2）产业上，常州是全国的电池重镇</strong><br>2025 年常州新能源产业规模突破 8500 亿元，动力电池产业链完整度 97%。储能是把动力电池技术往电力系统搬，本地企业、园区、电站案例都够用——"落地应用前景 20 分"这一项，别人要编，你有素材。</p>
+<p><strong>3）验证上，有公开标准 + 公开事故调查报告</strong></p>
+<ul>
+<li>GB/T 36276-2023《电力储能用锂离子电池》</li>
+<li>GB/T 42288-2022《电化学储能电站安全规程》</li>
+<li>GB 51048《电化学储能电站设计规范》</li>
+<li>UL 9540A（热失控扩散测试方法，国际通用）</li>
+<li><strong>北京丰台"4·16"储能电站火灾事故调查报告</strong>（2021 年，致 3 人死亡，磷酸铁锂储能电站）——时序、原因、责任链条全部公开，这就是你最硬的"标准答案"</li>
+</ul>
+<p>有了这四类东西，"专业性"就不是形容词，是能摊在桌面上的东西。</p>
+<hr>
+<h2 id="二-专业内核-热失控到底是怎么发生的">二、专业内核：热失控到底是怎么发生的</h2>
+<p>这一段是整个作品的灵魂。评委（尤其是安全、材料方向的老师）会盯着你讲不讲得清机理。</p>
+<p>锂离子电池热失控是<strong>链式反应</strong>，不是"温度高了就着火"：</p>
+<ol>
+<li><strong>SEI 膜分解</strong>（约 80–120℃）：负极表面保护层破裂，负极直接接触电解液</li>
+<li><strong>负极—电解液反应</strong>放热，温度继续爬升</li>
+<li><strong>隔膜收缩/熔断</strong>（约 130–160℃）：正负极直接接触，<strong>内短路</strong></li>
+<li><strong>正极分解并释放氧气</strong>（约 200℃ 以上）：电池自带氧化剂，所以<strong>不需要外界空气也能持续燃烧</strong></li>
+<li><strong>电解液气化燃烧</strong>，产气（H₂、CO、VOC、HF 等）</li>
+<li><strong>热失控在模组内传播</strong>：一颗电芯烤热邻居，整舱连锁</li>
+</ol>
+<p><strong>由此推出的关键结论（这是专业判断和业余判断的分水岭）：</strong></p>
+<ul>
+<li><strong>单看温度没意义，要看温升速率 dT/dt。</strong> 正常充放电温度波动平缓，热失控前兆是曲线突然抬高斜率。</li>
+<li><strong>要联合看电压。</strong> 内短路往往先表现为电压异常跌落或充电末端电压抬不起来。</li>
+<li><strong>要看清一致性。</strong> 簇内单体电压离散度（ΔV）持续扩大，比"某一颗 SOH 低"危险得多——那是内短路或连接件失效的典型前兆。</li>
+<li><strong>要看气体。</strong> H₂/CO/VOC 提前于明火出现，是储能舱最有效的早期信号。</li>
+<li><strong>要看工况。</strong> 低温快充易析锂（锂枝晶→刺穿隔膜），所以"低温 + 大电流 + 高 SOC"这个组合本身就带风险权重。</li>
+</ul>
+<p><strong>老化与安全的耦合（材料/电化学知识在这一步进来）：</strong></p>
+<ul>
+<li>库仑效率（CE）长期低于 99.5%–99.9% → 析锂嫌疑</li>
+<li>充电末端电压平台抬升、dQ/dV 峰位偏移 → 副反应/相变异常</li>
+<li>容量衰减是"慢变量"，安全风险多是"一致性和内短路"这两个快变量</li>
+</ul>
+<p>把上面这些写成规则，就是<strong>专家经验的可执行版本</strong>；这也是赛道三要求"专业知识怎样影响处理流程和结果质量"的直接答案。</p>
+<hr>
+<h2 id="三-AI-在这一步做什么-做对了才不是套壳">三、AI 在这一步做什么（做对了才不是套壳）</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>环节</th><th>AI 的具体职责</th><th>没有 AI 也能做吗</th></tr></thead>
+<tbody>
+<tr><td>数据接入</td><td>把 BMS 曲线、巡检表、消防台账、设计参数抽成统一字段结构</td><td>可以但极慢，且人工易错</td></tr>
+<tr><td>特征计算</td><td>dT/dt、ΔV 离散度、CE 滑窗均值、dQ/dV 曲线、SOH 轨迹</td><td>可以做，AI 负责自动化</td></tr>
+<tr><td>规则推理</td><td>把机理判据做成"条件组合 + 时序逻辑"，输出风险项</td><td>可以，但规模上不去</td></tr>
+<tr><td>条款检索</td><td>命中风险后回查标准条款，给出条款号与原文</td><td>人工翻标准很慢，这是刚需</td></tr>
+<tr><td>事故复盘</td><td>用历史事故时序自动回放，检查系统是否提前给出对应风险项</td><td>手工做不可行</td></tr>
+<tr><td>报告生成</td><td>分级风险清单 + 依据 + 处置 + 复查项</td><td>可以，但一致性差</td></tr>
+</tbody></table></div>
+<p><strong>定位要说清楚：AI 是"抽取、计算、检索、解释"的放大器，专业规则是主角。</strong> 这样写既符合赛道三的原意，也避免评委一句"这就是个套壳大模型"。</p>
+<blockquote>但"做成什么形态才算智能体、而不是一条流水线"，是这个方向最容易被扣分的地方 —— 见第十二节。</blockquote>
+<hr>
+<h2 id="四-输入与输出">四、输入与输出</h2>
+<p><strong>输入（第一版）</strong></p>
+<ol>
+<li>一段 BMS 运行数据（时间、单体电压、温度、电流、SOC）</li>
+<li>一张现场检查表（消防设施、通风、间距、灭火介质、告警配置、应急预案）</li>
+<li>场景说明（储能舱 / 实验室电池测试间 / 电池仓储，三选一）</li>
+</ol>
+<p><strong>输出</strong></p>
+<ol>
+<li><strong>风险清单</strong>：风险项 + 等级（高危/需整改/合规）+ 触发数据片段</li>
+<li><strong>标准依据</strong>：条款号 + 原文摘录（可点击定位）</li>
+<li><strong>热失控前兆提示</strong>：哪一簇、哪一颗、什么特征、置信度</li>
+<li><strong>处置建议</strong>：降功率/停机/隔离/复测/更换/加强监测，附复查项</li>
+<li><strong>待复核标记</strong>：超出规则库的情形明确写"需专业人员确认"，绝不硬编结论</li>
+</ol>
+<hr>
+<h2 id="五-规则表怎么设计-作品的核心资产">五、规则表怎么设计（作品的核心资产）</h2>
+<p>建议表结构：</p>
+<div class="table-wrap"><table>
+<thead><tr><th>字段</th><th>说明</th></tr></thead>
+<tbody>
+<tr><td>rule_id</td><td>规则编号</td></tr>
+<tr><td>风险类型</td><td>热失控前兆 / 内短路 / 析锂 / 一致性劣化 / 规程不符 / 消防配置缺陷</td></tr>
+<tr><td>触发条件</td><td>可执行判据（阈值 + 逻辑 + 持续时长）</td></tr>
+<tr><td>条件修饰</td><td>工况：SOC 区间、温度、充放电倍率、是否静置</td></tr>
+<tr><td>依据条款</td><td>标准号 + 条款号 + 原文摘要</td></tr>
+<tr><td>等级</td><td>高危 / 需整改 / 合规</td></tr>
+<tr><td>处置动作</td><td>停机、降载、隔离、复测、更换、增配探测</td></tr>
+<tr><td>证据要求</td><td>需要哪些数据才能判定（缺数据则降级为"待复核"）</td></tr>
+</tbody></table></div>
+<p><strong>判据示例（数值仅为示意，正式版本必须按标准与厂家参数核定）：</strong></p>
+<ul>
+<li>单体 dT/dt &gt; 1℃/min，且同簇最大温差 &gt; 5℃ → 高危，热失控前兆</li>
+<li>簇内 ΔV &gt; 200 mV 且连续 3 个采样点单调扩大 → 高危，内短路/连接失效嫌疑</li>
+<li>CE 连续 5 个循环 &lt; 99.5%，且充电末端电压平台抬升 → 需整改，析锂嫌疑</li>
+<li>气体探测 H₂ 或 CO 或 VOC 任一超阈值 → 高危，立即停机并启动应急</li>
+<li>储能舱灭火介质与电池类型不匹配 / 无可燃气体探测 → 规程不符，限期整改</li>
+<li>电池舱与相邻建筑防火间距不足 → 规程不符，依据设计规范条款</li>
+</ul>
+<p><strong>这张表就是你的"专业壁垒"</strong>：一张 30–40 条判据、每条都挂标准条款的表，比任何模型指标都能说服评委。</p>
+<hr>
+<h2 id="六-数据与验证-决定完成度-30-分">六、数据与验证（决定完成度 30 分）</h2>
+<p><strong>数据来源</strong></p>
+<ul>
+<li>电池老化/循环数据：NASA PCoE、MIT-Stanford（Severson，124 只商用电芯）、Oxford Battery Degradation——公开可下载，用来验证 CE、dQ/dV、SOH 这些特征算法</li>
+<li>事故案例：北京丰台"4·16"事故调查报告（公开全文）——用于时序复盘</li>
+<li>标准条款：GB/T 36276-2023、GB/T 42288-2022、GB 51048、UL 9540A</li>
+<li>现场检查表：本校实验室/本地企业，自己设计（这本身是专业工作）</li>
+</ul>
+<p><strong>验证方法（三件套）</strong></p>
+<ol>
+<li><strong>专家标注 gold set</strong>：请安全工程/材料方向老师对 20 个场景标注"应判风险项 + 等级" → 报漏报率、误报率、条款引用正确率</li>
+<li><strong>事故时序复盘</strong>：把丰台事故的关键节点做成时间轴，检查系统在 T-30min / T-10min 等节点是否给出了对应风险项。<strong>这条最有说服力，也最容易做成演示视频的高潮</strong></li>
+<li><strong>引用可定位</strong>：随机抽 20 条引用，逐条对照标准原文，算引用正确率（防 AI 编造条款）</li>
+</ol>
+<hr>
+<h2 id="七-第一版边界-4-周能做完">七、第一版边界（4 周能做完）</h2>
+<ul>
+<li><strong>只做一个场景</strong>：储能舱（或实验室电池测试间，二选一，别贪）</li>
+<li><strong>只做一类数据</strong>：BMS 电压/温度/电流 + 现场检查表（不做气体探测硬件，用模拟数据）</li>
+<li><strong>只做 30–40 条判据、3 份标准</strong></li>
+<li><strong>只做一个事故复盘</strong>（丰台）</li>
+<li><strong>明确不做</strong>：不预测"还剩多少天热失控"，不做硬件，不做电池选型推荐</li>
+</ul>
+<p><strong>明确的责任边界</strong>：辅助核查与前置预警工具，不替代消防验收与安全评价，最终判断由持证人员签署。</p>
+<hr>
+<h2 id="八-风险与怎么化解">八、风险与怎么化解</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>风险</th><th>化解方式</th></tr></thead>
+<tbody>
+<tr><td>专业门槛高，没有安全/材料队友撑不住</td><td>至少 1 名安全工程或材料/电化学同学；没有就不要选这条</td></tr>
+<tr><td>评委质疑"你能预测热失控吗"</td><td>不承诺预测，只承诺"前兆识别 + 规程符合性核查"，并主动说明学术界尚无可靠预测方法</td></tr>
+<tr><td>判据阈值被质疑"从哪来的"</td><td>每条判据标来源：标准条文 / 文献 / 专家经验，缺来源的降级为"待复核"</td></tr>
+<tr><td>数据拿不到</td><td>BMS 数据可以用公开数据集改造；现场检查表自己设计；事故复盘用公开报告</td></tr>
+<tr><td>责任风险</td><td>全程"辅助＋人工复核"，输出必带依据与不确定性</td></tr>
+</tbody></table></div>
+<hr>
+<h2 id="九-如果换成-低风险版">九、如果换成"低风险版"</h2>
+<p>如果你凑不到安全/材料背景的队友，把这个方向退一档：</p>
+<blockquote><strong>锂电池测试/储运环节的操作风险核查助手</strong>——只做"规程符合性核查"，用 GB/T 36276、GB/T 42288 的条款 + 常识性安全规则（过充过放、短路、挤压、高温、混放、消防配置），不做数据模型。<br>专业门槛降一档，但赛道三的"专业规则"内核还在，仍然比纯软件作品强。</blockquote>
+<p>再退一档就是之前文档里的<strong>实验室危险化学品安全核查助手</strong>（安全科学与工程博士点支撑，规则密度高，零数据门槛）。</p>
+<hr>
+<h2 id="十-六句话模板-直接填">十、六句话模板（直接填）</h2>
+<ol>
+<li>我准备帮助的用户是：<strong>高校电池实验室/储能电站的运维与安全管理老师</strong>。</li>
+<li>他在<strong>电池测试与储能舱日常运行</strong>场景中，需要解决<strong>风险判断依赖个人经验、规程条款查不全、前兆信号看不出</strong>的问题。</li>
+<li>用户输入<strong>BMS 运行数据与现场检查表</strong>，作品输出<strong>分级风险清单、标准条款依据与处置建议</strong>。</li>
+<li>第一版先实现<strong>储能舱单场景、30–40 条判据、3 份标准的符合性核查与热失控前兆识别</strong>，主要贡献对应<strong>赛道三（AI＋跨学科融合创新）</strong>。</li>
+<li>我们能获得的资料、工具与规则是<strong>GB/T 36276-2023、GB/T 42288-2022、GB 51048、UL 9540A，以及安全工程/材料专业老师整理的判据表</strong>。</li>
+<li>我们将用<strong>老师标注的 20 个场景</strong>、<strong>丰台"4·16"事故调查报告的时序复盘</strong>和<strong>标准条款原文</strong>检查效果。</li>
+</ol>
+<hr>
+<h2 id="十一-答辩三个必答题-提前背好">十一、答辩三个必答题（提前背好）</h2>
+<p><strong>Q1：这和"接个大模型做问答"有什么区别？</strong><br>A：我们的核心是那张挂在标准条款上的判据表。模型只负责抽取字段、跑计算、回查条款；判断逻辑是领域专家写的、可逐条审查的。演示时我会先给你看判据表，再看输出。</p>
+<p><strong>Q2：你怎么证明你的判断是对的？</strong><br>A：三重验证——专家标注 20 个场景算漏报/误报；用丰台事故调查报告的时序回放，看系统能否在关键节点前给出对应风险项；引用条款逐条对照原文算正确率。三个失败案例我们也会展示。</p>
+<p><strong>Q3：这东西真有人用吗？</strong><br>A：本校电池实验室和本地储能运维都需要"查规程、看前兆"的工具，我们已经访谈了 X 位老师（写进计划书），他们目前是翻标准 + 靠经验。</p>
+<hr>
+<h2 id="十二-它算不算-智能体-形态设计-重要">十二、它算不算"智能体"？（形态设计，重要）</h2>
+<p><strong>先说结论：按第三～七节那样实现，它只是一条"规则驱动的分析流水线"，严格说不算 agent。</strong> 这是本方向最大的真实风险——你参加的是<strong>智能体</strong>大赛，评委很可能直接问："你的 agent 在哪？"所以必须在设计阶段就把形态补上，而不是等答辩被问住。</p>
+<h3 id="判断标准-四条">判断标准：四条</h3>
+<div class="table-wrap"><table>
+<thead><tr><th>#</th><th>agent 的特征</th><th>流水线的样子</th><th>要做到</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>自主决定下一步做什么</td><td>固定 DAG，顺序写死</td><td>根据检查结果决定下一步（缺数据就去要、查不到就换检索路径）</td></tr>
+<tr><td>2</td><td>调用外部工具，且有明确工具契约</td><td>内部函数调用，无契约</td><td>6–8 个注册工具，各有入参、出参、失败语义</td></tr>
+<tr><td>3</td><td>观察结果并调整（失败重试、换路径、降级）</td><td>出错就中断</td><td>失败 → 换工具/换参数/降级 → 记录原因</td></tr>
+<tr><td>4</td><td>有目标与状态（多轮、可中断、可交接）</td><td>无状态</td><td>场景状态对象 + 判据覆盖度 + 待办清单</td></tr>
+</tbody></table></div>
+<p>一句话区分：<strong>流水线是"我把步骤排好了，你照着跑"；agent 是"我给你目标，你自己决定跑哪几步、跑完自查还有没有漏"。</strong></p>
+<h3 id="具体改法-一个-核查型-agent-的循环">具体改法：一个"核查型 agent"的循环</h3>
+<p><strong>目标</strong>：对场景 S 给出<strong>可复核</strong>的安全风险结论与整改清单（而不是"把流程跑完"）。</p>
+<p><strong>工具集</strong>（每个都要有名字、入参、失败语义）：</p>
+<div class="table-wrap"><table>
+<thead><tr><th>工具</th><th>作用</th><th>失败时怎么办</th></tr></thead>
+<tbody>
+<tr><td><code>load_bms</code></td><td>读 BMS 曲线并做完整性校验</td><td>缺字段 → 返回缺失清单，触发追问</td></tr>
+<tr><td><code>calc_features</code></td><td>dT/dt、ΔV 离散度、CE 滑窗、dQ/dV、SOH 轨迹</td><td>采样不足 → 降级为"趋势不可判"</td></tr>
+<tr><td><code>retrieve_clause</code></td><td>按风险类型检索标准条款</td><td>无命中 → 换同义词/上位标准重试，仍无 → 标"无依据"</td></tr>
+<tr><td><code>match_rules</code></td><td>用判据表匹配风险项</td><td>数据不全 → 输出"待复核"，不硬判</td></tr>
+<tr><td><code>replay_timeline</code></td><td>事故/工况时序回放</td><td>时间轴不齐 → 报对齐缺口</td></tr>
+<tr><td><code>ask_human</code></td><td>向运维/老师追问缺失信息</td><td>超时 → 走降级路径并标注来源</td></tr>
+<tr><td><code>write_report</code></td><td>生成分级报告</td><td>—</td></tr>
+<tr><td><code>schedule_recheck</code></td><td>生成复查任务与触发条件</td><td>—</td></tr>
+</tbody></table></div>
+<p><strong>主循环 Plan → Act → Observe → Self-check</strong></p>
+<ol>
+<li><strong>Plan</strong>：读场景说明，列出本次应覆盖的风险类型（热失控前兆 / 内短路 / 析锂 / 一致性劣化 / 规程符合性 / 消防配置）</li>
+<li><strong>Act</strong>：按需调用工具，不是全调一遍</li>
+<li><strong>Observe</strong>：逐条记录每条判据的状态——已判 / 数据不足 / 无依据</li>
+<li><strong>Self-check（关键）</strong>：算<strong>判据覆盖度</strong>——应检查的判据里有多少条已给出结论？未覆盖的必须回到 1 或调 <code>ask_human</code> 处理</li>
+<li>循环到覆盖度达标，或明确列出"无法判定项 + 原因"，才允许出报告</li>
+</ol>
+<h3 id="演示时必须能看见的三处-agent-行为">演示时必须能看见的三处 agent 行为</h3>
+<ol>
+<li><strong>缺数据会主动追问</strong>："当前缺少可燃气体探测数据，气体类 6 条判据无法判定，是否补充？"——而不是静默跳过</li>
+<li><strong>查不到会换路径</strong>：条款检索无命中时换同义词表/上位标准，两次都失败才标"无依据"</li>
+<li><strong>出报告前会自查</strong>：报告生成后跑一次依据覆盖率检查，覆盖不足就打回重做</li>
+</ol>
+<p>再给评委做一个<strong>对照演示</strong>（很省力但很有效）：同一份输入，让"固定流水线版"和"agent 版"各跑一遍，流水线静默跳过了缺数据的判据，agent 停下来追问了 —— 一次就把"你为什么是智能体"讲完了。</p>
+<h3 id="别做的事-一眼假">别做的事（一眼假）</h3>
+<ul>
+<li>为了"像 agent"硬加三个 agent 互相辩论、投票 —— 评委看得出来是表演，反而扣分</li>
+<li>让 agent 自己生成判据（专业规则必须由人写、可审查，这是赛道三的立身之本）</li>
+<li>全自动无人值守（安全场景必须保留人工确认闸门，这反而是加分项）</li>
+</ul>
+<h3 id="赛道怎么报">赛道怎么报</h3>
+<p>主线仍是<strong>赛道三</strong>（创新点＝专业知识如何影响流程与结果质量）。但你的形态天然满足<strong>赛道二</strong>的"多步骤＋工具协同＋结果校验"，材料里可以写一句"以智能体形态实现专业规则的调度与自校验"——两边都占优，但<strong>别改报赛道二</strong>：那里比的是工具编排的创新性，你的优势不在这儿。</p>
+<hr>
+<h2 id="十三-学生可行性-难在哪-怎么砍到能做">十三、学生可行性：难在哪、怎么砍到能做</h2>
+<p><strong>先给答案：如果按前面写的"完整版"做，对本科生偏难；砍成"学生版"完全可行，但有一个前提——队里必须有一个安全工程/材料/电化学背景的人。</strong> 卡点不在写代码，在"判据站不站得住"。</p>
+<h3 id="五个难度维度">五个难度维度</h3>
+<div class="table-wrap"><table>
+<thead><tr><th>维度</th><th>难度</th><th>真实卡点</th><th>能不能绕</th></tr></thead>
+<tbody>
+<tr><td>专业规则</td><td>高</td><td>判据阈值从哪来、是否符合标准</td><td><strong>不能绕</strong>。没有专业队友，规则表就是抄的，答辩一问就崩</td></tr>
+<tr><td>数据</td><td>中高</td><td>真实 BMS 数据、储能舱现场</td><td>能绕：公开数据集 + 自造模拟数据</td></tr>
+<tr><td>工程实现</td><td>中</td><td>特征计算、条款检索、agent 编排</td><td>能绕：砍到 18 条判据、单场景</td></tr>
+<tr><td>验证</td><td>中</td><td>专家标注 gold set</td><td>半绕：用公开事故报告的时间轴代替真值</td></tr>
+<tr><td>时间</td><td>中</td><td>4–6 周课余时间</td><td>靠砍范围</td></tr>
+</tbody></table></div>
+<p><strong>结论：写代码不是最难的，拿到"能站住脚的判据"才是。</strong> 如果队里没有专业背景的人，这条不要硬上——不是技术做不出来，是答辩一问"这个阈值凭什么是这个值"就穿。</p>
+<h3 id="三档版本-按你的条件选">三档版本，按你的条件选</h3>
+<div class="table-wrap"><table>
+<thead><tr><th>版本</th><th>前提</th><th>内容</th><th>工作量</th></tr></thead>
+<tbody>
+<tr><td>A 完整版</td><td>有实验室/研究生带，8 周以上</td><td>真 BMS 数据、整舱场景、40 条判据、多事故复盘</td><td>不建议本科生做</td></tr>
+<tr><td><strong>B 学生版（推荐）</strong></td><td>1 名安全/材料队友，6 周</td><td>单场景"电池测试间"、模拟数据、18 条判据、1 次事故复盘、agent 自查</td><td>约 12–16 人天</td></tr>
+<tr><td>C 保底版</td><td>无专业队友，2–3 周</td><td>只做"电池测试/储运规程符合性核查"，无数据模型</td><td>5–7 人天</td></tr>
+</tbody></table></div>
+<h3 id="学生版具体怎么砍-八刀">学生版具体怎么砍（八刀）</h3>
+<ol>
+<li><strong>数据不用真的</strong>：用 Severson/NASA 公开数据做特征验证，再写一个"模拟储能舱"生成器（电压温度曲线 + 注入 3 种异常），演示可控；材料里诚实标注"模拟数据"——这比拿不到数据硬编强得多</li>
+<li><strong>场景只做一个</strong>：电池测试间，不做整舱，不做电站</li>
+<li><strong>判据只写 18 条</strong>：覆盖 6 类风险（热失控前兆 / 内短路 / 析锂 / 一致性 / 规程 / 消防），每条挂 1 条标准条款</li>
+<li><strong>标准只摘 15 条</strong>：三份标准各取 5 条最相关条款，局部摘录并注明条款号，不追求全文覆盖</li>
+<li><strong>不需要训练模型</strong>：特征计算 + 规则匹配 + 条款检索 + 解释生成就够；"AI"体现在抽取、检索、自查、解释，而不是训个网络</li>
+<li><strong>单 agent + 6 个工具 + 1 轮自查</strong>：不搞多 agent 协作</li>
+<li><strong>复盘只做 6 个节点</strong>：丰台事故取关键时间点，不追分钟级精度</li>
+<li><strong>验证只要 10 个场景</strong>：老师标注 10 个即可，报漏报/误报 + 3 个失败案例（诚实展示失败反而加分）</li>
+</ol>
+<h3 id="人天估算-学生版-课余节奏">人天估算（学生版，课余节奏）</h3>
+<div class="table-wrap"><table>
+<thead><tr><th>模块</th><th>人天</th></tr></thead>
+<tbody>
+<tr><td>模拟数据生成器</td><td>2</td></tr>
+<tr><td>特征计算（dT/dt、ΔV、CE、dQ/dV）</td><td>2</td></tr>
+<tr><td>判据表（专业队友主笔，你负责结构）</td><td>3</td></tr>
+<tr><td>条款库与检索</td><td>2</td></tr>
+<tr><td>Agent 编排 + 覆盖度自查</td><td>2</td></tr>
+<tr><td>报告与界面</td><td>2</td></tr>
+<tr><td>事故复盘与验证</td><td>1</td></tr>
+<tr><td>计划书 + 演示视频</td><td>2</td></tr>
+<tr><td><strong>合计</strong></td><td><strong>约 16 人天</strong></td></tr>
+</tbody></table></div>
+<p>两个人、两周、每天 3–4 小时，做得完。</p>
+<h3 id="一句话建议">一句话建议</h3>
+<p><strong>做小做透，比做大做崩强得多。</strong> 评分表里"完成度与技术实现"占 30 分：一个只覆盖 18 条判据、但每条都能说清来源、能现场演示、有失败案例分析的作品，比一个"看起来全覆盖、一问来源就卡住"的作品分数高得多。评委看的是<strong>你说得清多少</strong>，不是<strong>你画了多大</strong>。</p>
+<hr>
+<h2 id="十四-依据链接">十四、依据链接</h2>
+<ul>
+<li><a href="https://openstd.samr.gov.cn/bzgk/std/newGbInfo?hcno=FC980FCD1DB8F9C5F27B93B294D87BE7">GB/T 42288-2022 电化学储能电站安全规程（国家标准全文公开系统）</a></li>
+<li><a href="https://openstd.samr.gov.cn/bzgk/std/newGbInfo?hcno=866D1F702E193B6EAE5BA96D516D07B0">GB/T 36276-2023 电力储能用锂离子电池（国家标准全文公开系统）</a></li>
+<li><a href="http://bj.people.com.cn/n2/2021/1123/c14540-35018549.html">北京丰台"4·16"火灾事故调查报告（人民网）</a></li>
+<li><a href="https://xkb.cczu.edu.cn/xkzl/list.htm">常州大学学科建设（一级博士点与省优势学科）</a></li>
+<li><a href="https://data.matr.io/1/projects/5c48dd2bc625d700019f3204">Severson 电池循环数据集（124 只商用电芯，CC BY 4.0）</a></li>
+</ul>
+<blockquote>注：文中的阈值数字是示意值，正式版必须按标准条文与厂家参数核定，并在文档里标注每一条的来源。</blockquote>
+</article></div>
+</body>
+</html>

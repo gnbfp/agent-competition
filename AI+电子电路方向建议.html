@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI＋电子电路方向建议（赛道三）</title>
+<style>
+:root{
+  --ink:#1b1f24; --ink-soft:#4a545e; --line:#e3e8ef; --bg:#f5f7fa;
+  --accent:#0b5fff; --accent-soft:#eaf1ff; --warn:#b45309; --ok:#0a7a45;
+}
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font-family:"Microsoft YaHei","PingFang SC","Hiragino Sans GB","Segoe UI",system-ui,sans-serif;
+  font-size:16.5px; line-height:1.85; -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:1000px;margin:0 auto;padding:40px 22px 90px}
+.card{background:#fff;border:1px solid var(--line);border-radius:16px;
+  box-shadow:0 1px 2px rgba(16,24,40,.04),0 12px 32px -18px rgba(16,24,40,.18);
+  padding:52px 56px 60px}
+h1{font-size:30px;line-height:1.35;margin:0 0 6px;letter-spacing:-.3px}
+h1+blockquote{margin-top:18px}
+h2{font-size:22px;margin:52px 0 16px;padding-top:18px;border-top:1px solid var(--line);letter-spacing:-.2px}
+h2:first-of-type{border-top:0}
+h3{font-size:18.5px;margin:34px 0 12px;color:#0b1b3a}
+h3::before{content:"";display:inline-block;width:4px;height:16px;background:var(--accent);
+  border-radius:2px;margin-right:10px;vertical-align:-2px}
+p{margin:12px 0}
+strong{color:#0b1b3a}
+a{color:var(--accent);text-decoration:none;border-bottom:1px solid #bcd0ff}
+ul,ol{margin:12px 0;padding-left:26px}
+li{margin:7px 0}
+li::marker{color:var(--accent)}
+hr{border:0;border-top:1px dashed var(--line);margin:36px 0}
+blockquote{margin:20px 0;padding:16px 20px;background:var(--accent-soft);
+  border-left:4px solid var(--accent);border-radius:0 10px 10px 0;color:#123;font-size:15.5px}
+blockquote strong{color:var(--accent)}
+code{background:#f2f5f9;border:1px solid var(--line);border-radius:5px;
+  padding:1.5px 6px;font-family:"Cascadia Mono",Consolas,monospace;font-size:13.5px;color:#0b3d91}
+.table-wrap{overflow-x:auto;margin:18px 0;border:1px solid var(--line);border-radius:10px}
+table{border-collapse:collapse;width:100%;font-size:14.8px;background:#fff}
+thead th{background:#f0f4fa;text-align:left;font-weight:700;color:#0b1b3a;
+  padding:11px 14px;border-bottom:1px solid var(--line);white-space:nowrap}
+tbody td{padding:11px 14px;border-bottom:1px solid #eef2f7;vertical-align:top;color:var(--ink-soft)}
+tbody tr:last-child td{border-bottom:0}
+tbody tr:nth-child(even){background:#fafbfd}
+tbody tr:hover{background:#f3f7ff}
+@media (max-width:720px){
+  .card{padding:28px 20px 36px;border-radius:12px}
+  .wrap{padding:16px 10px 60px}
+  h1{font-size:24px} h2{font-size:19px} body{font-size:15.5px}
+}
+</style>
+</head>
+<body>
+<div class="wrap"><article class="card">
+<h1 id="AI-电子电路方向建议-赛道三">AI＋电子电路方向建议（赛道三）</h1>
+<blockquote>你的问题：想做 AI＋电子电路。<br>结论先行：<strong>主推「PCB 板级设计审查助手」</strong>——读一块真实的板子，逐条指出"哪里不合规、会出什么问题、怎么改"，每条都挂 IPC 标准依据。验证方式用<strong>缺陷注入测试</strong>，这是电子方向里少数能算出"检出率"的题目。</blockquote>
+<hr>
+<h2 id="零-先划掉三个不能做的">零、先划掉三个不能做的</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>看起来很吸引人</th><th>为什么做不了</th></tr></thead>
+<tbody>
+<tr><td>AI 自动布线 / AI 生成电路</td><td>研究级难题（强化学习布线的论文都还在实验室），学生只能调现成模型，评委会问"你的贡献是什么"</td></tr>
+<tr><td>电路故障预测</td><td>没有真实故障数据；实验室故障样本太少，做出来是过拟合</td></tr>
+<tr><td>"AI 电子学答疑"</td><td>退化成问答机器人，赛道三的 30 分拿不到</td></tr>
+</tbody></table></div>
+<p>电子方向的选题必须满足：<strong>规则可写成表、结果可对照检查、不需要昂贵仪器</strong>。</p>
+<hr>
+<h2 id="一-主推方向-PCB-板级设计审查助手">一、主推方向：PCB 板级设计审查助手</h2>
+<h3 id="痛点">痛点</h3>
+<p>学生画板子的翻车方式高度固定，而且全部<strong>事后才发现</strong>：</p>
+<ul>
+<li>去耦电容离芯片太远，高速时电源塌陷、莫名其妙复位</li>
+<li>地平面被信号线切碎，回流路径乱走，EMI 超标</li>
+<li>走线按"看着差不多"画，过 1A 电流就发烫</li>
+<li>时钟线跨了地平面分割，辐射超标</li>
+<li>高压区爬电距离不够，安规过不了</li>
+<li>晶振没包地、USB 差分没控阻抗、测试点没留、丝印压焊盘</li>
+</ul>
+<p>这些<strong>都是规则可判定的</strong>，而且都有标准依据——这正是它适合赛道三的原因。</p>
+<h3 id="输入-输出">输入 / 输出</h3>
+<div class="table-wrap"><table>
+<thead><tr><th></th><th>内容</th></tr></thead>
+<tbody>
+<tr><td>输入</td><td>KiCad 工程文件（<code>.kicad_pcb</code> / <code>.kicad_sch</code>，纯文本 S 表达式，可直接解析）＋ 叠层信息 ＋ 电源树（各电源轨电压/电流）＋ BOM 关键器件</td></tr>
+<tr><td>输出</td><td>不符合项清单：<strong>位置、违反了哪条规则、依据哪条标准、会导致什么后果、怎么改、置信度</strong></td></tr>
+</tbody></table></div>
+<h3 id="四类检查-规则表就是作品的核心资产">四类检查（规则表就是作品的核心资产）</h3>
+<div class="table-wrap"><table>
+<thead><tr><th>类别</th><th>检查项举例</th><th>依据</th></tr></thead>
+<tbody>
+<tr><td>电气规则</td><td>线宽 vs 载流能力（按 IPC-2221 的"线宽—电流—温升"关系）、间距与爬电距离按电压等级、阻抗要求</td><td>IPC-2221、IPC-2222、GB/T 4588</td></tr>
+<tr><td>布局规则</td><td>去耦电容到电源引脚的距离与数量、地平面完整性、晶振包地与远离高速线、模拟/数字分区、散热铜箔面积</td><td>厂商应用笔记（TI/ADI/ST）、IPC-2221</td></tr>
+<tr><td>布线规则</td><td>差分对等长等距、时钟线不跨分割、回流路径连续、过孔数量与载流、串扰间距（3W 原则）</td><td>IPC-2221、信号完整性实践</td></tr>
+<tr><td>工艺规则</td><td>焊盘与阻焊桥、丝印压焊盘、拼板与工艺边、测试点、元件间距（贴片机/返修）</td><td>IPC-A-610、IPC-7351、板厂工艺能力</td></tr>
+</tbody></table></div>
+<p>规则表字段：<code>rule_id / 类别 / 判据 / 阈值 / 依据条款 / 后果类型 / 修复建议 / 需要补充信息</code></p>
+<h3 id="为什么它不是-KiCad-DRC-套壳-必答">为什么它不是"KiCad DRC 套壳"（必答）</h3>
+<div class="table-wrap"><table>
+<thead><tr><th></th><th>KiCad DRC</th><th>你的审查助手</th></tr></thead>
+<tbody>
+<tr><td>查什么</td><td>几何约束：间距、线宽、未连接、钻孔</td><td><strong>设计意图与标准符合性</strong>：去耦位置是否合理、地平面是否被切、回流路径是否连续、线宽够不够过这个电流、爬电距离够不够这个电压</td></tr>
+<tr><td>输出什么</td><td>"违反了规则 X"</td><td>"违反了哪条标准、会导致什么后果、怎么改"</td></tr>
+<tr><td>能不能追问</td><td>不能</td><td>缺信息会追问（"这层是完整地平面吗？3.3V 轨最大电流多少？"）</td></tr>
+</tbody></table></div>
+<p><strong>这句话要练熟</strong>：DRC 是尺子，你是审图的人。</p>
+<h3 id="验证-缺陷注入测试-这个方向的王牌">验证：缺陷注入测试（这个方向的王牌）</h3>
+<p>不要只拿一块好板子演示"它说没问题"——那证明不了什么。要做<strong>变异测试</strong>：</p>
+<ol>
+<li>拿一块<strong>已知正确的开源板</strong>（KiCad 官方 demo 工程、开源硬件项目都行）</li>
+<li>自动生成 20 个"故意埋雷"的变体：删掉一颗去耦电容、把地平面挖断一条、把电源线宽减半、让时钟线跨分割、把晶振挪到高速线旁、把间距改成 0.1mm</li>
+<li>跑你的助手，算 <strong>检出率（20 个中抓到几个）、误报率（好板子上报了几个假问题）</strong></li>
+<li>再拿 KiCad 自带 DRC 跑同样 20 个变体，做<strong>重叠项对照</strong>——重叠项结论应一致，不重叠项（设计意图类）就是你的增量价值</li>
+<li>请电子/自动化方向老师评 10 块真实板子，把"他认为该报没报"的补进规则库——<strong>修正记录写进答辩材料</strong></li>
+</ol>
+<p>这套方法论在软件工程里叫变异测试，评委（CS 背景）一看就懂，而且<strong>能算出具体数字</strong>，比"我们演示了一下感觉不错"强十倍。</p>
+<h3 id="第一版边界-六周">第一版边界（六周）</h3>
+<ul>
+<li>只支持 <strong>KiCad</strong> 格式（S 表达式好解析；Altium 二进制格式别碰）</li>
+<li>只做 <strong>2–4 层板</strong>，单板 ≤ 300 个元件</li>
+<li><strong>15–20 条规则</strong>，覆盖 4 类（每类 4–5 条）</li>
+<li>不做布线合理性全检、不做热仿真、不做信号完整性仿真</li>
+<li>输出"问题清单＋依据＋建议"，不判定"这块板能不能量产"</li>
+</ul>
+<h3 id="AI-在哪-规则在哪">AI 在哪、规则在哪</h3>
+<div class="table-wrap"><table>
+<thead><tr><th>环节</th><th>谁做</th></tr></thead>
+<tbody>
+<tr><td>解析工程文件、提取网络与几何</td><td>解析器（确定性）</td></tr>
+<tr><td>判断板子类型、电源树、层叠用途</td><td>LLM ＋ 结构化推断</td></tr>
+<tr><td>逐条执行规则检查</td><td>规则引擎（确定性，可复现）</td></tr>
+<tr><td>解释"为什么这算问题、会导致什么"</td><td>LLM ＋ 规则后果模板</td></tr>
+<tr><td>缺信息追问、覆盖度自查、报告生成</td><td>Agent 循环</td></tr>
+</tbody></table></div>
+<p><strong>关键设计</strong>：规则判定必须确定性——同一块板跑两次结论一致。LLM 只负责理解与解释，不负责判对错。</p>
+<h3 id="Agent-形态">Agent 形态</h3>
+<p>主循环：<strong>读取工程 → 识别叠层与电源树 → 分四类执行检查 → 记录 已检/需信息/无依据 → 覆盖度自查（发现漏检打回或追问）→ 出报告</strong></p>
+<p>三处必须可见的智能体行为：</p>
+<ol>
+<li><strong>主动追问</strong>：工程里没有叠层信息时，不问就不敢判阻抗——它会停下来问"这是 2 层还是 4 层？"</li>
+<li><strong>查不到依据就降级</strong>：某条规则找不到标准条款时，标"经验规则，非标准强制"，而不是含糊带过</li>
+<li><strong>自校验</strong>：出报告前统计"20 条规则中已检 N 条、需信息 M 条"，覆盖率不足就打回重跑</li>
+</ol>
+<h3 id="学科支撑">学科支撑</h3>
+<p>常州大学微电子与控制工程学院 2020 年组建（前身可追到 1981 年基础课部、1992 年计算机学科部），<strong>2016 年获电子科学与技术一级学科硕士点，2021 年获电子信息专业硕士点</strong>——电子方向在本校有真实学科落点。若队里能拉到该院老师或学长做规则把关，专业背书就齐了。</p>
+<h3 id="风险与化解">风险与化解</h3>
+<div class="table-wrap"><table>
+<thead><tr><th>风险</th><th>化解</th></tr></thead>
+<tbody>
+<tr><td>"这不就是 DRC"</td><td>上面的对照表＋重叠项/增量项对照实验</td></tr>
+<tr><td>"你们懂电路吗"</td><td>必须有电子/自动化队友；每条规则写依据来源；老师评审 10 块板</td></tr>
+<tr><td>格式兼容性</td><td>只做 KiCad，明确写"第一版仅支持 KiCad"，别贪</td></tr>
+<tr><td>被判"工具而非智能体"</td><td>追问、降级、自校验三处行为要演示出来</td></tr>
+</tbody></table></div>
+<hr>
+<h2 id="二-备选-A-模拟电路设计核查-真值最硬">二、备选 A：模拟电路设计核查（真值最硬）</h2>
+<p><strong>定位</strong>：输入电路网表与元件值，检查静态工作点是否在放大区、增益带宽是否够、相位裕度是否稳定、器件是否过应力、功耗与散热是否可行。</p>
+<ul>
+<li><strong>最大优势：真值来源最硬</strong>——用 <strong>ngspice</strong>（开源命令行仿真器）跑仿真做标准答案，你的规则判断与仿真结论对照，一致率可算、可复现。这是所有电子选题里"能证明自己对"的最强方案</li>
+<li><strong>最大劣势</strong>：需要真正的模拟电路功底（工作点、小信号模型、稳定性），写网表解析器和处理仿真收敛都要花时间；纯软件同学做不动</li>
+<li><strong>适合</strong>：队里有电子/自动化/微电子背景，且愿意啃仿真</li>
+</ul>
+<hr>
+<h2 id="三-备选-B-嵌入式配置一致性检查">三、备选 B：嵌入式配置一致性检查</h2>
+<p><strong>定位</strong>：输入 STM32 CubeMX 配置（<code>.ioc</code>）＋ 工程代码 ＋ 原理图网表，检查引脚复用冲突、时钟树超频、外设资源冲突、上下拉缺失、供电域不匹配、ADC 参考电压错误。</p>
+<ul>
+<li><strong>优势</strong>：学生做嵌入式翻车的头号原因就在这里；纯软件可做，不用硬件</li>
+<li><strong>劣势</strong>：真值难验证——最终要靠"烧进板子跑一下"，没有仿真级 gold standard；规则来自数据手册引脚复用表，整理工作量大</li>
+<li><strong>适合</strong>：队里有做单片机的同学</li>
+</ul>
+<hr>
+<h2 id="四-对比与推荐">四、对比与推荐</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>方向</th><th>规则密度</th><th>验证可行性</th><th>硬件依赖</th><th>学生可做</th><th>差异化</th><th>推荐度</th></tr></thead>
+<tbody>
+<tr><td>PCB 设计审查</td><td>5</td><td>5（缺陷注入）</td><td>无</td><td>4</td><td>5</td><td>★★★★★</td></tr>
+<tr><td>模拟电路核查</td><td>4</td><td>5（SPICE 真值）</td><td>无</td><td>2</td><td>4</td><td>★★★</td></tr>
+<tr><td>嵌入式配置检查</td><td>4</td><td>3</td><td>中</td><td>4</td><td>3</td><td>★★★</td></tr>
+</tbody></table></div>
+<hr>
+<h2 id="五-六句话模板-PCB-审查方向">五、六句话模板（PCB 审查方向）</h2>
+<ol>
+<li>我准备帮助的用户是：<strong>电子类课程设计的学生、创客、小团队硬件工程师</strong>。</li>
+<li>他在<strong>画完板子准备打样</strong>场景中，需要解决<strong>设计隐患看不出来、DRC 只报几何违规却不解释后果</strong>的问题。</li>
+<li>用户输入<strong>KiCad 工程文件与电源/叠层信息</strong>，作品输出<strong>带标准依据、后果说明与修改建议的问题清单</strong>。</li>
+<li>第一版先实现<strong>2–4 层板、15–20 条布局/布线/电气/工艺规则的检查与覆盖度自查</strong>，主要贡献对应<strong>赛道三（AI＋跨学科融合创新）</strong>。</li>
+<li>我们能获得的资料、工具与规则是<strong>IPC-2221/2222、IPC-A-610、GB/T 4588、厂商应用笔记，以及电子方向老师核定的判据阈值</strong>。</li>
+<li>我们将用<strong>20 个缺陷注入变体算检出率与误报率</strong>、<strong>KiCad DRC 做重叠项对照</strong>、<strong>老师评审 10 块真实板</strong>检查效果。</li>
+</ol>
+<hr>
+<h2 id="六-三个必答">六、三个必答</h2>
+<ol>
+<li><strong>"这和 KiCad DRC 有什么区别？"</strong> → 拿同一块板：DRC 报 3 条几何违规，你报 8 条问题，其中 5 条是"去耦太远/地平面被切/线宽不够过 2A/时钟线跨分割/晶振没包地"，每条带后果和依据。</li>
+<li><strong>"你们凭什么判断？"</strong> → 翻开规则表，每条有阈值和出处；再展示老师改过的 3 条。</li>
+<li><strong>"真有人用吗？"</strong> → 展示访谈：问 10 个画过板子的同学"你的板子第一次打样翻过什么车"，把原话放进计划书。这个题的回答率接近 100%，因为人人都翻过车。</li>
+</ol>
+<hr>
+<h2 id="七-你已经看过五个方向-最后给个选法">七、你已经看过五个方向，最后给个选法</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>方向</th><th>专业硬度</th><th>数据门槛</th><th>验证方式</th><th>需要什么队友</th></tr></thead>
+<tbody>
+<tr><td>电子电路（PCB 审查）</td><td>高</td><td>低</td><td>缺陷注入算检出率</td><td>电子/自动化</td></tr>
+<tr><td>石油化工（HAZOP）</td><td>最高</td><td>低</td><td>案例回放＋专家评</td><td>化工/安全</td></tr>
+<tr><td>生物（引物设计）</td><td>高</td><td>低</td><td>PrimerBank＋交叉验证</td><td>生物/制药</td></tr>
+<tr><td>储能电池安全</td><td>高</td><td>中</td><td>事故复盘＋专家标注</td><td>材料/电化学</td></tr>
+<tr><td>生活（室内空气）</td><td>中高</td><td>低</td><td>老师标注＋实测对照</td><td>环境/材料（弱依赖）</td></tr>
+</tbody></table></div>
+<p><strong>一个实用的判断</strong>：你<strong>自己有没有被这个坑伤过</strong>。你是软件专业，如果画过板子、烧过芯片、调过单片机的时序，电子方向的故事最好讲——因为那是你的真实经历；如果没有，石油化工和生物都要靠队友，风险更高。</p>
+<hr>
+<h2 id="八-还需要你确认">八、还需要你确认</h2>
+<ol>
+<li>队里<strong>有没有电子/自动化/微电子背景的同学</strong>？你自己画过板子吗（KiCad/Altium/立创EDA 都算）？</li>
+<li>能否借到<strong>实验室老师的板子</strong>或拿到课程设计的工程文件当测试样本？</li>
+<li>你现在是要<strong>最终定一个</strong>，还是继续看方向？（如果继续看，我建议下一个看"AI＋教育"或"AI＋材料"，覆盖剩下的可能）</li>
+</ol>
+<p>告诉我这些，我可以直接给：项目计划书目录、20 条审查规则全表（含判据阈值与 IPC 出处）、agent 工具清单与主循环、缺陷注入脚本设计、3 分钟演示脚本。</p>
+</article></div>
+</body>
+</html>

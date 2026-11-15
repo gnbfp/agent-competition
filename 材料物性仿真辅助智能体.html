@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>材料物性仿真辅助智能体（赛道三方案评估与设计）</title>
+<style>
+:root{
+  --ink:#1b1f24; --ink-soft:#4a545e; --line:#e3e8ef; --bg:#f5f7fa;
+  --accent:#0b5fff; --accent-soft:#eaf1ff; --warn:#b45309; --ok:#0a7a45;
+}
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font-family:"Microsoft YaHei","PingFang SC","Hiragino Sans GB","Segoe UI",system-ui,sans-serif;
+  font-size:16.5px; line-height:1.85; -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:1000px;margin:0 auto;padding:40px 22px 90px}
+.card{background:#fff;border:1px solid var(--line);border-radius:16px;
+  box-shadow:0 1px 2px rgba(16,24,40,.04),0 12px 32px -18px rgba(16,24,40,.18);
+  padding:52px 56px 60px}
+h1{font-size:30px;line-height:1.35;margin:0 0 6px;letter-spacing:-.3px}
+h1+blockquote{margin-top:18px}
+h2{font-size:22px;margin:52px 0 16px;padding-top:18px;border-top:1px solid var(--line);letter-spacing:-.2px}
+h2:first-of-type{border-top:0}
+h3{font-size:18.5px;margin:34px 0 12px;color:#0b1b3a}
+h3::before{content:"";display:inline-block;width:4px;height:16px;background:var(--accent);
+  border-radius:2px;margin-right:10px;vertical-align:-2px}
+p{margin:12px 0}
+strong{color:#0b1b3a}
+a{color:var(--accent);text-decoration:none;border-bottom:1px solid #bcd0ff}
+ul,ol{margin:12px 0;padding-left:26px}
+li{margin:7px 0}
+li::marker{color:var(--accent)}
+hr{border:0;border-top:1px dashed var(--line);margin:36px 0}
+blockquote{margin:20px 0;padding:16px 20px;background:var(--accent-soft);
+  border-left:4px solid var(--accent);border-radius:0 10px 10px 0;color:#123;font-size:15.5px}
+blockquote strong{color:var(--accent)}
+code{background:#f2f5f9;border:1px solid var(--line);border-radius:5px;
+  padding:1.5px 6px;font-family:"Cascadia Mono",Consolas,monospace;font-size:13.5px;color:#0b3d91}
+.table-wrap{overflow-x:auto;margin:18px 0;border:1px solid var(--line);border-radius:10px}
+table{border-collapse:collapse;width:100%;font-size:14.8px;background:#fff}
+thead th{background:#f0f4fa;text-align:left;font-weight:700;color:#0b1b3a;
+  padding:11px 14px;border-bottom:1px solid var(--line);white-space:nowrap}
+tbody td{padding:11px 14px;border-bottom:1px solid #eef2f7;vertical-align:top;color:var(--ink-soft)}
+tbody tr:last-child td{border-bottom:0}
+tbody tr:nth-child(even){background:#fafbfd}
+tbody tr:hover{background:#f3f7ff}
+@media (max-width:720px){
+  .card{padding:28px 20px 36px;border-radius:12px}
+  .wrap{padding:16px 10px 60px}
+  h1{font-size:24px} h2{font-size:19px} body{font-size:15.5px}
+}
+</style>
+</head>
+<body>
+<div class="wrap"><article class="card">
+<h1 id="材料物性仿真辅助智能体-赛道三方案评估与设计">材料物性仿真辅助智能体（赛道三方案评估与设计）</h1>
+<blockquote>你提的方向：材料物性仿真辅助智能体。<br>我的判断：<strong>方向对、学科底子最厚，但原话范围太大，必须收敛到一个具体切口，否则会变成"AI 助手聊天"。</strong><br>推荐切口：<strong>不做仿真软件，做仿真的"可信度"——参数怎么定、输入对不对、结果能不能信。</strong></blockquote>
+<hr>
+<h2 id="零-先说这个想法对在哪-险在哪">零、先说这个想法对在哪、险在哪</h2>
+<h3 id="对的地方">对的地方</h3>
+<ul>
+<li><strong>学科底子最厚</strong>：材料科学与工程是常州大学三个一级博士点之一，材料 ESI 全球前 1%（约 2.18‰），也是省优势学科。这条路你说出去，学校层面是"用本校最强学科做的作品"</li>
+<li><strong>"仿真"天然带专业规则</strong>：参数、判据、收敛条件，全是可写进表格的东西</li>
+<li><strong>数据公开</strong>：Materials Project、OQMD、AFLOW、NOMAD、COD 都开放，不必求企业</li>
+</ul>
+<h3 id="险的地方">险的地方</h3>
+<p><strong>"材料物性仿真"是一个学科群，不是一个题目</strong>：DFT 第一性原理、分子动力学、CALPHAD 相图、相场、有限元……每一个都是几年的功夫。原话直接当题目，会出现三种死法：</p>
+<ol>
+<li>做成"AI 帮你写 VASP 输入文件"——查表工具，评委会问"AI 在哪"</li>
+<li>做成"AI 解释材料性质"——知识问答，退回赛道一</li>
+<li>想全都做——六周什么都没做完</li>
+</ol>
+<p><strong>所以必须收敛。</strong> 下面这个切口，是我认为唯一既能保留"仿真"的专业性、又能在六周内做出可验证结果的。</p>
+<hr>
+<h2 id="一-切口-不做仿真-做仿真的-可信度">一、切口：不做仿真，做仿真的"可信度"</h2>
+<p>计算材料学的真实痛点<strong>不是不会跑软件</strong>，而是<strong>跑出来的结果不可信</strong>，而且当事人往往不知道：</p>
+<ul>
+<li>用 PBE 泛函算带隙，得到 0.6 eV 就写进论文，其实实验值是 1.1 eV 以上（<strong>PBE 系统性低估带隙 30–50%</strong>）</li>
+<li>k 点网格随手设 1×1×1，能量根本没收敛</li>
+<li>截断能沿用赝势默认值，没做收敛测试</li>
+<li>赝势版本混用（同一批计算用了不同 PAW 版本）</li>
+<li>算含 Fe/Mn/Ni 的氧化物不开自旋极化，也不加 U</li>
+<li>层状材料不做范德华修正，层间距算得离谱</li>
+<li>二维材料真空层只留 5 Å，层间相互作用没消掉</li>
+<li>缺陷计算超胞太小，掺杂浓度比实际高两个数量级</li>
+</ul>
+<p><strong>这批错误全部是教科书级别的、可判定的、有明确依据的</strong>（VASP wiki、Quantum ESPRESSO 文档、Materials Project 的方法学说明）。而且"判断结果是否合理"正是赛道三指南的原话。</p>
+<p>一句话定位：<strong>仿真前帮你定参数、仿真中帮你审输入、仿真后帮你判结果能不能信。</strong></p>
+<hr>
+<h2 id="二-主推方案-DFT-仿真方案核查与结果可信度评估">二、主推方案：DFT 仿真方案核查与结果可信度评估</h2>
+<h3 id="输入-输出">输入 / 输出</h3>
+<div class="table-wrap"><table>
+<thead><tr><th></th><th>内容</th></tr></thead>
+<tbody>
+<tr><td>输入</td><td>研究目标（"算 LiFePO4 的带隙" / "算 N 掺杂 TiO₂ 的形成能" / "算层状材料的层间距"）＋ 体系信息（化学式、结构文件 POSCAR/CIF、是否含磁性/强关联元素）＋ 拟用参数或已有输入文件（INCAR + KPOINTS，或 QE input）＋ 已有结果（可选）</td></tr>
+<tr><td>输出</td><td>①<strong>参数方案</strong>（泛函/截断能/k 点/赝势/色散修正/自旋/超胞/真空层）＋每条依据 ②<strong>输入文件问题清单</strong>（会导致结果不可信的具体设置）③<strong>结果可信度评级</strong>（与数据库/文献/实验对照后的判断）④<strong>建议的收敛测试清单</strong></td></tr>
+</tbody></table></div>
+<h3 id="三段式流程-这就是-agent-的主循环">三段式流程（这就是 agent 的主循环）</h3>
+<p><strong>前：方案设计</strong><br>从研究目标反推参数。目标是带隙 → 不能用 PBE 下结论；目标是形成能 → PBE 可接受但要说明；体系含 Fe/Mn/Ni/O → 必须考虑 +U 或 HSE；层状 → 必须开色散修正。</p>
+<p><strong>中：输入审查</strong><br>解析 INCAR / KPOINTS / POSCAR（都是纯文本，好解析），逐条对照规则表，指出"这条设置会导致什么后果"。</p>
+<p><strong>后：结果核验</strong><br>把算出来的晶格常数、带隙、形成能与 Materials Project 条目、实验值、文献对照，给出"可信 / 存疑 / 不可用"的评级和理由。</p>
+<h3 id="规则表-作品核心资产-10-条示例">规则表（作品核心资产，10 条示例）</h3>
+<div class="table-wrap"><table>
+<thead><tr><th>rule_id</th><th>判据</th><th>触发与阈值</th><th>依据</th></tr></thead>
+<tbody>
+<tr><td>M01</td><td>泛函与目标匹配</td><td>目标含带隙/光学性质，却用 PBE/PBEsol 下结论 → 提示系统性低估 30–50%，建议 HSE06 或 GW 或明确标注为"低估值"</td><td>VASP wiki / MP 方法学</td></tr>
+<tr><td>M02</td><td>强关联体系</td><td>含 Fe/Co/Ni/Mn/Cr 且为氧化物/氟化物 → 必须考虑 DFT+U 或 HSE</td><td>文献通行做法</td></tr>
+<tr><td>M03</td><td>截断能收敛</td><td>未做 ENCUT 收敛测试 → 要求能量变化 &lt; 1 meV/atom；不得直接沿用赝势默认值</td><td>QE/VASP 文档</td></tr>
+<tr><td>M04</td><td>k 点收敛</td><td>金属需密集 k 网格＋smearing；绝缘体可 Γ-centered；要求 k 点加倍后能量变化 &lt; 1 meV</td><td>QE/VASP 文档</td></tr>
+<tr><td>M05</td><td>赝势一致性</td><td>同一批计算混用不同赝势版本/类型 → 禁止</td><td>VASP wiki</td></tr>
+<tr><td>M06</td><td>色散修正</td><td>层状/分子晶体/吸附体系未开 DFT-D3 或 vdW 泛函 → 层间距与吸附能不可信</td><td>文献通行做法</td></tr>
+<tr><td>M07</td><td>自旋极化</td><td>含磁性元素未设 ISPIN=2 或未测试磁序 → 结果可能落在错误基态</td><td>VASP wiki</td></tr>
+<tr><td>M08</td><td>超胞尺寸</td><td>缺陷/掺杂计算超胞 &lt; 100 原子或未说明掺杂浓度 → 浓度失真</td><td>文献通行做法</td></tr>
+<tr><td>M09</td><td>真空层</td><td>二维材料真空层 &lt; 15 Å → 周期像间相互作用未消</td><td>文献通行做法</td></tr>
+<tr><td>M10</td><td>收敛判据</td><td>能量 EDIFF 未达 1E-6、离子弛豫力判据未达 0.02 eV/Å → 精度不足</td><td>VASP wiki</td></tr>
+</tbody></table></div>
+<blockquote>阈值要写成可配置参数，并注明"来自官方文档与通行做法，具体体系需实测收敛"。</blockquote>
+<h3 id="数据与工具-全部公开-无需-GPU">数据与工具（全部公开，无需 GPU）</h3>
+<div class="table-wrap"><table>
+<thead><tr><th>用途</th><th>工具/数据源</th></tr></thead>
+<tbody>
+<tr><td>材料结构、计算参数、参考物性</td><td>Materials Project（免费 API key，<code>mp-api</code>）</td></tr>
+<tr><td>补充数据库</td><td>OQMD、AFLOW、NOMAD、COD（晶体结构）</td></tr>
+<tr><td>结构处理</td><td>pymatgen、ASE（开源 Python）</td></tr>
+<tr><td>官方依据</td><td>VASP wiki、Quantum ESPRESSO 文档、MP 方法学页面</td></tr>
+<tr><td>验证用实验值</td><td>文献与数据库收录的实验带隙/晶格常数</td></tr>
+</tbody></table></div>
+<p><strong>不需要跑 DFT、不需要 VASP 授权、不需要集群。</strong> 这是这个方案能落地的关键。</p>
+<h3 id="怎么验证-这是它能不能赢的核心">怎么验证（这是它能不能赢的核心）</h3>
+<ol>
+<li><strong>参数对照</strong>：Materials Project 对每个材料都公开了实际使用的泛函、截断能、k 点。拿 20 个材料，比对"你推荐的参数"与"MP 实际用的参数"是否一致、差异是否有理由</li>
+<li><strong>论文方法段回放</strong>：找 20 篇论文的 Computational Details 段落，让助手<strong>只看研究目标</strong>给出参数方案，再由人判断是否与其实际采用的一致、你的方案是否更严谨</li>
+<li><strong>错误注入</strong>：造 20 份"埋雷输入"（PBE 算带隙、k 点 1×1×1、ENCUT=200、混赝势、Fe 体系不开自旋），算<strong>检出率与误报率</strong></li>
+<li><strong>老师评审</strong>：材料学院老师/研究生评 10 个案例，把"他认为该提没提"的补进规则表——<strong>修正记录写进答辩材料</strong></li>
+</ol>
+<p>这四层里，第 1、3 层能给出<strong>具体数字</strong>，是答辩最有力的东西。</p>
+<h3 id="第一版边界-六周">第一版边界（六周）</h3>
+<ul>
+<li>只做 <strong>DFT（VASP/QE）</strong>，不碰 MD、相图、相场、有限元</li>
+<li>只做<strong>周期性晶体</strong>，不做分子/表面/界面（可放 v2）</li>
+<li><strong>10–15 条规则</strong>，覆盖泛函、收敛、赝势、自旋、色散、超胞六类</li>
+<li>输入只管 <strong>INCAR/KPOINTS/POSCAR 与 QE input</strong> 两种格式</li>
+<li><strong>不代跑计算</strong>，只做方案、审查与核验（这是刻意的边界，也是免责声明）</li>
+</ul>
+<h3 id="AI-在哪-规则在哪">AI 在哪、规则在哪</h3>
+<div class="table-wrap"><table>
+<thead><tr><th>环节</th><th>谁做</th></tr></thead>
+<tbody>
+<tr><td>听懂"我要算掺杂形成能，看这个材料能不能做电池正极"</td><td>LLM 意图解析 → 结构化目标</td></tr>
+<tr><td>目标 → 参数推荐</td><td>规则表 ＋ 依据检索</td></tr>
+<tr><td>输入文件逐条检查</td><td>规则引擎（确定性，可复现）</td></tr>
+<tr><td>结果与数据库对照、判可信度</td><td>检索 ＋ 阈值判断 ＋ LLM 解释</td></tr>
+<tr><td>缺信息追问、覆盖度自查、报告</td><td>Agent 循环</td></tr>
+</tbody></table></div>
+<h3 id="Agent-形态-三处必须可见">Agent 形态（三处必须可见）</h3>
+<ol>
+<li><strong>主动追问</strong>：只知道化学式、不知道是否含磁性元素时，它会问；不知道目标是带隙还是总能量时，它会问——因为参数完全取决于目标</li>
+<li><strong>换路检索</strong>：某条规则查不到官方依据时，先查同义表述、再查上位文档，都失败才标"经验做法，非官方强制"</li>
+<li><strong>自校验</strong>：报告前统计"15 条规则中已检 N 条、需补充信息 M 条"，覆盖不全就打回</li>
+</ol>
+<hr>
+<h2 id="三-按队伍实力选三个版本">三、按队伍实力选三个版本</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>版本</th><th>做什么</th><th>周期</th><th>人天</th><th>适合</th></tr></thead>
+<tbody>
+<tr><td>v1 输入审查版</td><td>只做 INCAR/KPOINTS 静态审查＋问题解释，不联网</td><td>2–3 周</td><td>6–8</td><td>纯软件队伍＋1 个材料队友</td></tr>
+<tr><td>v2 方案＋核验版</td><td>加"目标→参数推荐"与 MP 数据库对照核验</td><td>5–6 周</td><td>14–16</td><td>推荐，完整故事</td></tr>
+<tr><td>v3 加真实验证</td><td>用 Quantum ESPRESSO 跑 Si 的收敛测试（ENCUT/k 点），把"收敛曲线"放进演示</td><td>6–7 周</td><td>20</td><td>队里有人装过 QE、有机器能跑</td></tr>
+</tbody></table></div>
+<p><strong>建议做 v2</strong>，把 v3 的 QE 收敛测试作为演示彩蛋（Si 的测试在普通笔记本上几分钟能跑完，不需要集群）。</p>
+<hr>
+<h2 id="四-三个必须先解决的技术问题">四、三个必须先解决的技术问题</h2>
+<ol>
+<li><strong>跑不起 DFT 怎么办？</strong></li>
+</ol>
+<p>→ 本来就不跑。这个方案的定位是"让计算可信"，不是"替人算"。若要做 v3，只用 QE + 小体系（Si、NaCl）做收敛演示，纯 CPU 可行。</p>
+<ol>
+<li><strong>Materials Project API 怎么用？</strong></li>
+</ol>
+<p>→ 注册免费 key，用 <code>mp-api</code> 包查询结构、参数与参考性质；需联网。若答辩环境不能联网，<strong>提前把 20 个材料的数据缓存成本地 JSON</strong>，演示走离线。</p>
+<ol>
+<li><strong>没有材料背景的队友怎么办？</strong></li>
+</ol>
+<p>→ <strong>不建议选这个方向</strong>。这套规则表外行写不出来，写出来也是从 VASP wiki 抄，一问就穿。这是它和"室内空气核查"最大的区别。</p>
+<hr>
+<h2 id="五-一定会被问的三个问题">五、一定会被问的三个问题</h2>
+<ol>
+<li><strong>"AI 在哪？这不就是查 VASP wiki？"</strong></li>
+</ol>
+<p>→ 查表是查不到"我要算这个材料的带隙、但只有 CPU 和一周时间，怎么在精度和成本间取舍"的。AI 做的是：从研究目标反推参数、在约束下做取舍、判断结果能不能信、缺信息时追问。规则引擎保证不漏项，LLM 保证听懂人话。再把"流水线版 vs agent 版"并排演示。</p>
+<ol>
+<li><strong>"你们自己算过吗？"</strong></li>
+</ol>
+<p>→ 诚实回答：不算，我们做的是<strong>让算出来的结果可信</strong>。然后展示 QE 收敛测试（如果做了 v3）或 MP 对照实验。</p>
+<ol>
+<li><strong>"材料学院认这个吗？"</strong></li>
+</ol>
+<p>→ 拿出老师评审记录与规则修正记录——这比任何自我评价有用。</p>
+<hr>
+<h2 id="六-和其他方向比">六、和其他方向比</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>方向</th><th>专业硬度</th><th>数据门槛</th><th>需要什么队友</th><th>最大风险</th></tr></thead>
+<tbody>
+<tr><td><strong>材料物性仿真（本方向）</strong></td><td>最高</td><td>低（数据全公开）</td><td><strong>材料/物理（硬依赖）</strong></td><td>没有材料队友就写不出规则</td></tr>
+<tr><td>石油化工（HAZOP）</td><td>最高</td><td>低</td><td>化工/安全</td><td>同上</td></tr>
+<tr><td>电子电路（PCB 审查）</td><td>高</td><td>低</td><td>电子/自动化</td><td>被判"DRC 套壳"</td></tr>
+<tr><td>生物（引物设计）</td><td>高</td><td>低</td><td>生物/制药</td><td>被判"Primer3 套壳"</td></tr>
+<tr><td>生活（室内空气）</td><td>中高</td><td>低</td><td>环境/材料（弱依赖）</td><td>被判"算数工具"</td></tr>
+</tbody></table></div>
+<p><strong>结论</strong>：材料这个方向和石油化工是同一档的"学科最强档"，但材料对队友的要求更硬——因为 DFT 参数这东西，没做过计算的人连错在哪都看不出来。</p>
+<hr>
+<h2 id="七-六句话模板">七、六句话模板</h2>
+<ol>
+<li>我准备帮助的用户是：<strong>刚开始做第一性原理计算的材料/物理方向本科生、研究生新生</strong>。</li>
+<li>他在<strong>第一次独立设计 DFT 计算方案</strong>场景中，需要解决<strong>参数怎么定、输入有没有埋雷、算出来的结果能不能信</strong>的问题。</li>
+<li>用户输入<strong>研究目标、体系结构与拟用参数</strong>，作品输出<strong>带依据的参数方案、输入问题清单与结果可信度评级</strong>。</li>
+<li>第一版先实现<strong>周期性晶体的 10–15 条参数与收敛规则审查、目标反推参数推荐、Materials Project 结果核验</strong>，主要贡献对应<strong>赛道三（AI＋跨学科融合创新）</strong>。</li>
+<li>我们能获得的资料、工具与规则是<strong>VASP wiki、Quantum ESPRESSO 文档、Materials Project 公开数据与参数、pymatgen/ASE，以及材料学院老师核定的判据</strong>。</li>
+<li>我们将用<strong>20 个材料的 MP 参数对照、20 份埋雷输入文件的检出率、老师评审的 10 个案例</strong>检查效果，并如实报告不适用情形。</li>
+</ol>
+<hr>
+<h2 id="八-还需要你确认">八、还需要你确认</h2>
+<ol>
+<li>队里<strong>有没有材料/物理背景、真上手做过 DFT 的同学</strong>？（这是这个方向成立的前提，没有就不要选）</li>
+<li>能不能拉到<strong>材料学院老师或研究生</strong>做规则把关？</li>
+<li>你们有<strong>能跑计算的机器或集群账号</strong>吗？（决定做 v2 还是 v3）</li>
+</ol>
+<p>如果这三点里前两点都是"有"，材料方向很可能是你目前所有选项里<strong>专业分最高</strong>的一个；如果只有软件队友，我还是建议退回"室内空气核查"或"Hazop（找化工队友）"这类依赖更低的题。</p>
+</article></div>
+</body>
+</html>

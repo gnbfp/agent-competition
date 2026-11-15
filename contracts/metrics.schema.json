@@ -1,0 +1,258 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "metrics.json — 指标计算结果（P3 产出）",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "athlete_id",
+    "window",
+    "load",
+    "capacity",
+    "recovery",
+    "flags"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "enum": [
+        "1.0"
+      ]
+    },
+    "athlete_id": {
+      "type": "string"
+    },
+    "window": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "start",
+        "end",
+        "days"
+      ],
+      "properties": {
+        "start": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+        },
+        "end": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+        },
+        "days": {
+          "type": "integer",
+          "minimum": 7
+        }
+      }
+    },
+    "load": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "trimp_week",
+        "acwr_rolling",
+        "acwr_ewma",
+        "acwr_status",
+        "week_load_change_pct"
+      ],
+      "properties": {
+        "trimp_daily": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "date",
+              "trimp"
+            ],
+            "properties": {
+              "date": {
+                "type": "string",
+                "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+              },
+              "trimp": {
+                "type": "number",
+                "minimum": 0
+              }
+            }
+          }
+        },
+        "trimp_week": {
+          "type": "number",
+          "minimum": 0
+        },
+        "acwr_rolling": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 5
+        },
+        "acwr_ewma": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 5
+        },
+        "acwr_status": {
+          "type": "string",
+          "enum": [
+            "undertrained",
+            "optimal",
+            "high",
+            "danger"
+          ]
+        },
+        "week_load_change_pct": {
+          "type": "number"
+        }
+      }
+    },
+    "capacity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "vo2max",
+        "methods",
+        "consistency_ok",
+        "max_spread_pct"
+      ],
+      "properties": {
+        "vo2max": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "value",
+            "unit",
+            "method",
+            "ci_low",
+            "ci_high"
+          ],
+          "properties": {
+            "value": {
+              "type": "number",
+              "minimum": 20,
+              "maximum": 90
+            },
+            "unit": {
+              "type": "string",
+              "enum": [
+                "ml/kg/min"
+              ]
+            },
+            "method": {
+              "type": "string",
+              "enum": [
+                "uth_sorensen",
+                "riegel",
+                "cooper",
+                "daniels"
+              ]
+            },
+            "ci_low": {
+              "type": "number"
+            },
+            "ci_high": {
+              "type": "number"
+            }
+          }
+        },
+        "methods": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "method",
+              "value"
+            ],
+            "properties": {
+              "method": {
+                "type": "string",
+                "enum": [
+                  "uth_sorensen",
+                  "riegel",
+                  "cooper",
+                  "daniels"
+                ]
+              },
+              "value": {
+                "type": "number"
+              }
+            }
+          }
+        },
+        "consistency_ok": {
+          "type": "boolean"
+        },
+        "max_spread_pct": {
+          "type": "number",
+          "minimum": 0
+        }
+      }
+    },
+    "recovery": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "resting_hr_baseline",
+        "resting_hr_delta",
+        "hr_drift_pct",
+        "sleep_h_avg"
+      ],
+      "properties": {
+        "resting_hr_baseline": {
+          "type": "integer",
+          "minimum": 30,
+          "maximum": 120
+        },
+        "resting_hr_delta": {
+          "type": "number"
+        },
+        "hr_drift_pct": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "hrv_rmssd": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "sleep_h_avg": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 24
+        }
+      }
+    },
+    "flags": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "code",
+          "level",
+          "message"
+        ],
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "level": {
+            "type": "string",
+            "enum": [
+              "low",
+              "medium",
+              "high"
+            ]
+          },
+          "message": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

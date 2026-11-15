@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>团队统一标准与环境要求</title>
+<style>
+:root{
+  --ink:#1b1f24; --ink-soft:#4a545e; --line:#e3e8ef; --bg:#f5f7fa;
+  --accent:#0b5fff; --accent-soft:#eaf1ff; --warn:#b45309; --ok:#0a7a45;
+}
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font-family:"Microsoft YaHei","PingFang SC","Hiragino Sans GB","Segoe UI",system-ui,sans-serif;
+  font-size:16.5px; line-height:1.85; -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:1000px;margin:0 auto;padding:40px 22px 90px}
+.card{background:#fff;border:1px solid var(--line);border-radius:16px;
+  box-shadow:0 1px 2px rgba(16,24,40,.04),0 12px 32px -18px rgba(16,24,40,.18);
+  padding:52px 56px 60px}
+h1{font-size:30px;line-height:1.35;margin:0 0 6px;letter-spacing:-.3px}
+h1+blockquote{margin-top:18px}
+h2{font-size:22px;margin:52px 0 16px;padding-top:18px;border-top:1px solid var(--line);letter-spacing:-.2px}
+h2:first-of-type{border-top:0}
+h3{font-size:18.5px;margin:34px 0 12px;color:#0b1b3a}
+h3::before{content:"";display:inline-block;width:4px;height:16px;background:var(--accent);
+  border-radius:2px;margin-right:10px;vertical-align:-2px}
+p{margin:12px 0}
+strong{color:#0b1b3a}
+a{color:var(--accent);text-decoration:none;border-bottom:1px solid #bcd0ff}
+ul,ol{margin:12px 0;padding-left:26px}
+li{margin:7px 0}
+li::marker{color:var(--accent)}
+hr{border:0;border-top:1px dashed var(--line);margin:36px 0}
+blockquote{margin:20px 0;padding:16px 20px;background:var(--accent-soft);
+  border-left:4px solid var(--accent);border-radius:0 10px 10px 0;color:#123;font-size:15.5px}
+blockquote strong{color:var(--accent)}
+code{background:#f2f5f9;border:1px solid var(--line);border-radius:5px;
+  padding:1.5px 6px;font-family:"Cascadia Mono",Consolas,monospace;font-size:13.5px;color:#0b3d91}
+pre.code{overflow-x:auto;margin:18px 0;padding:16px 18px;background:#0b1220;color:#dbe6f6;
+  border-radius:10px;font-family:"Cascadia Mono",Consolas,"Courier New",monospace;
+  font-size:13px;line-height:1.6;white-space:pre}
+pre.code code{background:none;border:0;padding:0;color:inherit;font-size:inherit}
+.table-wrap{overflow-x:auto;margin:18px 0;border:1px solid var(--line);border-radius:10px}
+table{border-collapse:collapse;width:100%;font-size:14.8px;background:#fff}
+thead th{background:#f0f4fa;text-align:left;font-weight:700;color:#0b1b3a;
+  padding:11px 14px;border-bottom:1px solid var(--line);white-space:nowrap}
+tbody td{padding:11px 14px;border-bottom:1px solid #eef2f7;vertical-align:top;color:var(--ink-soft)}
+tbody tr:last-child td{border-bottom:0}
+tbody tr:nth-child(even){background:#fafbfd}
+tbody tr:hover{background:#f3f7ff}
+@media (max-width:720px){
+  .card{padding:28px 20px 36px;border-radius:12px}
+  .wrap{padding:16px 10px 60px}
+  h1{font-size:24px} h2{font-size:19px} body{font-size:15.5px}
+}
+</style>
+</head>
+<body>
+<div class="wrap"><article class="card">
+<h1 id="团队统一标准与环境要求">团队统一标准与环境要求</h1>
+<blockquote>项目：运动生理闭环智能体（赛道三）· 5 人组 · 适用对象：P1–P5 全体成员<br>版本：v1.0（2026-11-15 冻结）· 维护人：P4 · 修改须走第八节流程<br>适用范围：写代码、写文档、查资料、做 PPT——<strong>使用 AI 时同样适用，不因为是 AI 写的就豁免</strong></blockquote>
+<p>一句话：<strong>环境一样、契约一样、AI 用法一样</strong>。三个人写的代码，要能像一个人写的。</p>
+<hr>
+<h2 id="零-这份文档怎么用">零、这份文档怎么用</h2>
+<ol>
+<li><strong>开工前</strong>：照第二节 15 分钟把环境配齐，跑 <code>python tools/check_env.py</code>，必须 <strong>8 项全 PASS</strong> 才能开始写代码。</li>
+<li><strong>每次提交</strong>：跑第七节的三条命令，输出贴进 PR 描述。</li>
+<li><strong>有冲突</strong>：以本文件为准。想改标准，走第八节的例外申请，<strong>不许私自升级 Python、不许私自加库</strong>。</li>
+<li><strong>不是口头约定</strong>：本文件对应的配置文件（<code>.editorconfig</code>、<code>.gitattributes</code>、<code>.vscode/settings.json</code>、<code>tools/check_env.py</code>）已经在仓库里，是能被执行和检查的。</li>
+</ol>
+<hr>
+<h2 id="一-硬性环境清单">一、硬性环境清单</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>项目</th><th>标准（本组基准）</th><th>不接受</th><th>怎么验</th></tr></thead>
+<tbody>
+<tr><td>操作系统</td><td>Windows 10/11 64 位</td><td>32 位系统</td><td><code>systeminfo</code></td></tr>
+<tr><td>Python</td><td><strong>3.12.x</strong>（基准 3.12.14）</td><td>3.11 及以下、3.13、Anaconda 自带解释器混用</td><td><code>python -V</code></td></tr>
+<tr><td>第三方库</td><td><strong>0 个</strong>，只用标准库</td><td>任何 <code>pip install</code></td><td><code>check_env.py</code> 第 3 项</td></tr>
+<tr><td>Git</td><td>≥ 2.40（基准 2.47.1）</td><td>网页上传代码、U 盘拷代码</td><td><code>git --version</code></td></tr>
+<tr><td>编辑器</td><td>VS Code ≥ 1.85（装 4 个扩展）</td><td>记事本改代码</td><td>见 2.3</td></tr>
+<tr><td>终端</td><td>PowerShell 7 或 Windows Terminal</td><td>cmd 中文乱码环境</td><td><code>$PSVersionTable</code></td></tr>
+<tr><td>文件编码</td><td>UTF-8，<strong>无 BOM</strong></td><td>GBK / GB2312 / 带 BOM</td><td><code>check_env.py</code> 第 6 项</td></tr>
+<tr><td>换行符</td><td><strong>LF</strong></td><td>CRLF 混进代码与数据文件</td><td><code>check_env.py</code> 第 7 项</td></tr>
+<tr><td>浏览器</td><td>Chrome / Edge ≥ 120</td><td>IE、旧内核</td><td>演示前自测</td></tr>
+<tr><td>Node.js</td><td><strong>v1 不需要</strong></td><td>引入 npm、打包工具、前端框架</td><td>—</td></tr>
+<tr><td>屏幕适配</td><td>界面在 1366×768 下无横向滚动</td><td>只在 2K 屏上验收</td><td>P5 自测</td></tr>
+</tbody></table></div>
+<p><strong>为什么死磕 Python 3.12 和零依赖</strong>：评审现场很可能只有一台干净的机器。3.12 是当前稳定版，标准库已经够用（JSON、HTTP、CSV、统计全都有）。一旦引入第三方库，就变成"谁的机器能跑、谁的机器装不上"，五天时间经不起这个消耗。</p>
+<hr>
+<h2 id="二-一次性环境搭建-约-15-分钟">二、一次性环境搭建（约 15 分钟）</h2>
+<h3 id="2-1-装-Python-3-12">2.1 装 Python 3.12</h3>
+<p>到 python.org 下载 Windows installer（64-bit），安装时 <strong>勾选 Add python.exe to PATH</strong>。<br>装完开新终端：<code>python -V</code> 必须输出 <code>Python 3.12.x</code>。</p>
+<h3 id="2-2-装-Git">2.2 装 Git</h3>
+<p>默认选项即可。最后一步可选 "Use Visual Studio Code as Git's default editor"。</p>
+<h3 id="2-3-装-VS-Code-与四个扩展">2.3 装 VS Code 与四个扩展</h3>
+<p>VS Code 打开仓库后，右下角会提示安装推荐扩展（<code>.vscode/extensions.json</code> 已配好）。手动装也可以：</p>
+<div class="table-wrap"><table>
+<thead><tr><th>扩展 ID</th><th>作用</th><th>不装的后果</th></tr></thead>
+<tbody>
+<tr><td>ms-python.python</td><td>跑脚本、选解释器</td><td>没法调试</td></tr>
+<tr><td>ms-python.vscode-pylance</td><td>类型提示、跳转</td><td>拼错字段名看不出来</td></tr>
+<tr><td>editorconfig.editorconfig</td><td>自动按 <code>.editorconfig</code> 缩进与换行</td><td>文件混入 CRLF</td></tr>
+<tr><td>eamodio.gitlens</td><td>看谁改了哪一行</td><td>冲突时找不到人</td></tr>
+</tbody></table></div>
+<h3 id="2-4-克隆并打开">2.4 克隆并打开</h3>
+<pre class="code"><code>git clone &lt;仓库地址&gt; 运动生理闭环
+cd 运动生理闭环
+code .</code></pre>
+<p><strong>必须用 VS Code 打开仓库根目录</strong>（能看到 <code>contracts</code>、<code>tools</code>、<code>src</code> 这一层），不要只打开 <code>src/p5_web</code> 之类的子目录，否则解释器路径、扩展配置、相对路径全会错。</p>
+<h3 id="2-5-设置-Git-身份-真名-学号">2.5 设置 Git 身份（真名 + 学号）</h3>
+<pre class="code"><code>git config user.name "戚XX 软件254"
+git config user.email "学号@cczu.edu.cn"</code></pre>
+<p>匿名提交（如 <code>user</code>、<code>admin</code>）在答辩前统计工作量时无法归属。</p>
+<h3 id="2-6-跑环境自检">2.6 跑环境自检</h3>
+<pre class="code"><code>python tools/check_env.py</code></pre>
+<p>期望输出（全部 PASS 才算就绪）：</p>
+<pre class="code"><code>[1/8] Python 版本    PASS 当前 3.12.14（要求 3.12.x）
+[5/8] 样例校验       PASS 4 个文件，0 处错误
+结果：8 PASS / 0 WARN / 0 FAIL
+结论：环境就绪，可以开始写代码。</code></pre>
+<h3 id="2-7-第一次把东西跑起来">2.7 第一次把东西跑起来</h3>
+<p>两个终端窗口：</p>
+<pre class="code"><code># 窗口 1：假后端（P5 不等后端就能开工）
+python contracts/mock_api.py --port 8080
+
+# 窗口 2：前端静态服务
+python -m http.server 8000 -d src/p5_web</code></pre>
+<p>浏览器打开 <code>http://127.0.0.1:8000</code>，能看到读 <code>report_sample.json</code> 的页面即成功。</p>
+<h3 id="2-8-五种常见装错-与处理方式">2.8 五种常见装错，与处理方式</h3>
+<div class="table-wrap"><table>
+<thead><tr><th>现象</th><th>原因</th><th>处理</th></tr></thead>
+<tbody>
+<tr><td><code>python</code> 打开的是应用商店</td><td>Microsoft Store 的占位程序</td><td>卸载它，装官方 installer</td></tr>
+<tr><td><code>python -V</code> 是 3.13 或 3.11</td><td>PATH 里排了别的版本</td><td><code>where python</code> 看顺序，调 PATH 或重装</td></tr>
+<tr><td>中文输出乱码</td><td>终端代码页不是 UTF-8</td><td>换 PowerShell 7，或 <code>chcp 65001</code></td></tr>
+<tr><td>clone 报 SSL 错误</td><td>网络或代理</td><td>换网络重试，<strong>不许</strong> <code>git config --global http.sslVerify false</code></td></tr>
+<tr><td>脚本报找不到文件</td><td>仓库路径含空格或中文</td><td>仓库放 <code>D:\code\...</code> 这类纯 ASCII 路径</td></tr>
+</tbody></table></div>
+<hr>
+<h2 id="三-仓库与目录规范">三、仓库与目录规范</h2>
+<h3 id="3-1-目标目录结构">3.1 目标目录结构</h3>
+<pre class="code"><code>运动生理闭环/
+├── contracts/              契约与校验（P4 维护，其他人只读）
+│   ├── *.schema.json       4 份 JSON Schema
+│   ├── samples/            4 份黄金样例
+│   ├── validate_contract.py  校验器（唯一真源）
+│   └── mock_api.py         假后端（P5 当天就能开工）
+├── tools/                  环境与质量脚本
+│   └── check_env.py        环境自检
+├── src/
+│   ├── p2_ingest/          P2：CSV → activity.json
+│   ├── p3_metrics/         P3：activity.json → metrics.json
+│   ├── p4_agent/           P4：metrics.json → plan.json / report.json
+│   └── p5_web/             P5：原生 HTML/JS，只读 report.json
+├── data/
+│   ├── raw/                真实原始数据（不进 Git）
+│   └── sample/             脱敏样例（可进 Git）
+├── docs/                   文档、AI 留痕、答辩材料
+└── tests/                  各人的最小测试</code></pre>
+<h3 id="3-2-分支与合并">3.2 分支与合并</h3>
+<div class="table-wrap"><table>
+<thead><tr><th>规则</th><th>内容</th></tr></thead>
+<tbody>
+<tr><td>主干</td><td><code>main</code>，<strong>保护分支，禁止直接 push</strong></td></tr>
+<tr><td>分支名</td><td><code>feature/&lt;模块&gt;-&lt;事项&gt;</code>，例：<code>feature/p2-csv-parser</code>、<code>feature/p5-risk-panel</code></td></tr>
+<tr><td>合并方式</td><td>提 PR → 至少 1 人 review → <code>check_env</code> 通过 → 合并</td></tr>
+<tr><td>PR 大小</td><td>单次 ≤ 300 行改动；更大的拆成多次</td></tr>
+<tr><td>冲突处理</td><td>谁后合谁解决；不许用 <code>--force</code> 覆盖别人提交</td></tr>
+</tbody></table></div>
+<h3 id="3-3-提交信息格式">3.3 提交信息格式</h3>
+<p><code>&lt;type&gt;(&lt;scope&gt;): &lt;一句话&gt;</code>，type 与 scope 用固定词表：</p>
+<div class="table-wrap"><table>
+<thead><tr><th>type</th><th>用于</th><th>示例</th></tr></thead>
+<tbody>
+<tr><td>feat</td><td>新功能</td><td><code>feat(p3): 加 EWMA 版 ACWR</code></td></tr>
+<tr><td>fix</td><td>修 bug</td><td><code>fix(p2): 配速 6'60" 不再静默取整</code></td></tr>
+<tr><td>docs</td><td>文档</td><td><code>docs(contracts): 补 C8 的说明</code></td></tr>
+<tr><td>test</td><td>测试</td><td><code>test(p4): 加 20 条 R15 触发用例</code></td></tr>
+<tr><td>chore</td><td>杂务</td><td><code>chore(tools): check_env 加 BOM 检查</code></td></tr>
+<tr><td>refactor</td><td>重构（不改行为）</td><td><code>refactor(p4): 抽出规则表加载</code></td></tr>
+</tbody></table></div>
+<p>scope 取值：<code>p2</code> <code>p3</code> <code>p4</code> <code>p5</code> <code>contracts</code> <code>docs</code> <code>tools</code>。</p>
+<h3 id="3-4-禁止提交的东西">3.4 禁止提交的东西</h3>
+<div class="table-wrap"><table>
+<thead><tr><th>禁止</th><th>原因</th></tr></thead>
+<tbody>
+<tr><td><code>data/raw/</code> 下的原始导出（.fit/.tcx/.gpx/含姓名的 CSV）</td><td>含姓名、GPS 轨迹、设备序列号</td></tr>
+<tr><td><code>__pycache__/</code>、<code>.venv/</code>、<code>~$*.docx</code></td><td>垃圾文件，撑大仓库</td></tr>
+<tr><td>自己的 <code>.vscode/</code> 私人设置</td><td>只提交 <code>settings.json</code> 与 <code>extensions.json</code></td></tr>
+<tr><td>大文件（&gt; 5 MB，含视频、docx、pdf）</td><td>走网盘或群共享，Git 只放代码与数据样例</td></tr>
+<tr><td>密码、密钥、个人邮箱密码</td><td>一旦推上去就等于公开</td></tr>
+</tbody></table></div>
+<h3 id="3-5-每个-PR-必须写清四件事">3.5 每个 PR 必须写清四件事</h3>
+<ol>
+<li>改了哪个契约字段（没有就写"无"）；</li>
+<li>跑了哪条校验命令、结果如何（贴 <code>check_env</code> 或 <code>validate_contract.py</code> 的输出）；</li>
+<li>界面改动<strong>贴截图</strong>；</li>
+<li>若含 AI 生成代码，链接到 <code>docs/AI使用留痕.md</code> 的对应行。</li>
+</ol>
+<hr>
+<h2 id="四-代码规范">四、代码规范</h2>
+<h3 id="4-1-Python-十条-可逐条检查">4.1 Python 十条（可逐条检查）</h3>
+<ol>
+<li>遵守 PEP 8；<strong>行长 ≤ 100</strong>；4 空格缩进；<strong>不许 Tab</strong>。</li>
+<li>每个函数 ≤ 50 行；超过就拆。</li>
+<li>所有公开函数写类型注解和一句话 docstring（说清参数与返回）。</li>
+<li>模块顶部统一 <code>from __future__ import annotations</code>。</li>
+<li>变量、函数、文件用 <code>snake_case</code>；类用 <code>PascalCase</code>；常量全大写。</li>
+<li><strong>禁止裸 <code>except:</code></strong>；捕获具体异常；异常里带上文（哪个文件、哪一行、什么值）。</li>
+<li>库代码用 <code>logging</code>，不用 <code>print</code>；命令行脚本可以用 <code>print</code>。</li>
+<li>不许留无主 <code>TODO</code>：写成 <code>TODO(P3): 处理跨零点</code> 这种带责任人的。</li>
+<li>数值边界必须显式处理：除零、空列表、<code>None</code>、负值各一行防御。</li>
+<li>一个文件只干一件事：解析的不管计算，计算的不管渲染。</li>
+</ol>
+<h3 id="4-2-命名与单位-与契约一致">4.2 命名与单位（与契约一致）</h3>
+<div class="table-wrap"><table>
+<thead><tr><th>类型</th><th>后缀</th><th>示例</th><th>说明</th></tr></thead>
+<tbody>
+<tr><td>时长</td><td><code>_s</code></td><td><code>duration_s</code></td><td>秒，整数</td></tr>
+<tr><td>距离</td><td><code>_m</code></td><td><code>distance_m</code></td><td>米，整数</td></tr>
+<tr><td>配速</td><td><code>_s_per_km</code></td><td><code>pace_s_per_km</code></td><td>6'00" = 360</td></tr>
+<tr><td>心率</td><td><code>_bpm</code></td><td><code>avg_hr_bpm</code></td><td>次/分，整数</td></tr>
+<tr><td>百分比</td><td><code>_pct</code></td><td><code>ratio_pct</code></td><td>0–100</td></tr>
+<tr><td>比率/指数</td><td><code>_ratio</code></td><td><code>acwr_ratio</code></td><td>小数，保留 2 位</td></tr>
+<tr><td>日期</td><td>—</td><td><code>date</code></td><td><code>YYYY-MM-DD</code></td></tr>
+<tr><td>时间戳</td><td>—</td><td><code>started_at</code></td><td>ISO8601 带 <code>+08:00</code></td></tr>
+</tbody></table></div>
+<p><strong>禁止</strong>命名：<code>data</code>、<code>info</code>、<code>tmp</code>、<code>res</code>、<code>d1</code>、<code>a</code>、<code>x2</code>。看不懂的命名等于没命名。</p>
+<h3 id="4-3-前端-JavaScript-六条">4.3 前端 JavaScript 六条</h3>
+<ol>
+<li>原生 ES module（<code>&lt;script type="module"&gt;</code>），<strong>不引框架、不引 CDN</strong>，离线必须能跑。</li>
+<li><strong>不自己算指标</strong>：ACWR、TRIMP、VO₂max 一律从 <code>report.json</code> 读，页面只负责显示。</li>
+<li>渲染集中在一个 <code>render.js</code>，禁止在事件回调里直接拼大段 HTML。</li>
+<li>数据缺失显示「数据不足」，<strong>不许显示 0</strong>（0 会被误读为真实测量值）。</li>
+<li>网络失败给明确提示，不许白屏。</li>
+<li>图表用原生 SVG 或 Canvas 手绘，不引图表库。</li>
+</ol>
+<h3 id="4-4-时间与时区">4.4 时间与时区</h3>
+<p>存储一律 ISO8601 带偏移（<code>2026-11-14T07:30:00+08:00</code>），界面显示本地时间并标注 <code>+08:00</code>。<br>跨零点跑步（如 23:50 开始）归属<strong>开始日期</strong>，这条写进契约 C 系列校验里。</p>
+<h3 id="4-5-错误处理与日志">4.5 错误处理与日志</h3>
+<ul>
+<li>出错时<strong>先落日志再抛异常</strong>，日志里带 <code>activity_id</code> 或文件路径，方便定位。</li>
+<li>不许把异常吞掉后返回一个"看起来正常"的假值——这是本项目最危险的 bug 类型（会让报告给出错误结论）。</li>
+<li>日志级别：<code>INFO</code> 正常流程，<code>WARNING</code> 数据可疑但不致命，<code>ERROR</code> 无法继续。</li>
+</ul>
+<h3 id="4-6-代码审查看什么-reviewer-五条">4.6 代码审查看什么（reviewer 五条）</h3>
+<ol>
+<li>有没有绕过契约（字段名、单位、枚举是否与 schema 一致）；</li>
+<li>有没有自己造一套算法（同类指标是否与 P3 的实现重复）；</li>
+<li>边界处理（空数据、缺失值、非法值）；</li>
+<li>有没有测试或至少一条手动验证记录；</li>
+<li>是否可解释——<strong>看不懂就直接问，问不明白就打回</strong>。</li>
+</ol>
+<hr>
+<h2 id="五-数据与隐私-健康数据-硬约束">五、数据与隐私（健康数据，硬约束）</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>数据类型</th><th>能否进 Git</th><th>能否贴给 AI</th><th>备注</th></tr></thead>
+<tbody>
+<tr><td>手表原始导出（.fit/.tcx/.gpx、含姓名 CSV）</td><td>否</td><td>否</td><td>放 <code>data/raw/</code>，已在 <code>.gitignore</code></td></tr>
+<tr><td>脱敏后的活动记录</td><td>可以（仅 <code>data/sample/</code>）</td><td>可以</td><td>只留匿名 ID + 生理指标</td></tr>
+<tr><td>伤病主诉文字</td><td>否</td><td>否（去掉姓名、时间、地点后可以）</td><td>报告里用"某队员"代替</td></tr>
+<tr><td>公开赛事成绩</td><td>可以</td><td>可以</td><td>标明来源与获取日期</td></tr>
+<tr><td>队友的健康数据</td><td>仅在其本人书面同意后使用</td><td>否</td><td>群里发一句"我同意用于本项目"并截图存档</td></tr>
+</tbody></table></div>
+<p><strong>脱敏四步</strong>（P2 写脚本，其余人用）：</p>
+<ol>
+<li>删姓名、手机号、设备序列号；</li>
+<li>删 GPS 轨迹与起终点位置（本项目不需要位置）；</li>
+<li>用 <code>anon_01</code>…<code>anon_05</code> 替换人名；</li>
+<li>检查：全文搜索真实姓名与"常州""宿舍"等可定位词，命中数为 0 才提交。</li>
+</ol>
+<p><strong>私隐红线</strong>：把真实原始数据（含姓名或位置）粘贴进任何公共 AI 对话框，等同公开泄露。用假数据或脱敏样例去问 AI。</p>
+<hr>
+<h2 id="六-AI-使用规范-所有队员强制">六、AI 使用规范（所有队员强制）</h2>
+<blockquote>这一节是本文件最重要的一节。<strong>用了 AI 写的东西，责任仍然是写它的人</strong>。</blockquote>
+<h3 id="6-1-三条总原则">6.1 三条总原则</h3>
+<ol>
+<li><strong>AI 是工具，不是作者</strong>：它出的是草稿，最终解释权与责任在你。</li>
+<li><strong>AI 产出默认有错</strong>：尤其名字、单位、阈值、引用——它最爱在这些地方编得像真的。</li>
+<li><strong>解释不了就不提交</strong>：答辩现场评审会让你指着某一行问"这里为什么这样写"。</li>
+</ol>
+<h3 id="6-2-三档清单">6.2 三档清单</h3>
+<div class="table-wrap"><table>
+<thead><tr><th>档位</th><th>可以用来做</th><th>要求</th></tr></thead>
+<tbody>
+<tr><td>绿：随便用</td><td>写样板代码、正则、重命名、翻译、解释报错、生成测试样例、文档初稿、PPT 大纲</td><td>自己读一遍即可</td></tr>
+<tr><td>黄：必须逐行审 + 留痕</td><td>规则判定逻辑、阈值与公式、契约字段定义、数据管道、报告文案</td><td>读懂每一行 → 按本文件改风格 → 跑测试 → 填留痕</td></tr>
+<tr><td>红：禁止</td><td>见 6.3 六条</td><td>直接打回</td></tr>
+</tbody></table></div>
+<h3 id="6-3-六条禁止-违反即打回">6.3 六条禁止（违反即打回）</h3>
+<ol>
+<li><strong>禁止用 AI 生成或"回忆"文献、标准条款、数字依据</strong>。</li>
+</ol>
+<p>本项目报告里每个结论都要挂 <code>rule_id</code> 与依据出处（契约 C8 会检查）。AI 编一条 GB/T 编号，答辩当场被问"第几条"就崩。<br>正确做法：AI 可以帮你<strong>解释</strong>你手上有原文的条款，不能帮你<strong>产生</strong>条款。</p>
+<ol>
+<li><strong>禁止把 schema / 契约文件整体丢给 AI 让它"顺手改"</strong>。</li>
+</ol>
+<p>字段由人定（P4 + 消费方确认），AI 只能写实现。</p>
+<ol>
+<li><strong>禁止把真实姓名、GPS、健康原始数据贴进公共 AI</strong>。</li>
+<li><strong>禁止提交自己看不懂的代码</strong>（包括"它跑通了我就交了"）。</li>
+<li><strong>禁止用 AI 编的数据充当验证数据</strong>。</li>
+</ol>
+<p>模拟数据必须标注"模拟"，并单独存放；验证章节里写清哪部分是模拟、哪部分是真跑。</p>
+<ol>
+<li><strong>禁止用"我觉得能跑"代替测试</strong>。AI 说"这段应该没问题"不算验证。</li>
+</ol>
+<h3 id="6-4-留痕制度">6.4 留痕制度</h3>
+<p>所有 AI 产出且<strong>进入仓库</strong>的代码或文档，在 <code>docs/AI使用留痕.md</code> 追加一行：</p>
+<div class="table-wrap"><table>
+<thead><tr><th>日期</th><th>谁</th><th>文件</th><th>AI</th><th>让它做什么</th><th>我改了什么</th><th>怎么验证的</th></tr></thead>
+<tbody>
+<tr><td>11-15</td><td>P2</td><td>csv_parser.py</td><td>DeepSeek</td><td>写配速解析</td><td>补非法值兜底、改抛异常</td><td>单测+5 条边界手测</td></tr>
+</tbody></table></div>
+<ul>
+<li>「我改了什么」写"没改"要特别小心——没审的 AI 代码最容易在答辩翻车。</li>
+<li>「怎么验证的」必须是一条能复现的命令或操作。</li>
+</ul>
+<h3 id="6-5-AI-生成代码的验收五步">6.5 AI 生成代码的验收五步</h3>
+<div class="table-wrap"><table>
+<thead><tr><th>步骤</th><th>动作</th><th>不合格的表现</th></tr></thead>
+<tbody>
+<tr><td>1 读懂</td><td>能用自己的话讲清这段在干什么</td><td>只能说"AI 说这样写"</td></tr>
+<tr><td>2 对齐</td><td>字段名、单位、枚举、日志方式改成本项目规范</td><td>出现 <code>heart_rate</code>、<code>print</code>、<code>critical</code> 这类自造词</td></tr>
+<tr><td>3 跑测试</td><td><code>check_env</code> + 该模块测试 + 手工塞边界值</td><td>只跑了一遍正常路径</td></tr>
+<tr><td>4 边界</td><td>空数据、缺失、非法值、跨零点各试一次</td><td>"这种情况不会出现"</td></tr>
+<tr><td>5 留痕</td><td>填 <code>docs/AI使用留痕.md</code></td><td>提交里没有任何说明</td></tr>
+</tbody></table></div>
+<h3 id="6-6-提问模板-照这个结构问-返工少一半">6.6 提问模板（照这个结构问，返工少一半）</h3>
+<pre class="code"><code>【项目】大学生智能体比赛作品：跑步训练闭环助手，Python 3.12，只用标准库。
+【约束】字段名与单位必须与下面的契约片段一致；不许引入第三方库；
+        不许编造标准编号或文献；输出只要代码，不要解释性废话。
+【契约片段】（粘贴 contracts 里相关的 properties 部分）
+【任务】实现 xxx，输入 yyy，输出 zzz。
+【边界】空列表、缺失值、非法值分别怎么处理，请在代码里体现。</code></pre>
+<h3 id="6-7-AI-与规范的冲突处理">6.7 AI 与规范的冲突处理</h3>
+<div class="table-wrap"><table>
+<thead><tr><th>常见冲突</th><th>处理</th></tr></thead>
+<tbody>
+<tr><td>AI 起了别的字段名（<code>heart_rate</code>）</td><td>改成契约名（<code>avg_hr_bpm</code>）</td></tr>
+<tr><td>AI 用 <code>print</code> 调试</td><td>改成 <code>logging</code>，调试完删掉</td></tr>
+<tr><td>AI 给一个"看起来合理"的阈值（如"心率超 180 就危险"）</td><td>阈值必须能指到依据（ACSM 或队内约定），指不到就不用</td></tr>
+<tr><td>AI 自造枚举值（<code>critical</code>）</td><td>只用契约里的 <code>low/medium/high</code></td></tr>
+<tr><td>AI 生成的注释是英文或空话</td><td>改成中文，说明"为什么"</td></tr>
+</tbody></table></div>
+<p><strong>总原则：契约与本文件优先于 AI 的任何建议。</strong></p>
+<h3 id="6-8-用-AI-写文档与-PPT-的四条">6.8 用 AI 写文档与 PPT 的四条</h3>
+<ol>
+<li>数字一律来自 <code>report.json</code> 或实际测跑结果，不许让 AI"估一个"。</li>
+<li>引用必须有可回查出处（作者、年份、期刊/标准号），且自己查过原文摘要。</li>
+<li>不许整段照搬 AI 文本——读一遍，用自己的话重写，否则答辩一问细节就露。</li>
+<li>PPT 里的图表必须能指出数据来源文件，禁止"示意图凑数"。</li>
+</ol>
+<h3 id="6-9-违规后果">6.9 违规后果</h3>
+<p>编造依据、泄露隐私、提交看不懂的代码，属第八节三条红线，直接打回并记录，影响个人分工评分。</p>
+<hr>
+<h2 id="七-自检与提交-每次都要跑">七、自检与提交（每次都要跑）</h2>
+<pre class="code"><code>python tools/check_env.py            # 环境 + 契约 + 编码
+python contracts/validate_contract.py  # 契约与样例校验
+python -m compileall -q src           # 语法检查</code></pre>
+<div class="table-wrap"><table>
+<thead><tr><th>时机</th><th>跑哪条</th></tr></thead>
+<tbody>
+<tr><td>每天开工</td><td><code>check_env.py</code></td></tr>
+<tr><td>改了契约文件</td><td><code>validate_contract.py</code></td></tr>
+<tr><td>提 PR 前</td><td>三条全跑</td></tr>
+<tr><td>演示前 30 分钟</td><td><code>check_env.py</code> + 打开页面走一遍完整流程</td></tr>
+</tbody></table></div>
+<p>三条命令的输出<strong>贴进 PR 描述</strong>，评审时直接看得到。</p>
+<hr>
+<h2 id="八-违规-例外与版本">八、违规、例外与版本</h2>
+<h3 id="8-1-三条红线">8.1 三条红线</h3>
+<ol>
+<li>编造依据（文献、标准条款、数字）；</li>
+<li>泄露隐私（真实姓名、GPS、健康原始数据）；</li>
+<li>提交自己看不懂的代码。</li>
+</ol>
+<p>处理：PR 直接打回，记录在 <code>docs/AI使用留痕.md</code> 末尾的违规记录；同一人两次以上，分工评分扣减。</p>
+<h3 id="8-2-例外申请-环境或工具要变更时">8.2 例外申请（环境或工具要变更时）</h3>
+<ol>
+<li>在群里说明：要改什么、为什么标准库/Python 3.12 做不到、影响谁；</li>
+<li>P4 在 48 小时内裁决并回复；</li>
+<li>通过后：改 <code>requirements.txt</code> 或本文件 → 升版本号 → 通知全员重跑 <code>check_env</code>；</li>
+<li>未通过前，<strong>保持现状</strong>，不许自己先装上再说。</li>
+</ol>
+<h3 id="8-3-版本记录">8.3 版本记录</h3>
+<div class="table-wrap"><table>
+<thead><tr><th>版本</th><th>日期</th><th>变更</th><th>谁</th></tr></thead>
+<tbody>
+<tr><td>v1.0</td><td>2026-11-15</td><td>首版冻结：环境、仓库、代码、数据、AI 五类规范</td><td>P4</td></tr>
+</tbody></table></div>
+<p>下次复核：第一次联调之后（看有没有需要放开的约束）。</p>
+<hr>
+<h2 id="九-附录">九、附录</h2>
+<h3 id="A-命令速查">A 命令速查</h3>
+<div class="table-wrap"><table>
+<thead><tr><th>目的</th><th>命令</th></tr></thead>
+<tbody>
+<tr><td>看 Python 版本</td><td><code>python -V</code></td></tr>
+<tr><td>环境自检</td><td><code>python tools/check_env.py</code></td></tr>
+<tr><td>契约校验</td><td><code>python contracts/validate_contract.py</code></td></tr>
+<tr><td>校验自己的产出</td><td><code>python contracts/validate_contract.py --dir out</code></td></tr>
+<tr><td>起假后端</td><td><code>python contracts/mock_api.py --port 8080</code></td></tr>
+<tr><td>起前端</td><td><code>python -m http.server 8000 -d src/p5_web</code></td></tr>
+<tr><td>语法检查</td><td><code>python -m compileall -q src</code></td></tr>
+<tr><td>看谁改了什么</td><td><code>git log --oneline --graph</code></td></tr>
+</tbody></table></div>
+<h3 id="B-macOS-Linux-差异">B macOS / Linux 差异</h3>
+<div class="table-wrap"><table>
+<thead><tr><th>项</th><th>Windows</th><th>macOS / Linux</th></tr></thead>
+<tbody>
+<tr><td>解释器命令</td><td><code>python</code></td><td>通常是 <code>python3</code>（建议做别名）</td></tr>
+<tr><td>路径分隔</td><td><code>\</code></td><td><code>/</code></td></tr>
+<tr><td>编码问题</td><td>需 <code>chcp 65001</code></td><td>默认 UTF-8，无问题</td></tr>
+<tr><td>换行</td><td>需 <code>.gitattributes</code> 强制 LF</td><td>原生 LF</td></tr>
+</tbody></table></div>
+<p><strong>注意</strong>：仓库里所有脚本用 <code>pathlib</code> 处理路径，禁止手拼 <code>"a\\b"</code> 这种字符串，保证跨平台。</p>
+<h3 id="C-已进仓库的配置文件">C 已进仓库的配置文件</h3>
+<div class="table-wrap"><table>
+<thead><tr><th>文件</th><th>作用</th><th>谁维护</th></tr></thead>
+<tbody>
+<tr><td><code>.editorconfig</code></td><td>缩进、编码、换行</td><td>P4</td></tr>
+<tr><td><code>.gitattributes</code></td><td>强制 LF、二进制识别</td><td>P4</td></tr>
+<tr><td><code>.gitignore</code></td><td>挡掉原始数据与临时文件</td><td>P4</td></tr>
+<tr><td><code>requirements.txt</code></td><td>依赖清单（v1 为空）</td><td>P4</td></tr>
+<tr><td><code>.vscode/settings.json</code></td><td>编辑器统一设置</td><td>P4</td></tr>
+<tr><td><code>.vscode/extensions.json</code></td><td>推荐扩展</td><td>P4</td></tr>
+<tr><td><code>tools/check_env.py</code></td><td>环境自检脚本</td><td>P4</td></tr>
+<tr><td><code>docs/AI使用留痕.md</code></td><td>AI 使用记录</td><td>全员</td></tr>
+</tbody></table></div>
+<h3 id="D-队员确认-开工前各自填一行">D 队员确认（开工前各自填一行）</h3>
+<div class="table-wrap"><table>
+<thead><tr><th>队员</th><th>分工</th><th>Python 版本</th><th><code>check_env</code> 结果</th><th>日期</th></tr></thead>
+<tbody>
+<tr><td></td><td>P1</td><td></td><td></td><td></td></tr>
+<tr><td></td><td>P2</td><td></td><td></td><td></td></tr>
+<tr><td></td><td>P3</td><td></td><td></td><td></td></tr>
+<tr><td></td><td>P4</td><td></td><td></td><td></td></tr>
+<tr><td></td><td>P5</td><td></td><td></td><td></td></tr>
+</tbody></table></div>
+<h3 id="E-一句话名词表">E 一句话名词表</h3>
+<div class="table-wrap"><table>
+<thead><tr><th>名词</th><th>一句话解释</th></tr></thead>
+<tbody>
+<tr><td>契约（schema）</td><td>字段名、类型、取值范围的唯一真源，改了要全员同步</td></tr>
+<tr><td>黄金样例</td><td>四个人拿同一份数据跑，输出必须一样的那份数据</td></tr>
+<tr><td>留痕</td><td><code>docs/AI使用留痕.md</code> 里的一行记录，说明哪段是 AI 写的、你改了什么</td></tr>
+<tr><td>ACWR</td><td>近 7 天负荷 ÷ 近 28 天平均负荷，0.8–1.3 为安全区</td></tr>
+<tr><td>TRIMP</td><td>按心率强度加权后的训练负荷，不是公里数相加</td></tr>
+</tbody></table></div>
+</article></div>
+</body>
+</html>

@@ -1,0 +1,42 @@
+# ---------- Python ----------
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+env/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.egg-info/
+
+# ---------- 真实数据：一律不进仓库 ----------
+# 手表导出的原始文件包含姓名、GPS 轨迹、设备序列号
+data/raw/
+*.fit
+*.tcx
+*.gpx
+*.csv.raw
+
+# ---------- 编辑器与系统 ----------
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+.idea/
+*.swp
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ---------- Office / 临时文件 ----------
+~$*
+*.tmp
+*.bak
+
+# ---------- 运行产物 ----------
+out/
+dist/
+*.log
+
+# ---------- 构建中间产物（_build 下带下划线前缀的都是临时文件） ----------
+_build/_*

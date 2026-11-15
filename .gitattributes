@@ -1,0 +1,22 @@
+# 换行与编码：仓库内一律 LF、UTF-8
+* text=auto eol=lf
+
+# 二进制文件不要做文本转换
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.bmp binary
+*.docx binary
+*.xlsx binary
+*.pptx binary
+*.pdf binary
+*.zip binary
+*.mp4 binary
+*.woff binary
+*.woff2 binary
+
+# 契约与样例是程序消费的，禁止换行转换
+contracts/*.json text eol=lf
+contracts/samples/*.json text eol=lf

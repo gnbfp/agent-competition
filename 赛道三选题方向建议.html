@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>赛道三「AI＋跨学科融合创新」选题方向建议</title>
+<style>
+:root{
+  --ink:#1b1f24; --ink-soft:#4a545e; --line:#e3e8ef; --bg:#f5f7fa;
+  --accent:#0b5fff; --accent-soft:#eaf1ff; --warn:#b45309; --ok:#0a7a45;
+}
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font-family:"Microsoft YaHei","PingFang SC","Hiragino Sans GB","Segoe UI",system-ui,sans-serif;
+  font-size:16.5px; line-height:1.85; -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:1000px;margin:0 auto;padding:40px 22px 90px}
+.card{background:#fff;border:1px solid var(--line);border-radius:16px;
+  box-shadow:0 1px 2px rgba(16,24,40,.04),0 12px 32px -18px rgba(16,24,40,.18);
+  padding:52px 56px 60px}
+h1{font-size:30px;line-height:1.35;margin:0 0 6px;letter-spacing:-.3px}
+h1+blockquote{margin-top:18px}
+h2{font-size:22px;margin:52px 0 16px;padding-top:18px;border-top:1px solid var(--line);letter-spacing:-.2px}
+h2:first-of-type{border-top:0}
+h3{font-size:18.5px;margin:34px 0 12px;color:#0b1b3a}
+h3::before{content:"";display:inline-block;width:4px;height:16px;background:var(--accent);
+  border-radius:2px;margin-right:10px;vertical-align:-2px}
+p{margin:12px 0}
+strong{color:#0b1b3a}
+a{color:var(--accent);text-decoration:none;border-bottom:1px solid #bcd0ff}
+ul,ol{margin:12px 0;padding-left:26px}
+li{margin:7px 0}
+li::marker{color:var(--accent)}
+hr{border:0;border-top:1px dashed var(--line);margin:36px 0}
+blockquote{margin:20px 0;padding:16px 20px;background:var(--accent-soft);
+  border-left:4px solid var(--accent);border-radius:0 10px 10px 0;color:#123;font-size:15.5px}
+blockquote strong{color:var(--accent)}
+code{background:#f2f5f9;border:1px solid var(--line);border-radius:5px;
+  padding:1.5px 6px;font-family:"Cascadia Mono",Consolas,monospace;font-size:13.5px;color:#0b3d91}
+.table-wrap{overflow-x:auto;margin:18px 0;border:1px solid var(--line);border-radius:10px}
+table{border-collapse:collapse;width:100%;font-size:14.8px;background:#fff}
+thead th{background:#f0f4fa;text-align:left;font-weight:700;color:#0b1b3a;
+  padding:11px 14px;border-bottom:1px solid var(--line);white-space:nowrap}
+tbody td{padding:11px 14px;border-bottom:1px solid #eef2f7;vertical-align:top;color:var(--ink-soft)}
+tbody tr:last-child td{border-bottom:0}
+tbody tr:nth-child(even){background:#fafbfd}
+tbody tr:hover{background:#f3f7ff}
+@media (max-width:720px){
+  .card{padding:28px 20px 36px;border-radius:12px}
+  .wrap{padding:16px 10px 60px}
+  h1{font-size:24px} h2{font-size:19px} body{font-size:15.5px}
+}
+</style>
+</head>
+<body>
+<div class="wrap"><article class="card">
+<h1 id="赛道三-AI-跨学科融合创新-选题方向建议">赛道三「AI＋跨学科融合创新」选题方向建议</h1>
+<blockquote>依据：《智能体科普与参赛指南》（常州大学首届智能体创新大赛 · 2026年10月）<br>面向：以软件/计算机为技术主力的参赛队，需要搭一个跨专业队友<br>结论先行：<strong>首选方向 1（实验室危险化学品安全核查助手）</strong>，备选方向 2（动力电池数据体检）、方向 3（水质异常识别）。详见决策矩阵。</blockquote>
+<hr>
+<h2 id="一-先把这条赛道的评分逻辑拆开">一、先把这条赛道的评分逻辑拆开</h2>
+<p>指南对赛道三的三句话，等于给了判分口径：</p>
+<div class="table-wrap"><table>
+<thead><tr><th>指南原文</th><th>翻译成设计要求</th></tr></thead>
+<tbody>
+<tr><td>核心问题：专业知识怎样帮助解决一个专业问题？</td><td>作品必须有<strong>专业规则</strong>，不能只是"接个大模型"</td></tr>
+<tr><td>适合起点：能提供规则、整理领域知识并判断结果是否合理</td><td>团队里必须有人能<strong>把专家经验写成规则</strong></td></tr>
+<tr><td>重点展示：专业知识怎样影响处理流程和结果质量</td><td>规则要<strong>可展示、可对照</strong>，能被评委逐条检查</td></tr>
+</tbody></table></div>
+<p>再叠加评分表（创新与选题价值 30 ／ 作品完成度与技术实现 30 ／ 落地应用前景 20 ／ 文档与答辩展示 20），得到五条设计原则：</p>
+<ul>
+<li><strong>P1 规则显性化</strong>：专业口径写成可执行的规则表／字段表／判据表。<strong>规则表本身就是作品成果</strong>，要单独做一页展示。不要藏在提示词里。</li>
+<li><strong>P2 证据可回查</strong>：每个结论都要能追溯到"条款号 / 标准限值 / 原始数据行 / 图谱位置"。这是评委最容易当场验证的东西，也是"AI 编造"的免疫针。</li>
+<li><strong>P3 人机边界清楚</strong>：输出分级（禁止 / 需条件 / 常规；或 高 / 中 / 低置信），越出规则库就标"待复核"。不要替专业人士下最终结论。</li>
+<li><strong>P4 对照实验</strong>：准备 20 条左右人工标注的"标准答案"，报漏报率、误报率、引用正确率，并主动展示 3 个失败案例和修复记录。这一条几乎决定"完成度 30 分"。</li>
+<li><strong>P5 第一版必须能跑</strong>：初赛就要交可运行原型，只交构想或文字方案不满足要求。所以选题的数据门槛必须在 3 周内能跨过。</li>
+</ul>
+<p>一句话公式：<strong>专业规则 × 可回查证据 × 可运行流程 × 对照验证</strong>。</p>
+<hr>
+<h2 id="二-六个候选方向">二、六个候选方向</h2>
+<h3 id="方向-1-实验室危险化学品安全核查助手-强烈推荐">方向 1｜实验室危险化学品安全核查助手（强烈推荐）</h3>
+<p><strong>定位</strong>：输入一份实验方案（试剂＋步骤），输出"哪里会出危险、依据哪条、怎么改"的风险清单。</p>
+<div class="table-wrap"><table>
+<thead><tr><th>环节</th><th>设计</th></tr></thead>
+<tbody>
+<tr><td>用户</td><td>高校实验室安全员、实验课任课教师、进实验室的本科生/研究生</td></tr>
+<tr><td>痛点</td><td>试剂相容性、废液分类、防护与应急处置靠人脑记；新开实验或学生自主实验最容易漏</td></tr>
+<tr><td>输入</td><td>实验步骤文本 / 试剂清单表（名称、浓度、用量）</td></tr>
+<tr><td>处理</td><td>①结构化抽取试剂与操作 → ②标准化到别名/CAS 表 → ③查相容性规则矩阵（含加热、浓度、密闭等条件修饰）→ ④检索标准条款（带条款号与原文）→ ⑤给出替代/隔离/防护/处置建议 → ⑥标注置信度与"超出规则库，需安全员确认"</td></tr>
+<tr><td>输出</td><td>三级风险清单（禁止 / 需条件 / 常规）＋ 条款出处 ＋ 替代方案 ＋ 废液分类</td></tr>
+</tbody></table></div>
+<p><strong>专业规则从哪来（这是分数来源，不是辅助材料）</strong></p>
+<ul>
+<li>《危险化学品安全管理条例》、GB 15603《危险化学品仓库储存通则》、GB 30000 系列《化学品分类和标签规范》（GHS 分类）、化学品安全技术说明书（MSDS）</li>
+<li>教育部《高等学校实验室安全规范》、本校实验室安全手册</li>
+<li>化学/安全专业同学整理的<strong>试剂相容性矩阵</strong>：30–50 种常用试剂 × 常见危险组合，典型如 高锰酸钾＋甘油（接触自燃）、硝酸＋乙醇（爆炸）、金属钠＋水、酸＋次氯酸盐（放氯气）、乙醚久置过氧化物</li>
+<li>规则表字段：<code>触发组合 | 条件修饰 | 风险类型 | 依据条款 | 等级 | 处置动作</code></li>
+</ul>
+<p><strong>第一版边界（3 周可交付）</strong></p>
+<ul>
+<li>30 种常见试剂、5 类典型实验（重结晶、萃取、氧化还原、酸碱中和、有机合成）</li>
+<li>只支持单一试剂与明确浓度；混合物、未知浓度明确提示不支持</li>
+<li>风险等级只做 3 级，不做精细量化</li>
+</ul>
+<p><strong>怎么证明有效</strong></p>
+<ul>
+<li>请安全员/化学老师对 20 份实验方案标注真值 → 报 <strong>漏报率（必须有，安全类漏报最致命）、误报率、条款引用可定位率</strong></li>
+<li>专门测"编造条款"：随机抽取 20 条引用，逐条对照标准原文，算引用正确率</li>
+<li>访谈 3 位实验室老师，记录"现在怎么做、麻烦在哪"，写进计划书（对应评分表"调研深入"）</li>
+</ul>
+<p><strong>风险与红线</strong></p>
+<ul>
+<li>责任边界：明确写"辅助核查工具，最终以安全员审核为准"，输出必须带依据原文</li>
+<li>规则整理是最重的工作量（正好是跨专业队友的价值所在，也是答辩最出彩的部分）</li>
+<li>不要做"万能安全问答"，会立刻退化成知识库聊天</li>
+</ul>
+<p><strong>拿分点</strong>：规则密度最高（最贴赛道三）；用户就在本校，调研证据真实可拍；演示 30 秒看懂（红黄绿风险表）；零外部数据依赖、零 GPU 成本；答辩被追问"你凭什么说危险"时，有条款原文可翻。</p>
+<hr>
+<h3 id="方向-2-动力电池-体检-与健康状态分析助手-落地前景最强">方向 2｜动力电池"体检"与健康状态分析助手（落地前景最强）</h3>
+<p><strong>定位</strong>：输入电池循环测试数据，输出一份带证据图的电池健康报告，并指出异常循环。</p>
+<div class="table-wrap"><table>
+<thead><tr><th>环节</th><th>设计</th></tr></thead>
+<tbody>
+<tr><td>用户</td><td>新能源/材料实验室的本科生、储能运维初学者、电池课程教学</td></tr>
+<tr><td>输入</td><td>充放电循环数据（电压、电流、容量、温度、时间）＋测试条件说明</td></tr>
+<tr><td>处理</td><td>数据清洗对齐 → 按电化学口径计算 SOH（容量保持率）、库仑效率 CE、内阻（DCIR）增长、dQ/dV 曲线 → 规则判据识别异常（CE 骤降提示析锂嫌疑、容量衰减拐点、dV 异常）→ 生成标注图 → 结论分级</td></tr>
+<tr><td>输出</td><td>体检报告：SOH 曲线、异常循环清单、dQ/dV 峰位标注、结论与"建议复测项"</td></tr>
+</tbody></table></div>
+<p><strong>专业规则</strong>：容量衰减的两阶段特征、CE 阈值、dQ/dV 峰位与相变对应关系、内阻增长与温度的关系。由材料/电化学同学提供口径，工具侧只实现计算与呈现。</p>
+<p><strong>数据</strong>：优先用公开数据集（NASA PCoE、MIT-Stanford/Severson、Oxford Battery Degradation），不用自己测电芯。</p>
+<p><strong>第一版边界</strong>：只做 3–5 颗电芯、单一化学体系（LFP 或 NCM 选一种）、只报"体检结论＋异常提示"，<strong>不承诺剩余寿命预测精度</strong>。</p>
+<p><strong>怎么证明有效</strong>：用数据集自带的寿命/健康标注做盲测；与文献给出的衰减结论对照；报告 3 颗已知状态电芯的判定一致性。</p>
+<p><strong>风险</strong>：数据清洗和格式对齐的工作量比想象大；领域门槛高，没有电化学队友则专业深度撑不住；常州动力电池产业集群是最好的落地故事，但别把作品吹成"产业级检测系统"。</p>
+<p><strong>拿分点</strong>：技术含量最高（信号处理＋规则＋可视化）；落地前景 20 分最好写；与指南已有示例不重复。</p>
+<hr>
+<h3 id="方向-3-地表水监测数据异常识别与溯源助手-纯计算机队伍最稳">方向 3｜地表水监测数据异常识别与溯源助手（纯计算机队伍最稳）</h3>
+<p><strong>定位</strong>：把国控/省控水质自动监测数据变成"今天哪里不对、依据哪条标准、该去查什么"的巡查单。</p>
+<div class="table-wrap"><table>
+<thead><tr><th>环节</th><th>设计</th></tr></thead>
+<tbody>
+<tr><td>输入</td><td>地表水自动监测小时值（pH、溶解氧、高锰酸盐指数、氨氮、总磷、总氮）＋站点信息</td></tr>
+<tr><td>处理</td><td>按 GB 3838-2002 做单因子评价（定水质类别）→ 时序突变与超标检测 → 结合上下游站点、降雨、排口分布做"归因假设排序" → 生成巡查任务与优先级</td></tr>
+<tr><td>输出</td><td>水质日报 ＋ 异常事件单（含超标项、限值、倍数）＋ 溯源线索（标注"假设，需现场核实"）</td></tr>
+</tbody></table></div>
+<p><strong>数据</strong>：生态环境部门公开的地表水自动监测数据，可离线快照，不用实时接口。</p>
+<p><strong>第一版边界</strong>：1 个流域、3–5 个站点、4 项指标；归因只给排序不给结论。</p>
+<p><strong>怎么证明有效</strong>：拿历史超标事件做回测（提前发现次数、漏报数、误报数）；与人工按标准计算的结果逐条对照。</p>
+<p><strong>风险</strong>：环境类"数据分析作品"多，容易同质化，必须靠"标准限值规则＋事件闭环＋巡查建议"拉开差距；归因容易过度推断，要用"证据强度"分级。</p>
+<hr>
+<h3 id="方向-4-用药安全核查助手-社会价值高-合规风险也高">方向 4｜用药安全核查助手（社会价值高，合规风险也高）</h3>
+<p>输入年龄/体重/肾功能与用药清单，输出剂量是否超限、有无相互作用、有无禁忌，附说明书条款。规则来自药品说明书、药典、CKD 分期剂量调整表。需要药学队友标注 30 例做 gold set。</p>
+<p><strong>红线</strong>：明确"非诊断、非处方工具，不替代医嘱"；不接入真实患者数据；只做"提示风险＋建议咨询医生"。评委一定会问越界问题，答不好会扣分。</p>
+<hr>
+<h3 id="方向-5-抽油机井示功图工况诊断教学助手-常大特色-数据是生死线">方向 5｜抽油机井示功图工况诊断教学助手（常大特色，数据是生死线）</h3>
+<p>输入示功图（载荷-位移曲线），做特征提取＋规则判据，识别供液不足、气体影响、泵漏失、蜡卡等 6–8 类工况，输出诊断结论与图示依据，用于课程教学。</p>
+<p><strong>最大不确定性是数据</strong>：公开示功图数据集很少。可行路径只有三条——石油专业同学提供教学样例、用教材标准图谱、或用简化悬点载荷模型仿真生成。<strong>如果队里没有石油工程同学且凑不出 50 张标注图，不要选这个方向。</strong></p>
+<p><strong>优势</strong>：与指南里的"油井生产教学数据分析"相邻但不重复（那个是数据分析，这个是图形诊断）；评委熟悉常大石油背景；成果图好看。</p>
+<hr>
+<h3 id="方向-6-非遗工艺知识助手-备选-需要设计-文科队友">方向 6｜非遗工艺知识助手（备选，需要设计/文科队友）</h3>
+<p>常州梳篦、乱针绣的工序与针法知识整理成结构化规则，做"工艺流程教学＋纹样元素检索"。专业规则是"工艺参数"（针法、配色、工序顺序）。<strong>没有传承人或设计专业背书，极易退化成"AI 画画"，不建议作为主选。</strong></p>
+<hr>
+<h2 id="三-决策矩阵">三、决策矩阵</h2>
+<p>权重按评分表折算：专业规则密度 25%、数据可得性 20%、学生可实现 20%、落地前景 20%、演示效果 15%（5 分制）。</p>
+<div class="table-wrap"><table>
+<thead><tr><th>方向</th><th>专业规则</th><th>数据可得</th><th>可实现</th><th>落地前景</th><th>演示效果</th><th>加权分</th><th>合规风险</th></tr></thead>
+<tbody>
+<tr><td>1 实验室安全核查</td><td>5</td><td>5</td><td>4</td><td>4</td><td>5</td><td><strong>4.60</strong></td><td>低</td></tr>
+<tr><td>2 动力电池体检</td><td>4</td><td>4</td><td>3</td><td>5</td><td>5</td><td><strong>4.15</strong></td><td>低</td></tr>
+<tr><td>4 用药安全核查</td><td>5</td><td>3</td><td>3</td><td>5</td><td>4</td><td><strong>4.05</strong></td><td>高</td></tr>
+<tr><td>3 水质异常识别</td><td>3</td><td>5</td><td>5</td><td>3</td><td>4</td><td><strong>3.95</strong></td><td>低</td></tr>
+<tr><td>5 示功图诊断</td><td>4</td><td>2</td><td>3</td><td>4</td><td>5</td><td><strong>3.55</strong></td><td>低</td></tr>
+<tr><td>6 非遗工艺</td><td>2</td><td>3</td><td>4</td><td>2</td><td>5</td><td><strong>3.05</strong></td><td>低</td></tr>
+</tbody></table></div>
+<p><strong>按队友情况选</strong></p>
+<ul>
+<li>队友是化学/化工/安全 → 方向 1（最优组合，规则由他出，工具由你出）</li>
+<li>队友是材料/新能源/电化学 → 方向 2（分数上限最高）</li>
+<li>队友是环境/给排水 → 方向 3 升级版（可加污染源清单）</li>
+<li>队友是石油工程 → 方向 5（先确认能拿到数据）</li>
+<li>只有计算机同学、也没有外援 → 方向 3（数据全公开，专业规则靠国家标准补齐）</li>
+</ul>
+<hr>
+<h2 id="四-避坑清单">四、避坑清单</h2>
+<ol>
+<li><strong>只做知识库问答</strong>：文档上传＋检索＋大模型回答，会被判"套壳 RAG"，赛道三的 30 分创新分拿不到。</li>
+<li><strong>让大模型直接下专业结论</strong>：没有规则表和出处，评委一句"这个结论依据是什么"就穿帮。</li>
+<li><strong>追求全覆盖</strong>：第一版就做全学科、全品类，必然跑不完。</li>
+<li><strong>选题数据拿不到</strong>：示功图、医学影像、企业内部数据是三大坑，报名前必须先拿到 20 条样例再定题。</li>
+<li><strong>没有 gold set</strong>：效果全靠"演示时看着不错"，完成度分会很低。</li>
+<li><strong>越权下结论</strong>：安全、医疗、法律类必须写清"辅助＋人工复核"。</li>
+<li><strong>只交网页 demo</strong>：指南要求可运行原型＋访问或运行说明，缺运行说明会被判不完整。</li>
+<li><strong>忽略本校优势</strong>：评委就是本校老师，"服务本校实验室/本校课程"比"赋能千行百业"更能打动他们。</li>
+</ol>
+<hr>
+<h2 id="五-四周落地计划-对齐初赛提交物">五、四周落地计划（对齐初赛提交物）</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>周</th><th>做什么</th><th>产出</th></tr></thead>
+<tbody>
+<tr><td>第 1 周</td><td>访谈 3 位真实用户（实验室老师/安全员），确定输入输出与不支持范围；队友开始整理规则表 v1</td><td>需求记录、规则表 v1（30–50 条）</td></tr>
+<tr><td>第 2 周</td><td>跑通主流程：抽取 → 规则匹配 → 条款引用 → 报告输出；先做命令行版本</td><td>可运行原型 v0.1</td></tr>
+<tr><td>第 3 周</td><td>建 20 条 gold set，算漏报/误报/引用正确率；修 3 个典型失败案例；做界面与一键演示</td><td>测试报告、原型 v0.5</td></tr>
+<tr><td>第 4 周</td><td>写项目计划书 PDF、录 3–5 分钟 MP4、写运行说明、准备答辩 Q&amp;A</td><td>全部初赛材料</td></tr>
+</tbody></table></div>
+<p><strong>提交物自查</strong>（指南明确要求）</p>
+<ul>
+<li>[ ] PDF 项目计划书（含需求依据、架构、规则表、测试结果、局限）</li>
+<li>[ ] 3–5 分钟 MP4 演示视频（必须演示完整流程，不能只放 PPT）</li>
+<li>[ ] 可运行原型 ＋ 访问/运行说明（一键启动脚本、依赖清单、示例数据）</li>
+<li>[ ] 资料授权与隐私说明、模型与第三方工具标注</li>
+<li>[ ] 团队成员分工表（每人能讲清"我做了什么、怎样影响结果"）</li>
+</ul>
+<hr>
+<h2 id="六-如果选方向-1-这六句话可以这样填">六、如果选方向 1，这六句话可以这样填</h2>
+<ol>
+<li>我准备帮助的用户是：<strong>本校实验室的安全员和带实验课的教师</strong>。</li>
+<li>他在<strong>学生自主实验/新开实验方案审核</strong>场景中，需要解决<strong>试剂组合风险与合规性检查靠人脑、易漏项</strong>的问题。</li>
+<li>用户输入<strong>实验步骤与试剂清单</strong>，作品输出<strong>带条款出处的三级风险清单与整改建议</strong>。</li>
+<li>第一版先实现<strong>30 种常用试剂、5 类典型实验的相容性核查</strong>，主要贡献对应<strong>赛道三（AI＋跨学科融合创新）</strong>。</li>
+<li>我们能获得的资料、工具与规则是<strong>GB 15603 / GB 30000 系列 / MSDS / 本校实验室安全手册，以及化学专业同学整理的相容性矩阵</strong>。</li>
+<li>我们将用<strong>安全员标注的 20 份实验方案</strong>和<strong>标准条款原文</strong>检查效果。</li>
+</ol>
+<hr>
+<h2 id="七-还需要你确认三件事">七、还需要你确认三件事</h2>
+<ol>
+<li><strong>队里的跨专业队友是哪个专业？</strong>（决定走方向 1 / 2 / 3 / 5）</li>
+<li><strong>能接触到哪类"专业资源"？</strong>（实验室老师、专业实验室数据、课程讲义、行业导师）</li>
+<li><strong>初赛截止时间与队伍人数？</strong>（决定第一版砍到多小）</li>
+</ol>
+<p>告诉我这三点，我可以把推荐方向直接展开成：项目计划书目录、技术架构图、规则表字段设计、演示视频脚本。</p>
+<hr>
+<h2 id="八-可核对的背景依据-写进计划书-需求分析-用">八、可核对的背景依据（写进计划书"需求分析"用）</h2>
+<ul>
+<li>常州大学设有石油与天然气工程学院、能源学院，石油化工是本校传统强势方向，因此"油井/石化/新能源材料"类题目在评委端有天然认同度，也更容易找到专业老师和样例数据（<a href="https://www.eol.cn/jiangsu/jsgd/202205/t20220526_2227755.shtml">学院介绍</a>、<a href="http://cpe.cczu.edu.cn/5862/list.htm">学院官网</a>）。</li>
+<li>常州是长三角动力电池产业核心城市，公开报道称本地电池企业超 160 家，中创新航、蜂巢能源等头部企业均在此布局，因此"电池数据体检"有真实落地叙事（<a href="https://finance.sina.cn/2026-01-20/detail-inhhxvet7179923.d.html">报道</a>、<a href="https://www.changzhou.gov.cn/gi_news/207176518219920">政府答复</a>、<a href="https://d.drcnet.com.cn/?docid=7861905&amp;leafid=3049">产业研究</a>）。</li>
+<li>常用公开数据/标准（报名前先下载样例确认可用）：NASA PCoE 电池老化数据集、MIT-Stanford（Severson）电池循环数据集、Oxford Battery Degradation Dataset；GB 3838-2002 地表水环境质量标准；GB 15603、GB 30000 系列化学品标准；化学品 MSDS 公开库。</li>
+</ul>
+<blockquote>提示：以上行业与学科信息用于说明"选题为什么落在这里"，正式计划书里请以你自己核实到的官方数据、本校实验室实际情况为准，不要直接引用二手报道当论据。</blockquote>
+</article></div>
+</body>
+</html>

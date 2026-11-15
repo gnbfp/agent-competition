@@ -1,0 +1,42 @@
+{
+  "schema_version": "1.0",
+  "athlete_id": "ATH-001",
+  "timezone": "Asia/Shanghai",
+  "generated_at": "2026-11-15T10:00:00+08:00",
+  "activities": [
+    {
+      "activity_id": "A20261112-01",
+      "date": "2026-11-12",
+      "start_time": "06:30",
+      "sport": "run",
+      "duration_s": 2880,
+      "distance_m": 8000,
+      "avg_hr": 152,
+      "max_hr": 171,
+      "elevation_gain_m": 22,
+      "avg_pace_s_per_km": 360,
+      "rpe": 6,
+      "sleep_h": 6.5,
+      "pain": null,
+      "source": "garmin",
+      "device_anomaly": false
+    },
+    {
+      "activity_id": "A20261114-01",
+      "date": "2026-11-14",
+      "start_time": "16:10",
+      "sport": "run",
+      "duration_s": 5400,
+      "distance_m": 14000,
+      "avg_hr": 158,
+      "max_hr": 183,
+      "elevation_gain_m": 65,
+      "avg_pace_s_per_km": 385,
+      "rpe": 8,
+      "sleep_h": 7.0,
+      "pain": "右膝外侧轻微不适",
+      "source": "garmin",
+      "device_anomaly": false
+    }
+  ]
+}
