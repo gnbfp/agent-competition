@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>运动生理闭环智能体 · 报告页（P5 起点）</title>
+<style>
+  :root { --ink:#0f172a; --soft:#475569; --line:#e2e8f0; --bg:#f6f8fb; --accent:#0b5fff;
+          --high:#dc2626; --med:#d97706; --low:#059669; }
+  * { box-sizing: border-box; }
+  body { margin:0; font-family:"Segoe UI","Microsoft YaHei",system-ui,sans-serif; color:var(--ink); background:var(--bg); }
+  header { background:#fff; border-bottom:1px solid var(--line); padding:18px 24px; }
+  header h1 { margin:0; font-size:18px; }
+  header p { margin:4px 0 0; color:var(--soft); font-size:13px; }
+  main { max-width:1040px; margin:24px auto 60px; padding:0 20px; display:grid; gap:16px; }
+  .card { background:#fff; border:1px solid var(--line); border-radius:10px; padding:20px; }
+  .headline { font-size:22px; font-weight:700; line-height:1.45; margin:0 0 10px; }
+  .badges { display:flex; gap:8px; flex-wrap:wrap; }
+  .badge { font-size:12px; padding:3px 10px; border-radius:999px; border:1px solid var(--line); color:var(--soft); }
+  .badge.high { border-color:var(--high); color:var(--high); }
+  .badge.medium { border-color:var(--med); color:var(--med); }
+  .badge.low { border-color:var(--low); color:var(--low); }
+  .metrics { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:12px; }
+  .metric { border:1px solid var(--line); border-radius:8px; padding:12px 14px; }
+  .metric .k { font-size:12px; color:var(--soft); }
+  .metric .v { font-size:22px; font-weight:700; margin-top:4px; }
+  .metric .u { font-size:12px; color:var(--soft); margin-left:3px; font-weight:400; }
+  h2 { font-size:15px; margin:0 0 14px; }
+  .risk { border-left:3px solid var(--line); padding:10px 14px; margin-bottom:12px; background:#fbfcfe; border-radius:0 8px 8px 0; }
+  .risk.high { border-left-color:var(--high); }
+  .risk.medium { border-left-color:var(--med); }
+  .risk.low { border-left-color:var(--low); }
+  .risk .t { font-weight:600; margin-bottom:6px; }
+  .risk .t code { font:12px ui-monospace,Consolas,monospace; background:#eef2f7; padding:1px 6px; border-radius:4px; margin-right:8px; }
+  .risk .e { font-size:13px; color:var(--soft); line-height:1.6; }
+  .risk .a { font-size:13px; margin-top:6px; }
+  .error { border-color:#fecaca; background:#fff1f2; color:#9f1239; }
+  .error code { background:#fff; padding:2px 6px; border-radius:4px; font-size:12px; }
+  table { width:100%; border-collapse:collapse; font-size:13px; }
+  th, td { text-align:left; padding:8px 10px; border-bottom:1px solid var(--line); }
+  th { color:var(--soft); font-weight:600; }
+  footer { text-align:center; color:var(--soft); font-size:12px; padding:0 20px 30px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>本周训练报告</h1>
+  <p>数据源：<code>GET /api/report</code>（假后端 contracts/mock_api.py）· 页面只显示，不计算任何指标</p>
+</header>
+
+<main id="app">
+  <section class="card"><p>正在读取 report.json …</p></section>
+</main>
+
+<footer>本页为 P5 起点：只消费 report.json，页面上的每个数字都必须能在 JSON 里找到出处。</footer>
+
+<script>
+// P5 约定：不自己算指标，只渲染 /api/report 返回的内容。
+const API = "http://127.0.0.1:8080/api/report";
+const app = document.getElementById("app");
+
+const LEVEL_CN = { high: "高危", medium: "注意", low: "提示" };
+const STATUS_CN = { undertrained: "训练不足", optimal: "负荷合理", high: "负荷偏高", danger: "高危" };
+
+function el(tag, cls, text) {
+  const node = document.createElement(tag);
+  if (cls) node.className = cls;
+  if (text !== undefined) node.textContent = text;
+  return node;
+}
+
+function metricCard(label, value, unit) {
+  const box = el("div", "metric");
+  box.appendChild(el("div", "k", label));
+  const v = el("div", "v", String(value));
+  if (unit) v.appendChild(el("span", "u", unit));
+  box.appendChild(v);
+  return box;
+}
+
+function riskCard(risk) {
+  const box = el("div", "risk " + (risk.level || "low"));
+  const title = el("div", "t");
+  title.appendChild(el("code", null, risk.rule_id));
+  title.appendChild(document.createTextNode(risk.title || ""));
+  box.appendChild(title);
+  if (risk.evidence) {
+    box.appendChild(el("div", "e", risk.evidence.clause + "（依据：" + risk.evidence.source + "）"));
+  }
+  if (risk.action) box.appendChild(el("div", "a", "→ " + risk.action));
+  return box;
+}
+
+function render(report) {
+  app.innerHTML = "";
+
+  const top = el("section", "card");
+  top.appendChild(el("p", "headline", report.summary.headline));
+  const badges = el("div", "badges");
+  badges.appendChild(el("span", "badge " + report.summary.risk_level, "风险等级：" + (LEVEL_CN[report.summary.risk_level] || report.summary.risk_level)));
+  badges.appendChild(el("span", "badge", "负荷状态：" + (STATUS_CN[report.summary.load_status] || report.summary.load_status)));
+  badges.appendChild(el("span", "badge", "窗口：" + report.metrics.window.start + " ~ " + report.metrics.window.end));
+  top.appendChild(badges);
+  app.appendChild(top);
+
+  const m = el("section", "card");
+  m.appendChild(el("h2", null, "关键指标"));
+  const grid = el("div", "metrics");
+  grid.appendChild(metricCard("ACWR（EWMA）", report.metrics.load.acwr_ewma.toFixed(2), ""));
+  grid.appendChild(metricCard("周 TRIMP", Math.round(report.metrics.load.trimp_week), ""));
+  grid.appendChild(metricCard("VO₂max", report.metrics.capacity.vo2max.value.toFixed(1), "ml/kg/min"));
+  grid.appendChild(metricCard("静息心率偏差", (report.metrics.recovery.resting_hr_delta > 0 ? "+" : "") + report.metrics.recovery.resting_hr_delta, "bpm"));
+  m.appendChild(grid);
+  app.appendChild(m);
+
+  const risks = el("section", "card");
+  risks.appendChild(el("h2", null, "本周风险（" + report.risks.length + " 条）"));
+  report.risks.forEach(r => risks.appendChild(riskCard(r)));
+  app.appendChild(risks);
+
+  const plan = el("section", "card");
+  plan.appendChild(el("h2", null, "下周安排"));
+  const table = el("table");
+  const head = el("tr");
+  ["日期", "类型", "时长(分)", "目标配速(s/km)", "依据"].forEach(h => head.appendChild(el("th", null, h)));
+  table.appendChild(head);
+  (report.plan.days || []).forEach(d => {
+    const tr = el("tr");
+    tr.appendChild(el("td", null, d.date));
+    tr.appendChild(el("td", null, d.kind));
+    tr.appendChild(el("td", null, String(d.duration_min)));
+    tr.appendChild(el("td", null, d.target_pace_s_per_km === null ? "—" : String(d.target_pace_s_per_km)));
+    tr.appendChild(el("td", null, (d.rules || []).join(" ")));
+    table.appendChild(tr);
+  });
+  plan.appendChild(table);
+  app.appendChild(plan);
+}
+
+function renderError(message) {
+  app.innerHTML = "";
+  const box = el("section", "card error");
+  box.appendChild(el("h2", null, "读不到报告数据"));
+  box.appendChild(el("p", null, message));
+  const tip = el("p", null, "先起假后端：");
+  tip.appendChild(el("code", null, "python contracts/mock_api.py --port 8080"));
+  box.appendChild(tip);
+  box.appendChild(el("p", null, "再用另一个终端起本页：python -m http.server 8000 -d src/p5_web"));
+  app.appendChild(box);
+}
+
+fetch(API)
+  .then(r => { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
+  .then(render)
+  .catch(err => renderError(String(err && err.message || err)));
+</script>
+</body>
+</html>
