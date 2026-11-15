@@ -60,7 +60,7 @@ tbody tr:hover{background:#f3f7ff}
 <body>
 <div class="wrap"><article class="card">
 <h1 id="团队统一标准与环境要求">团队统一标准与环境要求</h1>
-<blockquote>项目：运动生理闭环智能体（赛道三）· 5 人组 · 适用对象：P1–P5 全体成员<br>版本：v1.2（2026-11-15）· 维护人：P4 · 修改须走第八节流程<br>仓库：https://github.com/gnbfp/agent-competition （<strong>公开仓库</strong>：谁都能看、都能 clone；要推送代码才需要协作者权限）<br>适用范围：写代码、写文档、查资料、做 PPT——<strong>使用 AI 时同样适用，不因为是 AI 写的就豁免</strong></blockquote>
+<blockquote>项目：运动生理闭环智能体（赛道三）· 5 人组 · 适用对象：P1–P5 全体成员<br>版本：v1.3（2026-11-15）· 维护人：P4 · 修改须走第八节流程<br>仓库：https://github.com/gnbfp/agent-competition （<strong>公开仓库</strong>：谁都能看、都能 clone；要推送代码才需要协作者权限）<br>适用范围：写代码、写文档、查资料、做 PPT——<strong>使用 AI 时同样适用，不因为是 AI 写的就豁免</strong></blockquote>
 <p>一句话：<strong>环境一样、契约一样、AI 用法一样</strong>。三个人写的代码，要能像一个人写的。</p>
 <hr>
 <h2 id="零-这份文档怎么用">零、这份文档怎么用</h2>
@@ -198,7 +198,7 @@ python -m http.server 8000 -d src/p5_web</code></pre>
 </tbody></table></div>
 <p><strong>关于分支保护</strong>：仓库已经是公开仓，<strong>免费计划就能开 Branch protection</strong>，建议队长当天开掉：</p>
 <blockquote>Settings → Branches → Add branch protection rule → Branch name pattern 填 <code>main</code> → 勾选 <strong>Require a pull request before merging</strong>（Require approvals 设 1）→ 保存。</blockquote>
-<p>开了以后直推 <code>main</code> 会被 GitHub 直接拒绝，纪律变成强制。如果暂时没开，靠两条兜底：<code>main</code> 只放经过 PR 的代码 + 每个 PR 带上 <code>.github/pull_request_template.md</code> 的清单（见 3.6）。</p>
+<p>开了以后直推 <code>main</code> 会被 GitHub 直接拒绝，纪律变成强制。如果暂时没开，靠两条兜底：<code>main</code> 只放经过 PR 的代码 + 每个 PR 带上 <code>.github/pull_request_template.md</code> 的清单（见 3.7）。</p>
 <h3 id="3-4-提交信息格式">3.4 提交信息格式</h3>
 <p><code>&lt;type&gt;(&lt;scope&gt;): &lt;一句话&gt;</code>，type 与 scope 用固定词表：</p>
 <div class="table-wrap"><table>
@@ -222,7 +222,36 @@ python -m http.server 8000 -d src/p5_web</code></pre>
 <tr><td>大文件（&gt; 5 MB，含视频、docx、pdf）</td><td>走网盘或群共享，Git 只放代码与数据样例</td></tr>
 <tr><td>密码、密钥、个人邮箱密码</td><td>一旦推上去就等于公开</td></tr>
 </tbody></table></div>
-<h3 id="3-6-每个-PR-必须写清四件事-模板已进仓库">3.6 每个 PR 必须写清四件事（模板已进仓库）</h3>
+<h3 id="3-6-可回溯标签与回滚-写错了能退回去">3.6 可回溯标签与回滚（写错了能退回去）</h3>
+<p>改仓库必须留"路标"：<strong>每个阶段结束、每次契约变更，都要打一个 Git 标签（tag）</strong>。没有标签，出事时只能靠记 commit sha，五个人一起推的时候基本等于不可回溯。</p>
+<p><strong>四类标签（格式固定，不许自创）</strong>：</p>
+<div class="table-wrap"><table>
+<thead><tr><th>类型</th><th>格式</th><th>什么时候打</th><th>例</th></tr></thead>
+<tbody>
+<tr><td>阶段交付</td><td><code>stage-&lt;N&gt;</code></td><td>每个阶段结束（验收通过当天）</td><td><code>stage-1</code>、<code>stage-3</code></td></tr>
+<tr><td>契约变更</td><td><code>contract-v&lt;X.Y&gt;</code></td><td>schema 改完并通知全员之后</td><td><code>contract-v1.1</code></td></tr>
+<tr><td>仓库/文档快照</td><td><code>snap-&lt;主题&gt;-v&lt;X.Y&gt;</code></td><td>大改文档、换结构</td><td><code>snap-standards-v1.2</code></td></tr>
+<tr><td>对外提交版</td><td><code>submit-&lt;YYYYMMDD&gt;</code></td><td>交初赛材料、决赛前</td><td><code>submit-20261201</code></td></tr>
+</tbody></table></div>
+<p><strong>怎么打（由 1 个人执行，别五个人各打各的）</strong>：</p>
+<pre class="code"><code>git tag -a stage-1 -m "阶段一：契约冻结 v1.0，能读到一份真实数据"   # -a 带注释，必须有
+git push origin stage-1        # 推单个标签
+git push origin --tags         # 或一次推全部标签</code></pre>
+<p><strong>标签信息必须写三行</strong>（<code>git show stage-1</code> 时能看到，这就是回溯的凭证）：</p>
+<pre class="code"><code>这版能做什么：契约冻结，P2 能解析样例 CSV
+已知问题：暂不支持 .fit 导出
+谁验过：P4 跑过 check_env 8 PASS，P1 复看过协议</code></pre>
+<p><strong>回滚三招（按场景选，别乱用）</strong>：</p>
+<div class="table-wrap"><table>
+<thead><tr><th>场景</th><th>命令</th><th>说明</th></tr></thead>
+<tbody>
+<tr><td>撤销一次已推送的提交</td><td><code>git revert &lt;sha&gt;</code></td><td>生成一条反向提交，历史完整保留，<strong>最安全，优先用这个</strong></td></tr>
+<tr><td>只把某个文件恢复到标签版本</td><td><code>git checkout stage-1 -- contracts/report.schema.json</code></td><td>局部回滚，不动别人代码</td></tr>
+<tr><td>自己分支还没推送，想扔掉最后一次提交</td><td><code>git reset --hard HEAD~1</code></td><td><strong>仅限未推送</strong>，推过就别用</td></tr>
+</tbody></table></div>
+<p><strong>绝对禁止</strong>：对 <code>main</code> 或别人的分支执行 <code>git push --force</code>；对已经推送的公共提交做 <code>rebase</code> 改写历史——这会让其他人本地仓库和远端对不上，是全队级别的灾难。</p>
+<p><strong>台账</strong>：每打一次标签，在 <code>docs/版本与标签.md</code> 记一行（tag / 日期 / commit 前 7 位 / 这版内容 / 谁打的），这样不用懂 Git 的人也能查。</p>
+<h3 id="3-7-每个-PR-必须写清四件事-模板已进仓库">3.7 每个 PR 必须写清四件事（模板已进仓库）</h3>
 <p><code>.github/pull_request_template.md</code> 已放进仓库，<strong>开 PR 时自动出现</strong>，照填即可：</p>
 <ol>
 <li>改了哪个契约字段（没有就写"无"）；</li>
@@ -399,6 +428,7 @@ python -m compileall -q src             # 语法检查</code></pre>
 <tr><td>每天开工</td><td><code>git pull --rebase</code> + <code>check_env.py</code></td></tr>
 <tr><td>改了契约文件</td><td><code>validate_contract.py</code></td></tr>
 <tr><td>提 PR 前</td><td>四条全跑</td></tr>
+<tr><td><strong>阶段结束 / 契约改完</strong></td><td><code>git tag -a &lt;标签&gt; -m "..."</code> 然后 <code>git push origin --tags</code>，并在 <code>docs/版本与标签.md</code> 记一行</td></tr>
 <tr><td>演示前 30 分钟</td><td><code>check_env.py</code> + 打开页面走一遍完整流程</td></tr>
 </tbody></table></div>
 <p>命令的输出<strong>贴进 PR 描述</strong>，评审时直接看得到。</p>
@@ -425,6 +455,7 @@ python -m compileall -q src             # 语法检查</code></pre>
 <tr><td>v1.0</td><td>2026-11-15</td><td>首版冻结：环境、仓库、代码、数据、AI 五类规范</td><td>P4</td></tr>
 <tr><td>v1.1</td><td>2026-11-15</td><td>接入 GitHub 私有仓库 <code>gnbfp/agent-competition</code>；新增 3.2 仓库信息与协作者流程、PR 模板；七、自检加 <code>git pull --rebase</code></td><td>P4</td></tr>
 <tr><td>v1.2</td><td>2026-11-15</td><td>仓库转为公开：协作者只决定"能不能推"、改为可开 Branch protection、隐私章节升级为硬底线；补 README</td><td>P4</td></tr>
+<tr><td>v1.3</td><td>2026-11-15</td><td>新增 3.7 可回溯标签与回滚制度（四类标签、打标签命令、回滚三招、禁止 force push）、<code>docs/版本与标签.md</code> 台账</td><td>P4</td></tr>
 </tbody></table></div>
 <p>下次复核：第一次联调之后（看有没有需要放开的约束）。</p>
 <hr>
@@ -464,6 +495,7 @@ python -m compileall -q src             # 语法检查</code></pre>
 <tr><td><code>.vscode/extensions.json</code></td><td>推荐扩展</td><td>P4</td></tr>
 <tr><td><code>tools/check_env.py</code></td><td>环境自检脚本</td><td>P4</td></tr>
 <tr><td><code>docs/AI使用留痕.md</code></td><td>AI 使用记录</td><td>全员</td></tr>
+<tr><td><code>docs/版本与标签.md</code></td><td>标签台账：哪一版能跑、怎么退回去</td><td>P4</td></tr>
 <tr><td><code>.github/pull_request_template.md</code></td><td>开 PR 时自动弹出的四项清单</td><td>P4</td></tr>
 </tbody></table></div>
 <h3 id="D-队员确认-开工前各自填一行">D 队员确认（开工前各自填一行）</h3>
