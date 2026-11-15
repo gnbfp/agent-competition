@@ -36,6 +36,10 @@ REQUIRED_FILES = [
     "contracts/report.schema.json",
     "contracts/validate_contract.py",
     "contracts/mock_api.py",
+    "contracts/rules.json",
+    "docs/CSV中间格式.md",
+    "src/p2_ingest/csv_parser.py",
+    "tests/test_csv_parser.py",
     "docs/AI使用留痕.md",
     "tools/check_env.py",
 ]
