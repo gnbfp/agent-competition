@@ -18,6 +18,8 @@
 |---|---|---|---|---|---|---|
 | 2026-11-15 | P2 | `src/p2_ingest/csv_parser.py` | DeepSeek | 写"配速 6'30" 转 390 秒"的解析函数 | 补了 `6'60"` 非法值兜底；改成抛 `ValueError` 而不是返回 None | `python -m unittest`，另加 5 条边界用例手测 |
 | 2026-11-15 | P5 | `src/p5_web/render.js` | 豆包 | 生成风险等级 → 颜色的映射 | 按契约把 `level` 枚举改成 low/medium/high，去掉它自造的 `critical` | 用 `report_sample.json` 渲染，四个等级逐个看 |
+| 2026-11-18 | P2 | `src/p2_ingest/format_adapters.py`、`src/p2_ingest/import_export.py` | DeepSeek | 写"Garmin / 华为导出 → CSV 中间格式"的列名映射与单位归一（时长、配速、距离、心率），并要求解析失败只降级为缺失、不中断整份文件 | **（待 P2 复核后补：改了哪些字段/边界）** | `python -m unittest discover -s tests`（40 用例通过）+ `python contracts/validate_contract.py out/activity.json` → PASS |
+| 2026-11-18 | P2 | `tests/test_format_adapters.py`、`docs/P2_导入适配说明.md` | DeepSeek | 生成适配器的单测骨架、样例数据与说明文档 | **（待 P2 复核后补）** | 同上；两个样例文件均为模拟数据，已在文档第六节标注 |
 |  |  |  |  |  |  |  |
 
 **填写要点**
