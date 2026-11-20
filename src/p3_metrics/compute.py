@@ -1,4 +1,4 @@
-"""Compute the P3 training-load portion from an activity.json export."""
+"""Compute P3 metrics from an activity export and optional local measurements."""
 
 from __future__ import annotations
 
@@ -11,12 +11,18 @@ from datetime import date, timedelta
 from pathlib import Path
 from statistics import fmean
 
+if __package__:
+    from .physiology import capacity, normalized_measurements, recovery
+else:
+    from physiology import capacity, normalized_measurements, recovery
+
 
 ACUTE_DAYS = 7
 CHRONIC_DAYS = 28
 MAX_ACWR_GAP = 1.0
 TRIMP_COEFFICIENTS = {"male": (0.64, 1.92), "female": (0.86, 1.67)}
 RULES_PATH = Path(__file__).resolve().parents[2] / "contracts" / "rules.json"
+METRICS_VERSION = "2.0"
 
 
 def trimp_coefficients(resting_hr: int, max_hr: int, profile: str) -> tuple[float, float]:
@@ -52,9 +58,13 @@ def ewma(values: list[float], span: int) -> float:
     return average
 
 
+def rule_thresholds() -> dict:
+    return {item["rule_id"]: item["threshold"]
+            for item in json.loads(RULES_PATH.read_text(encoding="utf-8"))["rules"]}
+
+
 def acwr_status(value: float) -> str:
-    rules = {item["rule_id"]: item["threshold"]
-             for item in json.loads(RULES_PATH.read_text(encoding="utf-8"))["rules"]}
+    rules = rule_thresholds()
     lower, upper = rules["R05"]
     if value < lower:
         return "undertrained"
@@ -182,10 +192,26 @@ def compute_load(document: dict, *, as_of: date, history_start: date | None,
     }
 
 
+def compute_metrics(document: dict, *, as_of: date, history_start: date | None,
+                    resting_hr: int, max_hr: int, profile: str, measurements: dict | None = None) -> dict:
+    output = compute_load(document, as_of=as_of, history_start=history_start,
+                          resting_hr=resting_hr, max_hr=max_hr, profile=profile)
+    daily, race, steady = normalized_measurements(measurements, output["athlete_id"])
+    capacity_values, capacity_flags = capacity(resting_hr, max_hr, race, as_of,
+                                               rule_thresholds()["R13"] * 100)
+    recovery_values, recovery_flags = recovery(document["activities"], daily, steady, as_of)
+    output["flags"].extend({"code": code, "level": "medium", "message": message}
+                           for code, message in (*capacity_flags, *recovery_flags))
+    return {"schema_version": METRICS_VERSION, **output,
+            "capacity": capacity_values, "recovery": recovery_values}
+
+
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(description="计算 TRIMP 和两种 ACWR")
+    parser = argparse.ArgumentParser(description="计算训练负荷、有氧能力与恢复指标")
     parser.add_argument("activity", type=Path, help="P2 生成的 activity.json")
-    parser.add_argument("-o", "--out", type=Path, default=Path("out/load_metrics.json"))
+    parser.add_argument("-o", "--out", type=Path)
+    parser.add_argument("--measurements", type=Path, help="可选的本地补充量测 JSON")
+    parser.add_argument("--load-only", action="store_true", help="只生成节点 04 的训练负荷结果")
     parser.add_argument("--as-of", required=True, help="计算截止日，包含当天")
     parser.add_argument("--history-start", help="确认记录完整的起始日，直到计算截止日")
     parser.add_argument("--trimp-profile", required=True, choices=TRIMP_COEFFICIENTS)
@@ -193,19 +219,33 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--max-hr", type=int, required=True, help="个人最大心率 bpm")
     args = parser.parse_args(argv)
     try:
-        if args.activity.resolve() == args.out.resolve():
+        output_path = args.out or Path("out/load_metrics.json" if args.load_only else "out/metrics.json")
+        inputs = [args.activity] + ([args.measurements] if args.measurements else [])
+        if any(path.resolve() == output_path.resolve() for path in inputs):
             raise ValueError("输入与输出路径不得重合")
+        if args.load_only and args.measurements:
+            raise ValueError("--load-only 不读取补充量测")
         document = json.loads(args.activity.read_text(encoding="utf-8-sig"))
-        load = compute_load(document, as_of=parse_date(args.as_of),
-                            history_start=parse_date(args.history_start) if args.history_start else None,
-                            resting_hr=args.resting_hr, max_hr=args.max_hr, profile=args.trimp_profile)
-        payload = json.dumps(load, ensure_ascii=False, indent=2, allow_nan=False)
-        args.out.parent.mkdir(parents=True, exist_ok=True)
-        args.out.write_text(payload + "\n", encoding="utf-8", newline="\n")
+        options = {
+            "as_of": parse_date(args.as_of),
+            "history_start": parse_date(args.history_start) if args.history_start else None,
+            "resting_hr": args.resting_hr, "max_hr": args.max_hr, "profile": args.trimp_profile,
+        }
+        if args.load_only:
+            output = compute_load(document, **options)
+        else:
+            measurements = (json.loads(args.measurements.read_text(encoding="utf-8-sig"))
+                            if args.measurements else None)
+            if args.measurements and measurements is None:
+                raise ValueError("补充量测文件需要提供 JSON 对象")
+            output = compute_metrics(document, **options, measurements=measurements)
+        payload = json.dumps(output, ensure_ascii=False, indent=2, allow_nan=False)
+        output_path.parent.mkdir(parents=True, exist_ok=True)
+        output_path.write_text(payload + "\n", encoding="utf-8", newline="\n")
     except (OSError, OverflowError, ValueError) as exc:
         print(f"FAIL {exc}", file=sys.stderr)
         return 1
-    print(f"已写出训练负荷结果 {args.out}")
+    print(f"已写出指标结果 {output_path}")
     return 0
 
 

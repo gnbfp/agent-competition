@@ -23,6 +23,7 @@
 | 2026-11-20 | P2 | `src/p2_ingest/format_adapters.py`、`tests/test_format_adapters.py`、`docs/P2_导入适配说明.md` | Codex | 按维护者委托修复节点 02 导入缺陷并复验 | Codex 添加英里配速换算，拦截无法参与计算的数值并沿用现有的逐行警告处理，同时补充回归用例和导入说明 | `python -m unittest discover -s tests`，用两套模拟 CSV 运行 `import_export.py` 后分别运行 `validate_contract.py` |
 | 2026-11-20 | P2 | `src/p2_ingest/`、`tools/check_env.py`、`tests/test_ingest_quality.py` | Codex | 按维护者委托实现节点 03 | Codex 统一两条导入入口的 CSV 解码，完善坏行处理和体检报告，补充仓库样例编码检查和活动 JSON 脱敏工具 | `python tools/check_env.py`、`python contracts/validate_contract.py`、`python -m unittest discover -s tests`。验收使用模拟数据 |
 | 2026-11-20 | P3 | `src/p3_metrics/compute.py`、`src/p3_metrics/README.md`、`tests/test_training_load.py` | Codex | 按维护者委托实现节点 04 | Codex 实现逐条 TRIMP、周汇总、两种 ACWR 和计算参数溯源，并区分未知日期、零负荷及口径差异 | `python -m unittest discover -s tests -p test_training_load.py`，现有模拟活动运行 `compute.py`，再执行全库自检和单测 |
+| 2026-11-20 | P3 | `src/p3_metrics/`、`contracts/`、`tests/test_metrics.py` | Codex | 按维护者委托实现节点 05 | Codex 加入有氧能力和恢复计算，补充指标 v2 缺失值与溯源字段，并保留 v1 校验 | `python tools/check_env.py`、`python contracts/validate_contract.py`、`python -m unittest discover -s tests`，用模拟量测生成并校验指标 v2 |
 |  |  |  |  |  |  |  |
 
 **填写要点**

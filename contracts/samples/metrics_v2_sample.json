@@ -1,0 +1,266 @@
+{
+  "schema_version": "2.0",
+  "athlete_id": "ATH-001",
+  "window": {
+    "start": "2026-10-18",
+    "end": "2026-11-14",
+    "days": 28
+  },
+  "load_inputs": {
+    "profile": "female",
+    "coefficient_a": 0.86,
+    "coefficient_b": 1.67,
+    "resting_hr": 55,
+    "max_hr": 183,
+    "history_start": "2026-11-08"
+  },
+  "activity_trimp": [
+    {
+      "activity_id": "A20261112-01",
+      "date": "2026-11-12",
+      "trimp": 110.897429,
+      "reason": null
+    },
+    {
+      "activity_id": "A20261114-01",
+      "date": "2026-11-14",
+      "trimp": 238.773076,
+      "reason": null
+    }
+  ],
+  "load": {
+    "trimp_week": 349.670505,
+    "acwr_rolling": null,
+    "acwr_ewma": null,
+    "week_load_change_pct": null,
+    "acwr_status": null,
+    "trimp_daily": [
+      {
+        "date": "2026-10-18",
+        "trimp": null
+      },
+      {
+        "date": "2026-10-19",
+        "trimp": null
+      },
+      {
+        "date": "2026-10-20",
+        "trimp": null
+      },
+      {
+        "date": "2026-10-21",
+        "trimp": null
+      },
+      {
+        "date": "2026-10-22",
+        "trimp": null
+      },
+      {
+        "date": "2026-10-23",
+        "trimp": null
+      },
+      {
+        "date": "2026-10-24",
+        "trimp": null
+      },
+      {
+        "date": "2026-10-25",
+        "trimp": null
+      },
+      {
+        "date": "2026-10-26",
+        "trimp": null
+      },
+      {
+        "date": "2026-10-27",
+        "trimp": null
+      },
+      {
+        "date": "2026-10-28",
+        "trimp": null
+      },
+      {
+        "date": "2026-10-29",
+        "trimp": null
+      },
+      {
+        "date": "2026-10-30",
+        "trimp": null
+      },
+      {
+        "date": "2026-10-31",
+        "trimp": null
+      },
+      {
+        "date": "2026-11-01",
+        "trimp": null
+      },
+      {
+        "date": "2026-11-02",
+        "trimp": null
+      },
+      {
+        "date": "2026-11-03",
+        "trimp": null
+      },
+      {
+        "date": "2026-11-04",
+        "trimp": null
+      },
+      {
+        "date": "2026-11-05",
+        "trimp": null
+      },
+      {
+        "date": "2026-11-06",
+        "trimp": null
+      },
+      {
+        "date": "2026-11-07",
+        "trimp": null
+      },
+      {
+        "date": "2026-11-08",
+        "trimp": 0.0
+      },
+      {
+        "date": "2026-11-09",
+        "trimp": 0.0
+      },
+      {
+        "date": "2026-11-10",
+        "trimp": 0.0
+      },
+      {
+        "date": "2026-11-11",
+        "trimp": 0.0
+      },
+      {
+        "date": "2026-11-12",
+        "trimp": 110.897429
+      },
+      {
+        "date": "2026-11-13",
+        "trimp": 0.0
+      },
+      {
+        "date": "2026-11-14",
+        "trimp": 238.773076
+      }
+    ]
+  },
+  "flags": [
+    {
+      "code": "WEEK_INSUFFICIENT_HISTORY",
+      "level": "medium",
+      "message": "计算周环比需要最近两周的完整负荷。"
+    },
+    {
+      "code": "ACWR_INSUFFICIENT_HISTORY",
+      "level": "medium",
+      "message": "计算 ACWR 需要 28 天完整负荷。"
+    }
+  ],
+  "capacity": {
+    "vo2max": {
+      "value": 50.9073,
+      "unit": "ml/kg/min",
+      "method": "uth_sorensen"
+    },
+    "methods": [
+      {
+        "method": "uth_sorensen",
+        "value": 50.9073
+      },
+      {
+        "method": "daniels",
+        "value": 49.8062
+      },
+      {
+        "method": "riegel",
+        "value": 49.4792
+      }
+    ],
+    "estimate_range": {
+      "low": 49.4792,
+      "high": 50.9073
+    },
+    "consistency_ok": true,
+    "max_spread_pct": 2.805295,
+    "race_inputs": {
+      "date": "2026-11-08",
+      "distance_m": 5000,
+      "duration_s": 1200,
+      "riegel_distance_m": 10000,
+      "riegel_duration_s": 2501.917826,
+      "riegel_exponent": 1.06
+    }
+  },
+  "recovery": {
+    "resting_hr_baseline": 56,
+    "resting_hr_baseline_days": 7,
+    "resting_hr_delta": 2,
+    "hr_drift_pct": 5.0,
+    "hr_drift_inputs": {
+      "date": "2026-11-12",
+      "first_hr_bpm": 140,
+      "second_hr_bpm": 147,
+      "first_pace_s_per_km": 360,
+      "second_pace_s_per_km": 358,
+      "temperature_c": 18
+    },
+    "hrv_rmssd": 48.0,
+    "sleep_h_avg": 7.0,
+    "sleep_days": 3,
+    "daily": [
+      {
+        "date": "2026-11-07",
+        "resting_hr_bpm": 56,
+        "sleep_h": null,
+        "hrv_rmssd_ms": null
+      },
+      {
+        "date": "2026-11-08",
+        "resting_hr_bpm": 53,
+        "sleep_h": null,
+        "hrv_rmssd_ms": null
+      },
+      {
+        "date": "2026-11-09",
+        "resting_hr_bpm": 54,
+        "sleep_h": 7.0,
+        "hrv_rmssd_ms": null
+      },
+      {
+        "date": "2026-11-10",
+        "resting_hr_bpm": 55,
+        "sleep_h": null,
+        "hrv_rmssd_ms": null
+      },
+      {
+        "date": "2026-11-11",
+        "resting_hr_bpm": 56,
+        "sleep_h": null,
+        "hrv_rmssd_ms": null
+      },
+      {
+        "date": "2026-11-12",
+        "resting_hr_bpm": 57,
+        "sleep_h": 6.5,
+        "hrv_rmssd_ms": null
+      },
+      {
+        "date": "2026-11-13",
+        "resting_hr_bpm": 60,
+        "sleep_h": null,
+        "hrv_rmssd_ms": null
+      },
+      {
+        "date": "2026-11-14",
+        "resting_hr_bpm": 58,
+        "sleep_h": 7.5,
+        "hrv_rmssd_ms": 48.0
+      }
+    ]
+  }
+}

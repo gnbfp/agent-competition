@@ -7,7 +7,7 @@
 | 文件 | 作用 |
 |---|---|
 | `activity.schema.json` | P2 解析器产出：原始活动数据 |
-| `metrics.schema.json` | P3 指标模块产出：TRIMP / ACWR / VO₂max / 恢复 |
+| `metrics.schema.json` / `metrics.v2.schema.json` | P3 指标契约 v1 / v2。校验器按 `schema_version` 选择，当前计算命令输出 v2。 |
 | `plan.schema.json` | P4 agent 产出：周训练计划 |
 | `report.schema.json` | P4 产出、**P5 唯一消费**：完整报告（含依据链与 agent_trace） |
 | `samples/*.json` | 黄金样例：全队共同的分母 |
@@ -15,10 +15,12 @@
 | `mock_api.py` | 假后端：P5 第一天就能开发 |
 | `CHANGELOG.md` | 每次契约变更记一行 |
 
+独立的指标 v2 使用 `null` 表达无法计算的数据，并保留估算和派生指标的输入。现有 `report_sample.json` 嵌入的是指标 v1。新报告接入 v2 时需同步更新报告契约和网页的缺失值展示。
+
 ## 三条命令
 
 ```bash
-python contracts/validate_contract.py              # 校验 samples（应 4 个 PASS）
+python contracts/validate_contract.py              # 校验 samples（应 5 个 PASS）
 python contracts/validate_contract.py --dir out/   # 校验自己产出的数据
 python contracts/mock_api.py --port 8080 --delay 300
 ```
