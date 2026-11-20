@@ -16,12 +16,17 @@
 from __future__ import annotations
 
 import argparse
-import csv
 import json
+import math
 import pathlib
 import re
 import sys
 from datetime import datetime
+
+if __package__:
+    from .csv_input import CsvInputError, read_csv
+else:
+    from csv_input import CsvInputError, read_csv
 
 SCHEMA_VERSION = "1.0"
 TIMEZONE = "Asia/Shanghai"
@@ -39,6 +44,7 @@ SPORT_MAP = {
 }
 SOURCE_ALLOWED = {"garmin", "coros", "huawei", "keep", "manual", "csv"}
 REQUIRED_FIELDS = ("date", "sport", "duration_s", "distance_m", "avg_hr", "max_hr")
+OPTIONAL_FIELDS = ("start_time", "elevation_gain_m", "avg_pace_s_per_km", "rpe", "sleep_h", "pain", "source")
 
 HR_RANGE = (30, 230)
 HR_MAX_RANGE = (30, 250)
@@ -62,11 +68,11 @@ def _opt_int(row: dict, key: str, low: int, high: int) -> int | None:
     if raw == "":
         return None
     try:
-        value = int(round(float(raw)))  # 5.5 这类小数按四舍五入，别截断
-    except ValueError:
-        raise RowError(f"{key} 不是数字：{raw!r}") from None
+        value = round(float(raw))
+    except (ValueError, OverflowError):
+        raise RowError(f"{key} 不是有限数字") from None
     if not low <= value <= high:
-        raise RowError(f"{key} 超出范围 {low}–{high}：{value}")
+        raise RowError(f"{key} 超出范围 {low}–{high}")
     return value
 
 
@@ -77,9 +83,9 @@ def _opt_float(row: dict, key: str, low: float, high: float) -> float | None:
     try:
         value = float(raw)
     except ValueError:
-        raise RowError(f"{key} 不是数字：{raw!r}") from None
+        raise RowError(f"{key} 不是数字") from None
     if not low <= value <= high:
-        raise RowError(f"{key} 超出范围 {low}–{high}：{value}")
+        raise RowError(f"{key} 超出范围 {low}–{high}")
     return value
 
 
@@ -89,29 +95,37 @@ def build_activity(row: dict, athlete_seq: int) -> tuple[dict, list[str]]:
 
     date = _text(row, "date")
     if not DATE_RE.match(date):
-        raise RowError(f"date 必须形如 YYYY-MM-DD：{date!r}")
+        raise RowError("date 缺失或不是 YYYY-MM-DD")
+    try:
+        datetime.strptime(date, "%Y-%m-%d")
+    except ValueError:
+        raise RowError("date 不是有效日期") from None
 
     raw_sport = _text(row, "sport")
     sport = SPORT_MAP.get(raw_sport.lower()) or SPORT_MAP.get(raw_sport)
     if sport is None:
-        raise RowError(f"sport 无法识别：{raw_sport!r}")
+        raise RowError("sport 缺失或无法识别")
 
     raw_duration = _text(row, "duration_s")
     if raw_duration == "":
         raise RowError("duration_s 缺失（本行丢弃，不猜）")
     try:
         duration_s = int(float(raw_duration))
-    except ValueError:
-        raise RowError(f"duration_s 不是数字：{raw_duration!r}") from None
+    except (ValueError, OverflowError):
+        raise RowError("duration_s 不是有限数字") from None
     if duration_s < 1:
-        raise RowError(f"duration_s 必须 ≥ 1 秒：{duration_s}")
+        raise RowError("duration_s 必须 ≥ 1 秒")
 
+    raw_distance = _text(row, "distance_m")
+    if sport == "run" and not raw_distance:
+        raise RowError("distance_m 缺失，跑步活动需要实测距离")
     try:
-        distance_m = float(_text(row, "distance_m") or "0")
+        distance_m = float(raw_distance or "0")
     except ValueError:
         raise RowError("distance_m 不是数字") from None
-    if distance_m < 0:
-        raise RowError(f"distance_m 不能为负：{distance_m}")
+    if not math.isfinite(distance_m) or distance_m < 0:
+        raise RowError("distance_m 必须为有限的非负数字")
+    distance_m = round(distance_m, 1)
 
     avg_hr = _opt_int(row, "avg_hr", *HR_RANGE)
     max_hr = _opt_int(row, "max_hr", *HR_MAX_RANGE)
@@ -124,8 +138,13 @@ def build_activity(row: dict, athlete_seq: int) -> tuple[dict, list[str]]:
         )
 
     start_time = _text(row, "start_time") or None
-    if start_time is not None and not TIME_RE.match(start_time):
-        raise RowError(f"start_time 必须形如 HH:MM：{start_time!r}")
+    if start_time is not None:
+        try:
+            if not TIME_RE.match(start_time):
+                raise ValueError
+            datetime.strptime(start_time, "%H:%M")
+        except ValueError:
+            raise RowError("start_time 不是有效的 HH:MM") from None
 
     elevation = _opt_float(row, "elevation_gain_m", 0, 10000)
     rpe = _opt_int(row, "rpe", 0, 10)
@@ -133,16 +152,20 @@ def build_activity(row: dict, athlete_seq: int) -> tuple[dict, list[str]]:
     pain = _text(row, "pain") or None
 
     pace = _opt_float(row, "avg_pace_s_per_km", 120, 1200)
-    if pace is None and distance_m > 0:
-        pace = round(duration_s / distance_m * 1000)
-        if not 120 <= pace <= 1200:
-            warnings.append(f"按距离推算的配速 {pace} s/km 超出合理区间，置为 null")
-            pace = None
+    if distance_m > 0:
+        estimate = duration_s / distance_m * 1000
+        if pace is None:
+            pace = round(estimate) if math.isfinite(estimate) else None
+            if pace is None or not 120 <= pace <= 1200:
+                warnings.append("按距离推算的配速超出合理区间，置为 null")
+                pace = None
+        elif sport == "run" and abs(estimate - pace) > 15:
+            raise RowError("avg_pace_s_per_km 与用时和距离推算的配速相差超过 15 秒/公里")
 
     raw_source = _text(row, "source").lower()
     source = raw_source if raw_source in SOURCE_ALLOWED else "csv"
     if raw_source and raw_source not in SOURCE_ALLOWED:
-        warnings.append(f"source 未知（{raw_source}），按 csv 处理")
+        warnings.append("source 未知，按 csv 处理")
 
     activity = {
         "activity_id": f"A{date.replace('-', '')}-{athlete_seq:02d}",
@@ -150,7 +173,7 @@ def build_activity(row: dict, athlete_seq: int) -> tuple[dict, list[str]]:
         "start_time": start_time,
         "sport": sport,
         "duration_s": duration_s,
-        "distance_m": round(distance_m, 1),
+        "distance_m": distance_m,
         "avg_hr": avg_hr,
         "max_hr": max_hr,
         "elevation_gain_m": elevation,
@@ -195,15 +218,16 @@ def parse_rows(rows: list[dict]) -> tuple[list[dict], list[tuple[int, str]], lis
     return activities, skipped, rejected, warnings
 
 
+def read_middle_csv(path: pathlib.Path) -> tuple[list[dict], str]:
+    fieldnames, rows, encoding = read_csv(path)
+    missing = [c for c in REQUIRED_FIELDS if c not in fieldnames]
+    if missing:
+        raise CsvInputError(f"表头缺列：{', '.join(missing)}（见 docs/CSV中间格式.md）")
+    return rows, encoding
+
+
 def load_csv(path: pathlib.Path) -> list[dict]:
-    with path.open("r", encoding="utf-8-sig", newline="") as handle:
-        reader = csv.DictReader(handle)
-        if reader.fieldnames is None:
-            raise SystemExit(f"FAIL {path} 是空文件")
-        missing = [c for c in REQUIRED_FIELDS if c not in reader.fieldnames]
-        if missing:
-            raise SystemExit(f"FAIL 表头缺列：{', '.join(missing)}（见 docs/CSV中间格式.md）")
-        return list(reader)
+    return read_middle_csv(path)[0]
 
 
 def build_document(activities: list[dict], athlete_id: str) -> dict:
@@ -216,27 +240,40 @@ def build_document(activities: list[dict], athlete_id: str) -> dict:
     }
 
 
-def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(description="CSV 中间格式 → activity.json")
-    parser.add_argument("csv_path", help="输入 CSV（UTF-8，允许带 BOM）")
-    parser.add_argument("-o", "--out", default="out/activity.json", help="输出路径")
-    parser.add_argument("--athlete", default=DEFAULT_ATHLETE, help="匿名 ID，如 anon_01")
-    parser.add_argument("--strict", action="store_true", help="有任何行被丢弃就以退出码 1 结束")
-    args = parser.parse_args(argv)
+def write_data_check(path: pathlib.Path, rows: list[dict], activities: list[dict],
+                     skipped: list[tuple[int, str]], rejected: list[dict], warnings: list[str], *,
+                     encoding: str, adapter_warning_count: int) -> None:
+    lines = [
+        "# 数据体检报告", "",
+        f"- 输入编码：{encoding}",
+        f"- 读入 {len(rows)} 行，入库 {len(activities)} 条，丢弃 {len(skipped)} 条，设备异常旁路 {len(rejected)} 条。",
+        f"- 格式适配警告 {adapter_warning_count} 条，入库警告 {len(warnings)} 条。",
+        "", "## 输入缺失字段", "",
+    ]
+    counts = [(field, sum(not _text(row, field) for row in rows))
+              for field in (*REQUIRED_FIELDS, *OPTIONAL_FIELDS)]
+    lines.extend([f"- `{field}`：{count} 行" for field, count in counts if count] or ["无。"])
+    lines.extend(["", "## 丢弃记录", ""])
+    lines.extend([f"- 第 {index} 行：{reason}" for index, reason in skipped] or ["无。"])
+    lines.extend(["", "## 设备异常旁路", ""])
+    lines.extend([f"- 第 {item['line']} 行（{item['rule_id']}）：平均心率高于最大心率。"
+                  for item in rejected] or ["无。"])
+    lines.extend(["", "## 入库警告", ""])
+    lines.extend([f"- {warning}" for warning in warnings] or ["无。"])
+    path.write_text("\n".join(lines) + "\n", encoding="utf-8", newline="\n")
 
-    path = pathlib.Path(args.csv_path)
-    if not path.exists():
-        print(f"FAIL 找不到 {path}")
+
+def import_rows(rows: list[dict], out_path: pathlib.Path, *, source_name: str, encoding: str,
+                athlete_id: str, strict: bool, adapter_warning_count: int = 0) -> int:
+    if out_path.name.lower() in {"rejected.json", "data_check.md"}:
+        print("FAIL activity 输出路径与导入附属文件重名")
         return 1
-
-    rows = load_csv(path)
     activities, skipped, rejected, warnings = parse_rows(rows)
-    document = build_document(activities, args.athlete)
+    document = build_document(activities, athlete_id)
 
-    out_path = pathlib.Path(args.out)
     out_path.parent.mkdir(parents=True, exist_ok=True)
     out_path.write_text(
-        json.dumps(document, ensure_ascii=False, indent=2) + "\n",
+        json.dumps(document, ensure_ascii=False, allow_nan=False, indent=2) + "\n",
         encoding="utf-8",
         newline="\n",
     )
@@ -253,21 +290,49 @@ def main(argv: list[str] | None = None) -> int:
         print(f"  [警告] {warning}")
     print(f"已写出 {out_path}（{out_path.stat().st_size} B）")
 
-    if rejected:
-        reject_path = out_path.parent / "rejected.json"
+    reject_path = out_path.with_name("rejected.json")
+    if rejected or reject_path.is_file():
         reject_path.write_text(
-            json.dumps({"schema_version": SCHEMA_VERSION, "source": path.name, "items": rejected},
+            json.dumps({"schema_version": SCHEMA_VERSION, "source": source_name, "items": rejected},
                        ensure_ascii=False, indent=2) + "\n",
             encoding="utf-8",
             newline="\n",
         )
-        print(f"设备异常 {len(rejected)} 条已旁路到 {reject_path}（R02，不进主数据）")
+        if rejected:
+            print(f"设备异常 {len(rejected)} 条已旁路到 {reject_path}（R02，不进主数据）")
 
-    if args.strict and (skipped or rejected):
+    report_path = out_path.with_name("data_check.md")
+    write_data_check(report_path, rows, activities, skipped, rejected, warnings,
+                     encoding=encoding, adapter_warning_count=adapter_warning_count)
+    print(f"数据体检报告已写出 {report_path}")
+
+    if strict and (skipped or rejected):
         print("结论：--strict 模式下不允许丢弃行。")
         return 1
     print("结论：解析完成，请继续跑 contracts/validate_contract.py 校验。")
     return 0
+
+
+def main(argv: list[str] | None = None) -> int:
+    parser = argparse.ArgumentParser(description="CSV 中间格式 → activity.json")
+    parser.add_argument("csv_path", help="输入 CSV（UTF-8，兼容 BOM 和 GBK）")
+    parser.add_argument("-o", "--out", default="out/activity.json", help="输出路径")
+    parser.add_argument("--athlete", default=DEFAULT_ATHLETE, help="匿名 ID，如 anon_01")
+    parser.add_argument("--strict", action="store_true", help="有任何行被丢弃就以退出码 1 结束")
+    args = parser.parse_args(argv)
+    path = pathlib.Path(args.csv_path)
+    output = pathlib.Path(args.out)
+    if path.resolve() in {candidate.resolve() for candidate in
+                          (output, output.with_name("data_check.md"), output.with_name("rejected.json"))}:
+        print("FAIL 输入与输出路径不得重合")
+        return 1
+    try:
+        rows, encoding = read_middle_csv(path)
+        return import_rows(rows, output, source_name=path.name, encoding=encoding,
+                           athlete_id=args.athlete, strict=args.strict)
+    except (CsvInputError, OSError) as exc:
+        print(f"FAIL {exc}")
+        return 1
 
 
 if __name__ == "__main__":

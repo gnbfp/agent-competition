@@ -21,6 +21,7 @@
 | 2026-11-18 | P2 | `src/p2_ingest/format_adapters.py`、`src/p2_ingest/import_export.py` | DeepSeek | 写"Garmin / 华为导出 → CSV 中间格式"的列名映射与单位归一（时长、配速、距离、心率），并要求解析失败只降级为缺失、不中断整份文件 | 原提交未记录人工修改，节点 02 接手续改见下行记录 | 原分支 40 项单测通过，Garmin 和华为模拟导出生成的 activity JSON 均通过契约校验 |
 | 2026-11-18 | P2 | `tests/test_format_adapters.py`、`docs/P2_导入适配说明.md` | DeepSeek | 生成适配器的单测骨架、样例数据与说明文档 | 原提交未记录人工修改，节点 02 接手续改见下行记录 | 原分支 40 项单测通过。两个样例均为模拟数据，已在适配说明中标注 |
 | 2026-11-20 | P2 | `src/p2_ingest/format_adapters.py`、`tests/test_format_adapters.py`、`docs/P2_导入适配说明.md` | Codex | 按维护者委托修复节点 02 导入缺陷并复验 | Codex 添加英里配速换算，拦截无法参与计算的数值并沿用现有的逐行警告处理，同时补充回归用例和导入说明 | `python -m unittest discover -s tests`，用两套模拟 CSV 运行 `import_export.py` 后分别运行 `validate_contract.py` |
+| 2026-11-20 | P2 | `src/p2_ingest/`、`tools/check_env.py`、`tests/test_ingest_quality.py` | Codex | 按维护者委托实现节点 03 | Codex 统一两条导入入口的 CSV 解码，完善坏行处理和体检报告，补充仓库样例编码检查和活动 JSON 脱敏工具 | `python tools/check_env.py`、`python contracts/validate_contract.py`、`python -m unittest discover -s tests`。验收使用模拟数据 |
 |  |  |  |  |  |  |  |
 
 **填写要点**
