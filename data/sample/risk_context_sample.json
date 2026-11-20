@@ -1,0 +1,17 @@
+{
+  "athlete_id": "ATH-001",
+  "max_hr_source": "measured",
+  "import_quality": {"incomplete_rows": 0, "device_anomaly_rows": 0},
+  "session_types": {
+    "2026-11-08": [],
+    "2026-11-09": [],
+    "2026-11-10": [],
+    "2026-11-11": [],
+    "2026-11-12": ["easy"],
+    "2026-11-13": [],
+    "2026-11-14": ["long"]
+  },
+  "pain_reported": true,
+  "environment": {"temperature_c": 29, "humidity_pct": 60},
+  "target_race_date": "2026-11-21"
+}
