@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>任务分配 v2（按人分工 · 2026-11-20 起生效）</title>
+<style>
+:root{
+  --ink:#1b1f24; --ink-soft:#4a545e; --line:#e3e8ef; --bg:#f5f7fa;
+  --accent:#0b5fff; --accent-soft:#eaf1ff; --warn:#b45309; --ok:#0a7a45;
+}
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font-family:"Microsoft YaHei","PingFang SC","Hiragino Sans GB","Segoe UI",system-ui,sans-serif;
+  font-size:16.5px; line-height:1.85; -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:1000px;margin:0 auto;padding:40px 22px 90px}
+.card{background:#fff;border:1px solid var(--line);border-radius:16px;
+  box-shadow:0 1px 2px rgba(16,24,40,.04),0 12px 32px -18px rgba(16,24,40,.18);
+  padding:52px 56px 60px}
+h1{font-size:30px;line-height:1.35;margin:0 0 6px;letter-spacing:-.3px}
+h1+blockquote{margin-top:18px}
+h2{font-size:22px;margin:52px 0 16px;padding-top:18px;border-top:1px solid var(--line);letter-spacing:-.2px}
+h2:first-of-type{border-top:0}
+h3{font-size:18.5px;margin:34px 0 12px;color:#0b1b3a}
+h3::before{content:"";display:inline-block;width:4px;height:16px;background:var(--accent);
+  border-radius:2px;margin-right:10px;vertical-align:-2px}
+p{margin:12px 0}
+strong{color:#0b1b3a}
+a{color:var(--accent);text-decoration:none;border-bottom:1px solid #bcd0ff}
+ul,ol{margin:12px 0;padding-left:26px}
+li{margin:7px 0}
+li::marker{color:var(--accent)}
+hr{border:0;border-top:1px dashed var(--line);margin:36px 0}
+blockquote{margin:20px 0;padding:16px 20px;background:var(--accent-soft);
+  border-left:4px solid var(--accent);border-radius:0 10px 10px 0;color:#123;font-size:15.5px}
+blockquote strong{color:var(--accent)}
+code{background:#f2f5f9;border:1px solid var(--line);border-radius:5px;
+  padding:1.5px 6px;font-family:"Cascadia Mono",Consolas,monospace;font-size:13.5px;color:#0b3d91}
+pre.code{overflow-x:auto;margin:18px 0;padding:16px 18px;background:#0b1220;color:#dbe6f6;
+  border-radius:10px;font-family:"Cascadia Mono",Consolas,"Courier New",monospace;
+  font-size:13px;line-height:1.6;white-space:pre}
+pre.code code{background:none;border:0;padding:0;color:inherit;font-size:inherit}
+.table-wrap{overflow-x:auto;margin:18px 0;border:1px solid var(--line);border-radius:10px}
+table{border-collapse:collapse;width:100%;font-size:14.8px;background:#fff}
+thead th{background:#f0f4fa;text-align:left;font-weight:700;color:#0b1b3a;
+  padding:11px 14px;border-bottom:1px solid var(--line);white-space:nowrap}
+tbody td{padding:11px 14px;border-bottom:1px solid #eef2f7;vertical-align:top;color:var(--ink-soft)}
+tbody tr:last-child td{border-bottom:0}
+tbody tr:nth-child(even){background:#fafbfd}
+tbody tr:hover{background:#f3f7ff}
+@media (max-width:720px){
+  .card{padding:28px 20px 36px;border-radius:12px}
+  .wrap{padding:16px 10px 60px}
+  h1{font-size:24px} h2{font-size:19px} body{font-size:15.5px}
+}
+</style>
+</head>
+<body>
+<div class="wrap"><article class="card">
+<h1 id="任务分配-v2-按人分工-2026-11-20-起生效">任务分配 v2（按人分工 · 2026-11-20 起生效）</h1>
+<blockquote>用途：从今天起按「人」干活，不再按 P1–P5 角色分。本表每行都是一个能验收的交付物，做完在群里报一句，进度记到 <code>docs/版本与标签.md</code>。<br>关系说明：旧的「五人任务清单（按 P1–P5 角色）」作废，<strong>模块边界和契约不变</strong>，只是责任重新落到人。<br>估时是人天，不是期限；估算已扣掉"我代做已完成"的部分。</blockquote>
+<h2 id="一-五人分工总表">一、五人分工总表</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>姓名</th><th>角色</th><th>负责范围</th><th>主要目录</th><th>估算人天</th></tr></thead>
+<tbody>
+<tr><td><strong>戚相宜</strong></td><td>队长 + 开发（数据与契约）</td><td>仓库管理、契约维护、数据链（P2）、真实数据、联调、评审合并</td><td><code>contracts/</code> <code>src/p2_ingest/</code> <code>tools/</code></td><td>约 20</td></tr>
+<tr><td><strong>路成</strong></td><td>开发（指标与智能体）</td><td>指标计算（P3）、智能体主循环与工具（P4）、报告生成</td><td><code>src/p3_metrics/</code> <code>src/p4_agent/</code></td><td>约 22</td></tr>
+<tr><td><strong>张笑钰</strong></td><td>前端页面</td><td>页面全部（P5）：报告页、导入页、可视化、演示模式</td><td><code>src/p5_web/</code></td><td>约 14</td></tr>
+<tr><td><strong>李婷欣</strong></td><td>项目计划书（主体）</td><td>计划书正文：背景、问题、方案、技术、创新、落地</td><td><code>docs/计划书/</code></td><td>约 10</td></tr>
+<tr><td><strong>戴晓月</strong></td><td>项目计划书（验证与表达）</td><td>验证章节、答辩 PPT 文案、视频脚本、依据引用规范</td><td><code>docs/计划书/</code> <code>docs/答辩/</code></td><td>约 10</td></tr>
+</tbody></table></div>
+<p>GitHub 账号：戚相宜 <code>gnbfp</code>、李婷欣 <code>snowfindtwilight</code>。<strong>张笑钰、戴晓月的账号需要本人确认</strong>（现有协作者里还剩 <code>sy616313</code>、<code>diosama-S</code> 两个），路成如果没有账号，先注册再报给队长。</p>
+<h2 id="二-逐人任务">二、逐人任务</h2>
+<h3 id="戚相宜-队长-开发-数据与契约">戚相宜（队长 + 开发：数据与契约）</h3>
+<div class="table-wrap"><table>
+<thead><tr><th>#</th><th>任务</th><th>产物 / 验收</th><th>估时</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>审掉李婷欣的 P2 适配器分支（<code>feature/p2-format-adapters</code>）：确认 40 条单测过、两个样例都过 <code>validate_contract</code>、没改 schema</td><td>PR 合并进 <code>main</code>，并在 PR 里写 3 条意见</td><td>0.5</td></tr>
+<tr><td>2</td><td>让她补 <code>docs/AI使用留痕.md</code> 里空着的「我改了什么」，再合并</td><td>留痕两行填满</td><td>0.2</td></tr>
+<tr><td>3</td><td>给 <code>tools/check_env.py</code> 加 <strong><code>.csv</code> 编码检查</strong> 和解析器 GBK 兜底</td><td><code>check_env</code> 能拦住 GBK 导出的 CSV；补一条单测</td><td>0.5</td></tr>
+<tr><td>4</td><td>导出本人 12 个月跑步数据 → <code>data/raw/</code>（不进 Git）→ 转中间格式 → 跑通解析</td><td><code>data/raw/me_2025_2026.csv</code> + <code>out/activity.json</code> 过校验</td><td>1</td></tr>
+<tr><td>5</td><td>写脱敏脚本（删姓名/手机号/GPS/设备序列号，匿名 ID 替换）</td><td><code>src/p2_ingest/anonymize.py</code>，自检"真实姓名命中 0"才允许写 <code>data/sample/</code></td><td>2</td></tr>
+<tr><td>6</td><td>数据体检报告（缺哪些字段、哪些行被判设备异常、为什么）</td><td><code>out/data_check.md</code>（给人看的）</td><td>2</td></tr>
+<tr><td>7</td><td>契约维护：谁要加字段，由你改 schema + 样例 + 版本号 + 通知全员</td><td><code>contracts/CHANGELOG.md</code> 有记录，<code>check_env</code> 全绿</td><td>持续</td></tr>
+<tr><td>8</td><td>总联调：真实数据从 CSV 一路跑到页面出报告</td><td>一条命令跑通全链路，<code>report.json</code> 过校验</td><td>3</td></tr>
+<tr><td>9</td><td>仓库管理：PR review、分支保护、打标签、主持站会</td><td>每个阶段有 tag，台账有记录</td><td>持续</td></tr>
+<tr><td>10</td><td>阈值校准：找体育老师核 3 条（10% 法则、35% 长距离、睡眠 6h），把结论写回 <code>rules.json</code></td><td>3 条规则的 <code>source</code> 里出现"据 XX 老师 2026-XX 访谈"</td><td>0.5</td></tr>
+</tbody></table></div>
+<h3 id="路成-开发-指标与智能体">路成（开发：指标与智能体）</h3>
+<div class="table-wrap"><table>
+<thead><tr><th>#</th><th>任务</th><th>产物 / 验收</th><th>估时</th></tr></thead>
+<tbody>
+<tr><td>1</td><td><strong>第一件事</strong>：<code>src/p3_metrics/compute.py</code> 读 <code>activity.json</code> 输出 <code>metrics.json</code>，与 <code>metrics_sample.json</code> 逐字段对齐（误差 ≤0.01）</td><td>单测：样例进 → 样例出，完全相同</td><td>2</td></tr>
+<tr><td>2</td><td>TRIMP 计算（男女系数 0.64/1.92、0.86/1.67，见 <code>rules.json</code> R04）</td><td>与手算 3 组对照一致</td><td>1.5</td></tr>
+<tr><td>3</td><td>ACWR 双口径（EWMA 为主、滚动为对照）+ <code>acwr_status</code> 分档</td><td><code>acwr_rolling</code>/<code>acwr_ewma</code> 都出，差值 &gt;1.0 时报警</td><td>2</td></tr>
+<tr><td>4</td><td>VO₂max 三法交叉（Uth / Riegel / Daniels）+ <code>consistency_ok</code> + <code>max_spread_pct</code></td><td>三法差异 &gt;5% 时 <code>consistency_ok=false</code></td><td>2</td></tr>
+<tr><td>5</td><td>恢复指标（静息心率基线与偏差、心率漂移、HRV、睡眠均值）</td><td><code>recovery</code> 五个字段全出</td><td>2</td></tr>
+<tr><td>6</td><td><code>src/p4_agent/run.py</code> 主循环：Plan → Act → Observe → Self-check</td><td>控制台能看到四步，不是一把梭</td><td>3</td></tr>
+<tr><td>7</td><td>8 个工具实现（load_activities / compute_load / estimate_vo2max / check_risk / retrieve_evidence / ask_athlete / generate_plan / explain）</td><td>每个工具有单测；<code>retrieve_evidence</code> 能查到 <code>rules.json</code> 原文</td><td>4</td></tr>
+<tr><td>8</td><td>规则引擎：跑 R01–R18，出 <code>risks[]</code>（带 rule_id / level / evidence.clause / action）</td><td>20 条规则逐条有触发样例</td><td>3</td></tr>
+<tr><td>9</td><td>R19/R20 自校验：计划增幅 &gt;10% 或有无依据条目 → 打回重排</td><td>故意造两条违规，agent 能自己打回</td><td>1.5</td></tr>
+<tr><td>10</td><td>报告生成 <code>report.json</code>（含 <code>agent_trace</code> 6 步、<code>evidence[]</code> 覆盖率）</td><td>过 <code>validate_contract</code>，页面能直接渲染</td><td>2</td></tr>
+</tbody></table></div>
+<h3 id="张笑钰-前端页面">张笑钰（前端页面）</h3>
+<div class="table-wrap"><table>
+<thead><tr><th>#</th><th>任务</th><th>产物 / 验收</th><th>估时</th></tr></thead>
+<tbody>
+<tr><td>1</td><td><strong>第一件事</strong>：把现有 <code>index.html</code> 跑起来（起 <code>mock_api</code> + <code>http.server</code>），首页能出报告</td><td>截图发群：结论 + 风险灯 + 指标卡 + 下周安排</td><td>0.5</td></tr>
+<tr><td>2</td><td>风险条目可展开依据（点开看 <code>evidence.clause</code> + 出处）</td><td>每条风险都能点到原文条款</td><td>2</td></tr>
+<tr><td>3</td><td>数据导入页（选 CSV → 上传/粘贴 → 出解析结果与丢弃原因）</td><td>上传后能看到"入库 N 条、丢弃 M 条、原因"</td><td>2.5</td></tr>
+<tr><td>4</td><td>SVG 手绘可视化：负荷曲线（近 28 天）+ ACWR 仪表盘 + 风险等级灯</td><td>不引任何图表库，离线可跑</td><td>3</td></tr>
+<tr><td>5</td><td>下周计划表（每日安排 + 点击展开"为什么这样排"）</td><td>每天挂 rule_id，能展开依据</td><td>2</td></tr>
+<tr><td>6</td><td>演示模式（一键载入预置数据，30 秒内出结果，路径无网络依赖）</td><td>断网点一下就能演示</td><td>1.5</td></tr>
+<tr><td>7</td><td>页面纪律：不自己算指标，全部来自 <code>report.json</code>；缺数据显示「数据不足」不显示 0</td><td>代码 review 时 grep 不出计算公式</td><td>持续</td></tr>
+<tr><td>8</td><td>出素材：截图/录屏给视频用</td><td>三张关键界面图 + 一段 40 秒录屏</td><td>1</td></tr>
+</tbody></table></div>
+<h3 id="李婷欣-项目计划书-主体">李婷欣（项目计划书：主体）</h3>
+<blockquote>她的 P2 适配器是额外贡献，已并入主线；现在转计划书。开写前先看 <code>docs/项目计划书-v0.1.md</code>，那是骨架，你来把它写成人话。</blockquote>
+<div class="table-wrap"><table>
+<thead><tr><th>#</th><th>任务</th><th>产物 / 验收</th><th>估时</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>第一章：选题背景与问题（跑步 App 只给计划不给依据）</td><td>800 字 + 3 条真实痛点（可引队长本人经历）</td><td>1.5</td></tr>
+<tr><td>2</td><td>第二章：方案总述（输入→处理→输出，一张流程图讲清）</td><td>1 张流程图 + 600 字</td><td>1.5</td></tr>
+<tr><td>3</td><td>第三章：技术方案（契约、规则库、指标公式、智能体主循环）</td><td>4 张表/图，公式要和 <code>rules.json</code> 一致</td><td>2.5</td></tr>
+<tr><td>4</td><td>第四章：跨学科说明（运动生理学规则 + 软件工程实现，为什么不是套壳）</td><td>对照表：评委可能问什么 / 我们怎么答</td><td>1.5</td></tr>
+<tr><td>5</td><td>第五章：创新点（三条，每条一句可验证的话）</td><td>3 条，每条带证据（哪个文件/哪个数字）</td><td>1</td></tr>
+<tr><td>6</td><td>全文排版成 PDF（初赛要交 PDF）</td><td>目录、页码、图表编号齐全</td><td>1.5</td></tr>
+<tr><td>7</td><td>与戴晓月对稿：你写"是什么"，她写"凭什么信"</td><td>两稿合并无重复、无矛盾</td><td>0.5</td></tr>
+</tbody></table></div>
+<h3 id="戴晓月-项目计划书-验证与表达">戴晓月（项目计划书：验证与表达）</h3>
+<div class="table-wrap"><table>
+<thead><tr><th>#</th><th>任务</th><th>产物 / 验收</th><th>估时</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>第六章：验证方案（L1 回测 / L2 三法一致性 / L3 对抗测试 / L4 对照 / L5 专家评审）</td><td>5 层每层写清"怎么做、出什么数、多少算通过"</td><td>2.5</td></tr>
+<tr><td>2</td><td>验证执行表：谁在什么时候跑 L1–L5，用什么数据</td><td>一张执行表，交给各模块执行</td><td>1</td></tr>
+<tr><td>3</td><td>依据清单与引用规范（文献作者年/国家标准号/访谈记录）</td><td>20 条规则逐条列出处，格式统一</td><td>2</td></tr>
+<tr><td>4</td><td>答辩 PPT 文案（12–15 页，一页一个结论）</td><td>每页标题=结论，副标题=证据</td><td>2</td></tr>
+<tr><td>5</td><td>5 分钟路演逐字稿（含 30 秒开场钩子）</td><td>讲一遍 &lt;5 分 30 秒</td><td>1.5</td></tr>
+<tr><td>6</td><td>3–5 分钟视频脚本（分镜：问题→演示→验证→结论）</td><td>分镜表 + 旁白，交给张笑钰录屏</td><td>1.5</td></tr>
+<tr><td>7</td><td>隐私与合规表述（真实数据脱敏、不替代医生）</td><td>计划书里有一节专门写这个</td><td>0.5</td></tr>
+</tbody></table></div>
+<h2 id="三-谁挡谁-按顺序解锁">三、谁挡谁（按顺序解锁）</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>顺序</th><th>依赖</th><th>谁在等</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>戚相宜合并 P2 适配器 + 真实数据落地</td><td>路成指标能用真数据跑；戴晓月 L1 回测才有素材</td></tr>
+<tr><td>2</td><td>路成 <code>compute.py</code> 出 <code>metrics.json</code></td><td>智能体才有输入；张笑钰页面才有指标卡</td></tr>
+<tr><td>3</td><td>路成 agent 出 <code>report.json</code></td><td>张笑钰的页面才能完整渲染，李婷欣的技术章节才能截图</td></tr>
+<tr><td>4</td><td>张笑钰页面完成</td><td>戴晓月的视频脚本、答辩演示才有画面</td></tr>
+<tr><td>5</td><td>计划书 + 演示 + 验证数字齐</td><td>才能交初赛</td></tr>
+</tbody></table></div>
+<h2 id="四-协作规矩-不遵守就回退">四、协作规矩（不遵守就回退）</h2>
+<ol>
+<li><strong>不许直接推 <code>main</code></strong>，一律开 <code>feature/*</code> 分支 + PR，队长 review 后合并（分支保护已开）。</li>
+<li>**只有戚相宜能改 <code>contracts/*.schema.json</code>**；别人要加字段，先在群里说，由他改 schema + 样例 + 版本号。</li>
+<li><strong>用 AI 写的代码/文档必须记 <code>docs/AI使用留痕.md</code></strong>，"我改了什么""怎么验证的"两列不能空。</li>
+<li>提交前跑三条：<code>python tools/check_env.py</code>、<code>python contracts/validate_contract.py</code>、<code>python -m unittest discover -s tests</code>。</li>
+<li>每个阶段结束由队长打标签（<code>stage-1</code>、<code>stage-2</code>…），并在 <code>docs/版本与标签.md</code> 记一行。</li>
+</ol>
+<h2 id="五-验收口径-每人都适用">五、验收口径（每人都适用）</h2>
+<ul>
+<li>交付物是<strong>能被别人跑起来</strong>的东西，不是截图或描述。</li>
+<li>写完自己先按"验收"那一列走一遍，过了再报。</li>
+<li>讲不清"这行为什么这么写"的代码，不许提交。</li>
+</ul>
+<h2 id="六-今天各自第一件事">六、今天各自第一件事</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>谁</th><th>今天做什么</th></tr></thead>
+<tbody>
+<tr><td>戚相宜</td><td>审并合并李婷欣的 PR；把 <code>.csv</code> 编码检查加到 <code>check_env</code>；导出跑步数据</td></tr>
+<tr><td>路成</td><td><code>compute.py</code> 骨架：样例 <code>activity.json</code> 进 → 与 <code>metrics_sample.json</code> 逐字段对齐</td></tr>
+<tr><td>张笑钰</td><td>起 <code>mock_api</code> + <code>http.server</code>，把首页跑出来，截图发群</td></tr>
+<tr><td>李婷欣</td><td>读完 <code>docs/项目计划书-v0.1.md</code>，交第一章 800 字初稿</td></tr>
+<tr><td>戴晓月</td><td>交"验证方案"目录 + L1/L2 两层的操作细则初稿</td></tr>
+</tbody></table></div>
+<h2 id="附-已完成-别重复做">附：已完成、别重复做</h2>
+<ul>
+<li>4 份契约 schema + 4 份黄金样例 + <code>validate_contract.py</code>（含 C1–C8 跨字段校验）+ <code>mock_api.py</code></li>
+<li><code>contracts/rules.json</code> 20 条规则 + <code>tools/check_rules.py</code></li>
+<li><code>docs/CSV中间格式.md</code> + <code>src/p2_ingest/csv_parser.py</code> + 14 条单测</li>
+<li><code>src/p5_web/index.html</code> 起点页（能渲染 <code>report.json</code>）</li>
+<li>三份 README（P3/P4/P5 模块说明）、<code>docs/项目计划书-v0.1.md</code>、<code>docs/组长开工包.md</code></li>
+<li>仓库：分支保护、4 个标签、PR 模板、AI 留痕制度、<code>check_env</code> 8 项自检</li>
+</ul>
+</article></div>
+</body>
+</html>

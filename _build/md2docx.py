@@ -101,7 +101,7 @@ def add_page_number_footer(section):
         set_run(r, BODY_CN, BODY_EN, 9, color=GRAY)
 
 
-INLINE = re.compile(r"(\*\*[^*]+\*\*|`[^`]+`|\[[^\]]+\]\([^)]+\)|\*[^*\s][^*]*\*)")
+INLINE = re.compile(r"(\*\*(?:.+?)\*\*|`[^`]+`|\[[^\]]+\]\([^)]+\)|\*[^*\s][^*]*\*)")
 
 
 def add_inline(paragraph, text, size=10.5, color=INK, bold=False):
