@@ -1,0 +1,9 @@
+{
+  "athlete_id": "ATH-001",
+  "answers": {
+    "pain_reported": false,
+    "max_hr_source": "measured",
+    "sleep_h.2026-11-15": 5.5,
+    "sleep_h.2026-11-16": 5.0
+  }
+}

@@ -48,9 +48,21 @@ python -m unittest discover -s tests -p test_risk_rules.py
 
 `planning_gate` 给下一节点使用。高级别信号进入人工复核。疼痛证据不足时先确认；无暂停信号也只表示本次检查的结果。项目 ACWR 阈值用于标记负荷变化，后续安排需要结合更多观测由人确认。关于 ACWR 的局限，见 [运动负荷方法学研究](https://pubmed.ncbi.nlm.nih.gov/32502973/)。
 
-## 后续主循环与报告
+## 节点 07：本地编排和追问
 
-节点 07 将把规则结果接入工具编排和补问流程。节点 08 整合计划、自检和正式报告，报告引用的规则 ID 要能回查现有规则库。
+先用模拟活动生成 11 月 16 日的指标快照，再分别运行无答复和有答复的评估。
+
+```bash
+python src/p3_metrics/compute.py contracts/samples/activity_sample.json --as-of 2026-11-16 --history-start 2026-11-08 --trimp-profile female --resting-hr 55 --max-hr 183
+python -m src.p4_agent.run out/metrics.json --evidence-query 膝痛 -o out/agent_pending.json
+python -m src.p4_agent.run out/metrics.json --answers data/sample/agent_answers_sample.json --evidence-query 膝痛
+```
+
+每次运行按 Plan、Act、Observe、Self-check 输出阶段。可选的 `--activities` 和 `--context` 分别传入同一跑者的活动和已有补充信息，直接运行 `python src/p4_agent/run.py` 也支持相同参数。结果的 `questions` 列出欠缺的疼痛确认、最大心率来源或睡眠小时。用 `--interactive` 直接回答，或用 `--answers` 提交带相同 `athlete_id` 的本地文件。文件只接受本轮问题，`changed_checks` 列出补答后实际变化的判定。
+
+依据查询先尝试规则编号，再尝试唯一匹配的名称或已登记的同义词。两次找不到会标记无依据。自检会保留人工复核状态，高级别信号或关键依据缺失时进入 `hold_for_review`。附加查询未命中的结果也会记录，供答辩演示。
+
+本节点交付 `agent_run.json`。它包含复核门、规则结果与工具调用记录，可以为下一节点提供输入。节点 08 将处理正式计划、R19/R20 自检和报告契约。
 
 ## 三处必须可见的 agent 行为（答辩必看）
 

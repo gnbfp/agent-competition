@@ -49,6 +49,9 @@ REQUIRED_FILES = [
     "src/p3_metrics/physiology.py",
     "data/sample/measurements_sample.json",
     "tests/test_csv_parser.py",
+    "src/p4_agent/followup.py",
+    "src/p4_agent/run.py",
+    "data/sample/agent_answers_sample.json",
     "docs/AI使用留痕.md",
     "tools/check_env.py",
 ]
