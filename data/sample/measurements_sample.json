@@ -1,0 +1,22 @@
+{
+  "athlete_id": "ATH-001",
+  "daily": [
+    {"date": "2026-11-07", "resting_hr_bpm": 56},
+    {"date": "2026-11-08", "resting_hr_bpm": 53},
+    {"date": "2026-11-09", "resting_hr_bpm": 54, "sleep_h": 7.0},
+    {"date": "2026-11-10", "resting_hr_bpm": 55},
+    {"date": "2026-11-11", "resting_hr_bpm": 56},
+    {"date": "2026-11-12", "resting_hr_bpm": 57},
+    {"date": "2026-11-13", "resting_hr_bpm": 60},
+    {"date": "2026-11-14", "resting_hr_bpm": 58, "hrv_rmssd_ms": 48.0, "sleep_h": 7.5}
+  ],
+  "race": {"date": "2026-11-08", "distance_m": 5000, "duration_s": 1200},
+  "steady_run": {
+    "date": "2026-11-12",
+    "first_hr_bpm": 140,
+    "second_hr_bpm": 147,
+    "first_pace_s_per_km": 360,
+    "second_pace_s_per_km": 358,
+    "temperature_c": 18
+  }
+}

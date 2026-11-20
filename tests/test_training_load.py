@@ -100,7 +100,7 @@ class TrainingLoadTest(unittest.TestCase):
             completed = subprocess.run(
                 [sys.executable, "-B", "src/p3_metrics/compute.py", "contracts/samples/activity_sample.json",
                  "--as-of", "2026-11-14", "--history-start", "2026-11-08",
-                 "--trimp-profile", "female", "--resting-hr", "52", "--max-hr", "190",
+                 "--trimp-profile", "female", "--resting-hr", "52", "--max-hr", "190", "--load-only",
                  "-o", str(destination)],
                 cwd=ROOT, capture_output=True, text=True, encoding="utf-8",
             )

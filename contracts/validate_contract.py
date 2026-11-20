@@ -12,6 +12,7 @@ Usage
 Exit code 0 = all pass, 1 = at least one error.
 """
 import json
+import math
 import os
 import re
 import sys
@@ -31,7 +32,7 @@ TYPE_CHECKS = {
     "array": lambda v: isinstance(v, list),
     "string": lambda v: isinstance(v, str),
     "integer": lambda v: isinstance(v, int) and not isinstance(v, bool),
-    "number": lambda v: isinstance(v, (int, float)) and not isinstance(v, bool),
+    "number": lambda v: type(v) is int or (type(v) is float and math.isfinite(v)),
     "boolean": lambda v: isinstance(v, bool),
     "null": lambda v: v is None,
 }
@@ -90,19 +91,57 @@ def load_json(path):
         return json.load(f)
 
 
-def schema_for(path):
+def schema_for(path, version="1.0"):
     base = os.path.basename(path).lower()
     for prefix, schema_name in SCHEMA_BY_PREFIX:
         if base.startswith(prefix):
+            if prefix == "metrics" and version == "2.0":
+                schema_name = "metrics.v2.schema.json"
             return os.path.join(HERE, schema_name)
     return None
 
 
 def num(value):
     """Return value only when it is a real number (guard against bad samples)."""
-    if isinstance(value, bool):
-        return None
-    return value if isinstance(value, (int, float)) else None
+    return value if TYPE_CHECKS["number"](value) else None
+
+
+def cross_metrics_v2(doc, errors):
+    load = doc["load"]
+    rolling, ewma = load["acwr_rolling"], load["acwr_ewma"]
+    status = load["acwr_status"]
+    gap_flag = any(flag["code"] == "ACWR_METHOD_GAP" for flag in doc["flags"])
+    if (rolling is None) != (ewma is None):
+        errors.append("$.load: 两种 ACWR 需要同时提供或同时为空")
+    if gap_flag or rolling is None or ewma is None:
+        if status is not None:
+            errors.append("$.load.acwr_status: 口径冲突或数据不足时应为空")
+    if rolling is not None and ewma is not None and abs(rolling - ewma) > 1.0 and not gap_flag:
+        errors.append("$.flags: 两种 ACWR 相差超过 1.0 时需要 ACWR_METHOD_GAP")
+
+    capacity = doc["capacity"]
+    methods = {item["method"]: item["value"] for item in capacity["methods"]}
+    if len(methods) != len(capacity["methods"]):
+        errors.append("$.capacity.methods: 计算方法重复")
+    values = list(methods.values())
+    expected_range = {"low": min(values), "high": max(values)} if len(values) >= 2 else None
+    if capacity["estimate_range"] != expected_range:
+        errors.append("$.capacity.estimate_range: 范围应与有效结果的最小值和最大值一致")
+    spread = None
+    consistent = None
+    if len(values) == 3:
+        spread = round((max(values) - min(values)) / max(values) * 100, 6)
+        rules = load_json(os.path.join(HERE, "rules.json"))["rules"]
+        limit = next(rule["threshold"] * 100 for rule in rules if rule["rule_id"] == "R13")
+        consistent = spread <= limit
+    if capacity["max_spread_pct"] != spread or capacity["consistency_ok"] != consistent:
+        errors.append("$.capacity: 差异值或一致性状态与方法结果不符")
+    point = capacity["vo2max"]
+    if consistent is True:
+        if point["method"] != "uth_sorensen" or point["value"] != methods["uth_sorensen"]:
+            errors.append("$.capacity.vo2max: 一致时应引用心率比估算值")
+    elif point["method"] is not None or point["value"] is not None:
+        errors.append("$.capacity.vo2max: 数据不足或方法不一致时点估值应为空")
 
 
 def cross_checks(name, doc, errors):
@@ -126,7 +165,9 @@ def cross_checks(name, doc, errors):
                 if abs(pace - stated) > 15:
                     errors.append("$.activities[%d]: avg_pace_s_per_km(%s) 与 duration/distance 推算值(%.0f) 不一致"
                                   % (i, stated, pace))
-    if name.startswith("metrics"):
+    if name.startswith("metrics") and doc["schema_version"] == "2.0":
+        cross_metrics_v2(doc, errors)
+    elif name.startswith("metrics"):
         load = doc.get("load") or {}
         roll, ewma = num(load.get("acwr_rolling")), num(load.get("acwr_ewma"))
         if roll is not None and ewma is not None and abs(roll - ewma) > 1.0:
@@ -164,12 +205,14 @@ def cross_checks(name, doc, errors):
 
 
 def validate_file(path):
-    schema_path = schema_for(path)
-    if not schema_path:
+    if not schema_for(path):
         return ["无法按文件名判断该用哪个 schema（应以 activity/metrics/plan/report 开头）"]
     doc = load_json(path)
+    version = doc.get("schema_version") if isinstance(doc, dict) else None
+    schema_path = schema_for(path, version)
     errors = check(doc, load_json(schema_path))
-    cross_checks(os.path.basename(path).lower(), doc, errors)
+    if not errors:
+        cross_checks(os.path.basename(path).lower(), doc, errors)
     return errors
 
 
