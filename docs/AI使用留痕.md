@@ -27,6 +27,7 @@
 | 2026-11-20 | P3 | `src/p3_metrics/compute.py`、`src/p3_metrics/README.md`、`tests/test_training_load.py` | Codex | 按维护者委托实现节点 04 | Codex 实现逐条 TRIMP、周汇总、两种 ACWR 和计算参数溯源，并区分未知日期、零负荷及口径差异 | `python -m unittest discover -s tests -p test_training_load.py`，现有模拟活动运行 `compute.py`，再执行全库自检和单测 |
 | 2026-11-20 | P3 | `src/p3_metrics/`、`contracts/`、`tests/test_metrics.py` | Codex | 按维护者委托实现节点 05 | Codex 加入有氧能力和恢复计算，补充指标 v2 缺失值与溯源字段，并保留 v1 校验 | `python tools/check_env.py`、`python contracts/validate_contract.py`、`python -m unittest discover -s tests`，用模拟量测生成并校验指标 v2 |
 | 2026-11-20 | P4 | `src/p4_agent/`、`tests/test_risk_rules.py`、`data/sample/risk_context_sample.json` | Codex | 按维护者委托实现节点 06 | Codex 接入指标 v2、活动和补充上下文判断 R01–R18，追加证据查询与人工复核标记 | `python tools/check_env.py`、`python contracts/validate_contract.py`、`python -m unittest discover -s tests`，以模拟数据运行规则命令 |
+| 2026-11-20 | 审核整改 | P2、P4、自检与使用说明 | Codex | 处理第二轮审核的兼容性问题 | 支持 P4 直接脚本入口，复核带距离后缀的数字配速，补 P4 必备文件和编码说明 | `python tools/check_env.py`、`python contracts/validate_contract.py`、`python -m unittest discover -s tests` |
 |  |  |  |  |  |  |  |
 
 **填写要点**

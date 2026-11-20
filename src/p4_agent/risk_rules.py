@@ -9,10 +9,14 @@ from collections import defaultdict
 from datetime import date, timedelta
 from pathlib import Path
 
+# Direct script execution starts with src/p4_agent, rather than the repo root.
+if not __package__:
+    sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+
 from contracts.validate_contract import load_json, validate_file
 
-from .evidence import load_rules, lookup_evidence
-from .risk_context import HARD_SESSIONS, as_number, iso_day, normalized_context
+from src.p4_agent.evidence import load_rules, lookup_evidence
+from src.p4_agent.risk_context import HARD_SESSIONS, as_number, iso_day, normalized_context
 
 
 REVIEW_ACTIONS = {

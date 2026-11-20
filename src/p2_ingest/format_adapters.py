@@ -239,7 +239,8 @@ def parse_pace(raw: str, unit: str = "") -> int | None:
 def normalize_running_pace(raw: str, unit: str, pace: int, duration: int, distance: float) -> tuple[int, bool]:
     """Resolve an ambiguous numeric minutes header using the row's actual speed."""
     time_unit, slash, distance_unit = unit.partition("/")
-    if not slash or time_unit not in ("min", "分", "分钟") or not re.fullmatch(r"\d+(?:\.\d+)?", raw.strip()):
+    value_text = re.sub(r"\s+", "", raw).partition("/")[0]
+    if not slash or time_unit not in ("min", "分", "分钟") or not re.fullmatch(r"\d+(?:\.\d+)?", value_text):
         return pace, False
     estimated = duration / distance * 1000
     if abs(estimated - pace) <= 15:

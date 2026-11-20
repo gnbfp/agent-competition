@@ -132,7 +132,7 @@ def build_activity(row: dict, athlete_seq: int) -> tuple[dict, list[str]]:
     if avg_hr is None or max_hr is None:
         raise RowError("avg_hr / max_hr 缺失（不猜，整行丢弃）")
 
-    if avg_hr > max_hr or avg_hr <= 0:
+    if avg_hr > max_hr:
         raise DeviceAnomalyError(
             f"心率不合理（avg {avg_hr} > max {max_hr}），按 R02 不入库，写入 rejected.json"
         )

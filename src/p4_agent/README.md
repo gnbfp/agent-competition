@@ -32,6 +32,8 @@ python -m src.p4_agent.risk_rules evidence R15
 python -m unittest discover -s tests -p test_risk_rules.py
 ```
 
+也可直接运行 `python src/p4_agent/risk_rules.py evidence R15`。两个入口接受相同的命令和参数。
+
 结果写入 `out/risk_checks.json`。`checks` 按编号列出 R01–R18 的观测值、缺失数据和规则原文出处。判断状态是 `triggered`、`not_triggered` 或 `insufficient_data`。R04 是 P3 的计算规则，在这里记为 `not_applicable`，并携带实际 TRIMP 参数。`risks` 仅收录命中的检查，字段与现有报告的风险条目一致。
 
 补充信息可参照模拟文件，实际文件放在本地 `data/raw/`。所有文件的 `athlete_id` 必须一致。

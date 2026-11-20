@@ -225,8 +225,9 @@ class CommandLineTest(unittest.TestCase):
             source.write_text(
                 "Activity Type,Date,Distance,Time,Avg HR,Max HR,Avg Pace(min/km)\n"
                 "Running,2026-11-12,5,30:00,150,171,360\n"
-                "Running,2026-11-13,5,32:30,150,171,6.5\n"
-                "Running,2026-11-14,5,30:00,150,171,999\n",
+                "Running,2026-11-13,5,30:00,150,171,360/km\n"
+                "Running,2026-11-14,5,32:30,150,171,6.5/km\n"
+                "Running,2026-11-15,5,30:00,150,171,999/km\n",
                 encoding="utf-8",
             )
             out = tmp / "activity.json"
@@ -237,8 +238,8 @@ class CommandLineTest(unittest.TestCase):
             )
             self.assertEqual(run.returncode, 0, run.stdout + run.stderr)
             activities = json.loads(out.read_text(encoding="utf-8"))["activities"]
-            self.assertEqual([row["avg_pace_s_per_km"] for row in activities], [360, 390])
-            self.assertIn("采用秒值", run.stdout)
+            self.assertEqual([row["avg_pace_s_per_km"] for row in activities], [360, 360, 390])
+            self.assertEqual(run.stdout.count("采用秒值"), 2)
             self.assertIn("丢弃 1 条", out.with_name("data_check.md").read_text(encoding="utf-8"))
 
     def test_auto_detect_and_validate(self) -> None:
