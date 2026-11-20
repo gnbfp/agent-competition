@@ -50,7 +50,7 @@ _ALIASES: dict[str, str] = {
     "爬升": "elevation", "累计爬升": "elevation", "总爬升": "elevation", "爬升高度": "elevation",
     "avgpace": "pace", "平均配速": "pace", "配速": "pace",
     # 主观与睡眠
-    "rpe": "rpe", "主观疲劳度": "rpe", "rpe(1-10)": "rpe",
+    "rpe": "rpe", "主观疲劳度": "rpe",
     "sleeph": "sleep_h", "睡眠": "sleep_h", "睡眠时长": "sleep_h",
     # 疼痛
     "pain": "pain", "疼痛": "pain", "疼痛反馈": "pain",
@@ -236,6 +236,20 @@ def parse_pace(raw: str, unit: str = "") -> int | None:
     return round(seconds)
 
 
+def normalize_running_pace(raw: str, unit: str, pace: int, duration: int, distance: float) -> tuple[int, bool]:
+    """Resolve an ambiguous numeric minutes header using the row's actual speed."""
+    time_unit, slash, distance_unit = unit.partition("/")
+    if not slash or time_unit not in ("min", "分", "分钟") or not re.fullmatch(r"\d+(?:\.\d+)?", raw.strip()):
+        return pace, False
+    estimated = duration / distance * 1000
+    if abs(estimated - pace) <= 15:
+        return pace, False
+    in_seconds = parse_pace(raw, f"s/{distance_unit}")
+    if in_seconds is not None and 120 <= in_seconds <= 1200 and abs(estimated - in_seconds) <= 15:
+        return in_seconds, True
+    return pace, False
+
+
 def parse_int(raw: str, unit: str = "") -> int | None:
     """解析整数（心率等）。带 bpm 后缀也认。"""
     if is_missing(raw):
@@ -379,6 +393,11 @@ def adapt_row(row: dict, column_map: ColumnMap, source_id: str, line_no: int,
         target = "elevation_gain_m" if field == "elevation" else field
         if field == "pace":
             target = "avg_pace_s_per_km"
+            if sport == "run" and duration and distance:
+                value, corrected = normalize_running_pace(column_map.raw(row, field), column_map.unit(field),
+                                                          value, duration, distance)
+                if corrected:
+                    warnings.append(f"第 {line_no} 行 配速与表头单位不符，按距离和时长复核后采用秒值")
         output[target] = str(value)
 
     pain = column_map.raw(row, "pain")

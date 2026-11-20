@@ -107,6 +107,20 @@ class MetricsTest(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "athlete_id"):
             self.compute(self.measurements)
 
+    def test_r02_filters_calculation_but_retains_observed_readings(self) -> None:
+        with self.assertRaisesRegex(ValueError, "R02"):
+            self.compute(self.measurements, resting_hr=111)
+        self.measurements["daily"][0]["resting_hr_bpm"] = 111
+        self.measurements["daily"][-1]["resting_hr_bpm"] = 115
+        output = self.compute(self.measurements, resting_hr=110)
+        self.assertEqual(self.validate(output), [])
+        result = output["recovery"]
+        self.assertEqual(result["resting_hr_baseline_days"], 6)
+        self.assertIsNone(result["resting_hr_baseline"])
+        self.assertIsNone(result["resting_hr_delta"])
+        self.assertEqual(result["daily"][-1]["resting_hr_bpm"], 115)
+        self.assertIn("RESTING_HR_REVIEW", {flag["code"] for flag in output["flags"]})
+
     def test_cli_outputs_formal_metrics_and_keeps_v1_readable(self) -> None:
         output = self.temp / "metrics.json"
         result = subprocess.run(

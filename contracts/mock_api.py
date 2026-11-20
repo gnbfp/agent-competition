@@ -10,6 +10,7 @@ Usage
   python mock_api.py --port 8080 --delay 300
 Routes
   GET /api/health /api/activity /api/metrics /api/plan /api/report
+  GET /api/metrics?version=2.0
   GET /api/report?week=2026-11-16    (same body, week ignored)
 """
 import argparse
@@ -17,7 +18,7 @@ import json
 import os
 import time
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
-from urllib.parse import urlparse
+from urllib.parse import parse_qs, urlparse
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 SAMPLES = os.path.join(HERE, "samples")
@@ -27,6 +28,7 @@ ROUTES = {
     "/api/plan": "plan_sample.json",
     "/api/report": "report_sample.json",
 }
+METRICS_SAMPLES = {"1.0": ROUTES["/api/metrics"], "2.0": "metrics_v2_sample.json"}
 DELAY_MS = 0
 
 
@@ -44,13 +46,21 @@ class Handler(BaseHTTPRequestHandler):
         self.wfile.write(body)
 
     def do_GET(self):  # noqa: N802 - http.server API
-        path = urlparse(self.path).path.rstrip("/") or "/"
+        request = urlparse(self.path)
+        path = request.path.rstrip("/") or "/"
         if DELAY_MS:
             time.sleep(DELAY_MS / 1000.0)
         if path == "/api/health":
             self._send({"ok": True, "schema_version": "1.0", "mode": "mock"})
             return
         sample = ROUTES.get(path)
+        if path == "/api/metrics":
+            versions = parse_qs(request.query, keep_blank_values=True).get("version", ["1.0"])
+            if len(versions) != 1 or versions[0] not in METRICS_SAMPLES:
+                self._send({"error": "unsupported_metrics_version",
+                            "supported_versions": list(METRICS_SAMPLES)}, status=400)
+                return
+            sample = METRICS_SAMPLES[versions[0]]
         if not sample:
             self._send({"error": "not_found", "path": path,
                         "available": ["/api/health"] + sorted(ROUTES)}, status=404)

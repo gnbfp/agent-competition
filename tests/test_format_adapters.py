@@ -219,6 +219,28 @@ class ZeroHrTest(unittest.TestCase):
 
 
 class CommandLineTest(unittest.TestCase):
+    def test_minutes_header_can_recover_seconds_only_when_row_speed_agrees(self) -> None:
+        with scratch() as tmp:
+            source = tmp / "garmin_pace.csv"
+            source.write_text(
+                "Activity Type,Date,Distance,Time,Avg HR,Max HR,Avg Pace(min/km)\n"
+                "Running,2026-11-12,5,30:00,150,171,360\n"
+                "Running,2026-11-13,5,32:30,150,171,6.5\n"
+                "Running,2026-11-14,5,30:00,150,171,999\n",
+                encoding="utf-8",
+            )
+            out = tmp / "activity.json"
+            run = subprocess.run(
+                [sys.executable, str(ROOT / "src" / "p2_ingest" / "import_export.py"),
+                 str(source), "-o", str(out)],
+                cwd=ROOT, capture_output=True, text=True, encoding="utf-8",
+            )
+            self.assertEqual(run.returncode, 0, run.stdout + run.stderr)
+            activities = json.loads(out.read_text(encoding="utf-8"))["activities"]
+            self.assertEqual([row["avg_pace_s_per_km"] for row in activities], [360, 390])
+            self.assertIn("采用秒值", run.stdout)
+            self.assertIn("丢弃 1 条", out.with_name("data_check.md").read_text(encoding="utf-8"))
+
     def test_auto_detect_and_validate(self) -> None:
         """CLI 产出的 activity.json 必须通过 contracts/validate_contract.py。"""
         with scratch() as tmp:

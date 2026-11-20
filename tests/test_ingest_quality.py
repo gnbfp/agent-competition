@@ -78,6 +78,18 @@ class ImportQualityTest(unittest.TestCase):
                 self.assertIn("不是有效的 UTF-8 或 GBK", result.stdout)
                 self.assertFalse(self.out.exists())
 
+    def test_missing_nonrunning_distance_is_not_a_measured_zero(self) -> None:
+        source = self.temp / "middle.csv"
+        source.write_text(
+            "date,sport,duration_s,distance_m,avg_hr,max_hr\n"
+            "2026-11-12,bike,1800,,150,170\n"
+            "2026-11-13,strength,1800,0,130,150\n", encoding="utf-8",
+        )
+        self.require_success(run_script("src/p2_ingest/csv_parser.py", source, "-o", self.out))
+        activities = json.loads(self.out.read_text(encoding="utf-8"))["activities"]
+        self.assertEqual([(row["sport"], row["distance_m"]) for row in activities], [("strength", 0)])
+        self.assertIn("distance_m 缺失", self.out.with_name("data_check.md").read_text(encoding="utf-8"))
+
     def test_environment_check_rejects_gbk_sample_but_ignores_raw_input(self) -> None:
         raw = self.temp / "data/raw"
         sample = self.temp / "data/sample"

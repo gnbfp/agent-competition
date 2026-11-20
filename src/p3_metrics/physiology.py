@@ -122,7 +122,8 @@ def capacity(resting_hr: int, max_hr: int, race: dict | None, as_of: date, thres
         if not consistent:
             flags.append(("VO2_METHOD_GAP", "三种计算结果差异超过项目阈值，仅提供估算范围。"))
     else:
-        flags.append(("VO2_INSUFFICIENT_INPUT", "有氧能力对照缺少可用赛绩或心率输入。"))
+        missing = ", ".join(sorted({"uth_sorensen", "daniels", "riegel"} - {item["method"] for item in methods}))
+        flags.append(("VO2_INSUFFICIENT_INPUT", f"可用估算不足三条，缺少有效结果：{missing}。"))
     return {
         "vo2max": {"value": round(uth, 4) if consistent else None,
                    "unit": "ml/kg/min", "method": "uth_sorensen" if consistent else None},
@@ -131,18 +132,23 @@ def capacity(resting_hr: int, max_hr: int, race: dict | None, as_of: date, thres
     }, flags
 
 
-def recovery(activities: list[dict], daily: dict, steady: dict | None, as_of: date) -> tuple[dict, list]:
+def recovery(activities: list[dict], daily: dict, steady: dict | None,
+             as_of: date, resting_bounds: list[int]) -> tuple[dict, list]:
     flags = []
     window_start = as_of - timedelta(days=HISTORY_DAYS - 1)
     week_start = as_of - timedelta(days=RECENT_DAYS - 1)
-    historical = [entry["resting_hr_bpm"] for day, entry in daily.items()
-                  if window_start <= day < as_of and entry["resting_hr_bpm"] is not None]
+    low, high = resting_bounds
+    in_window = {day: entry["resting_hr_bpm"] for day, entry in daily.items() if window_start <= day <= as_of}
+    historical = [value for day, value in in_window.items() if day < as_of and valid_number(value, low, high)]
+    review_count = sum(value is not None and not valid_number(value, low, high) for value in in_window.values())
+    if review_count:
+        flags.append(("RESTING_HR_REVIEW", f"有 {review_count} 天静息心率超出 R02 复核范围，暂不用于计算。"))
     baseline = median(historical) if len(historical) >= MIN_BASELINE_DAYS else None
     current = daily.get(as_of, {})
     resting = current.get("resting_hr_bpm")
-    delta = resting - baseline if resting is not None and baseline is not None else None
+    delta = resting - baseline if valid_number(resting, low, high) and baseline is not None else None
     if delta is None:
-        flags.append(("RESTING_HR_INSUFFICIENT", "静息心率偏差需要当天测量和至少 7 天历史测量。"))
+        flags.append(("RESTING_HR_INSUFFICIENT", "静息心率偏差需要当天及至少 7 天历史的可用测量。"))
 
     activity_sleep = defaultdict(set)
     for activity in activities:

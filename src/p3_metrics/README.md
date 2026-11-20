@@ -29,6 +29,8 @@ python contracts/validate_contract.py out/metrics.json
 
 模拟量测的结构见 `data/sample/measurements_sample.json`。实际文件放在本地 `data/raw/`，其 `athlete_id` 必须和活动一致。
 
+计算用静息心率范围读取 `contracts/rules.json` 的 R02。记录层能保留历史或需复核的日量测，统计时会排除超出 R02 范围的读数，并给出 `RESTING_HR_REVIEW` 标记。当前 R02 范围是 30–110 bpm，属于项目数据复核口径。
+
 | 输入 | 计算及缺失处理 |
 |---|---|
 | 心率参数 | 用个人最大与静息心率的比值得到 Uth–Sørensen 估算。依据见 [Uth 等人的原研究](https://pure.au.dk/portal/en/publications/estimation-of-vo2max-from-the-ratio-between-hrmax-and-hrrest-the-/)。 |

@@ -117,10 +117,10 @@ def build_activity(row: dict, athlete_seq: int) -> tuple[dict, list[str]]:
         raise RowError("duration_s 必须 ≥ 1 秒")
 
     raw_distance = _text(row, "distance_m")
-    if sport == "run" and not raw_distance:
-        raise RowError("distance_m 缺失，跑步活动需要实测距离")
+    if not raw_distance:
+        raise RowError("distance_m 缺失，不能用 0 填充")
     try:
-        distance_m = float(raw_distance or "0")
+        distance_m = float(raw_distance)
     except ValueError:
         raise RowError("distance_m 不是数字") from None
     if not math.isfinite(distance_m) or distance_m < 0:

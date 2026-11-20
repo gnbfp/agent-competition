@@ -8,6 +8,7 @@ import math
 import sys
 from collections import defaultdict
 from datetime import date, timedelta
+from functools import cache
 from pathlib import Path
 from statistics import fmean
 
@@ -28,9 +29,11 @@ METRICS_VERSION = "2.0"
 def trimp_coefficients(resting_hr: int, max_hr: int, profile: str) -> tuple[float, float]:
     if profile not in TRIMP_COEFFICIENTS:
         raise ValueError("需要选择有效的 TRIMP 系数")
-    if (type(resting_hr) is not int or type(max_hr) is not int
-            or not 30 <= resting_hr <= 120 or not resting_hr < max_hr <= 250):
-        raise ValueError("静息心率或个人最大心率不符合输入范围")
+    low, high = rule_thresholds()["R02"]["resting_hr_bpm"]
+    if type(resting_hr) is not int or not low <= resting_hr <= high:
+        raise ValueError(f"用于计算的静息心率须在项目 R02 复核范围 {low}–{high} bpm 内，请核对测量值")
+    if type(max_hr) is not int or not resting_hr < max_hr <= 250:
+        raise ValueError("个人最大心率不符合输入范围")
     return TRIMP_COEFFICIENTS[profile]
 
 
@@ -58,6 +61,7 @@ def ewma(values: list[float], span: int) -> float:
     return average
 
 
+@cache
 def rule_thresholds() -> dict:
     return {item["rule_id"]: item["threshold"]
             for item in json.loads(RULES_PATH.read_text(encoding="utf-8"))["rules"]}
@@ -199,7 +203,8 @@ def compute_metrics(document: dict, *, as_of: date, history_start: date | None,
     daily, race, steady = normalized_measurements(measurements, output["athlete_id"])
     capacity_values, capacity_flags = capacity(resting_hr, max_hr, race, as_of,
                                                rule_thresholds()["R13"] * 100)
-    recovery_values, recovery_flags = recovery(document["activities"], daily, steady, as_of)
+    recovery_values, recovery_flags = recovery(document["activities"], daily, steady, as_of,
+                                               rule_thresholds()["R02"]["resting_hr_bpm"])
     output["flags"].extend({"code": code, "level": "medium", "message": message}
                            for code, message in (*capacity_flags, *recovery_flags))
     return {"schema_version": METRICS_VERSION, **output,
