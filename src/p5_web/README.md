@@ -7,6 +7,14 @@
 `index.html` 是一个能跑的最小页面：读 `GET /api/report`，渲染 headline、关键指标、风险列表、下周安排。深蓝主题、无框架、无构建、原生 JS。
 
 ```bash
+python -m src.pipeline --demo --serve
+```
+
+打开终端打印的 `/live` 链接，页面通过同源 `/api/report` 读取这次生成的报告。该服务只监听本机接口，只提供预览页、报告和健康检查。无需先启动模拟后端。
+
+独立调试页面时仍可使用模拟后端。
+
+```bash
 # 终端 1：假后端
 python contracts/mock_api.py --port 8080
 # 终端 2：静态服务
