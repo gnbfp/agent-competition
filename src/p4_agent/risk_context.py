@@ -30,7 +30,7 @@ def normalized_context(document: dict | None, athlete_id: str) -> dict:
     if not isinstance(document, dict) or document.get("athlete_id") != athlete_id:
         raise ValueError("补充信息的 athlete_id 必须与指标一致")
     fields = {"athlete_id", "max_hr_source", "session_types", "pain_reported",
-              "import_quality", "environment", "target_race_date"}
+              "import_quality", "environment", "target_race_date", "sleep_readings"}
     if unknown := set(document) - fields:
         raise ValueError(f"补充信息包含未知字段：{', '.join(sorted(unknown))}")
     context = dict(document)
@@ -42,6 +42,16 @@ def normalized_context(document: dict | None, athlete_id: str) -> dict:
         raise ValueError("pain_reported 应为布尔值或 null")
     if context.get("target_race_date") is not None:
         context["target_race_date"] = iso_day(context["target_race_date"])
+
+    sleep = context.get("sleep_readings")
+    if sleep is not None:
+        if not isinstance(sleep, dict):
+            raise ValueError("sleep_readings 应是日期到睡眠小时的映射")
+        for day, value in sleep.items():
+            iso_day(day)
+            numeric = as_number(value)
+            if numeric is None or not 0 <= numeric <= 24:
+                raise ValueError("sleep_readings 的小时数须在 0–24 之间")
 
     sessions = context.get("session_types")
     if sessions is not None:

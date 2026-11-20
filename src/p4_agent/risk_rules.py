@@ -44,8 +44,9 @@ PACE_MATCH_SECONDS = 5
 
 
 class Assessment:
-    def __init__(self, rules: dict[str, dict]):
+    def __init__(self, rules: dict[str, dict], *, allow_missing_evidence: bool = False):
         self.rules = rules
+        self.allow_missing_evidence = allow_missing_evidence
         self.checks: list[dict] = []
         self.risks: list[dict] = []
 
@@ -56,7 +57,7 @@ class Assessment:
             missing: tuple[str, ...] = ()) -> None:
         rule = self.rules[rule_id]
         evidence = lookup_evidence(rule_id, self.rules)
-        if evidence is None:
+        if evidence is None and not self.allow_missing_evidence:
             raise ValueError(f"{rule_id} 缺少可回查的规则依据")
         if rule["kind"] == "compute":
             status = "not_applicable"
@@ -255,8 +256,12 @@ def condition_checks(result: Assessment, metrics: dict, activities: list[dict] |
                ("用户明确确认是否有疼痛",))
 
     sleep = recent_readings(metrics, day, "sleep_h", 2)
+    supplied = {key: value for key, value in (answers.get("sleep_readings") or {}).items()
+                if key in sleep and sleep[key] is None}
+    sleep.update(supplied)
     low_sleep = [value < result.threshold("R16") if value is not None else None for value in sleep.values()]
-    result.add("R16", consecutive(low_sleep), {"daily_sleep_h": sleep}, ("截止日前连续两天的睡眠记录",))
+    result.add("R16", consecutive(low_sleep), {"daily_sleep_h": sleep, "supplemented_dates": list(supplied)},
+               ("截止日前连续两天的睡眠记录",))
 
     environment = answers.get("environment") or {}
     temp, humidity = environment.get("temperature_c"), environment.get("humidity_pct")
@@ -274,7 +279,8 @@ def condition_checks(result: Assessment, metrics: dict, activities: list[dict] |
 
 
 def evaluate_rules(metrics: dict, *, activities: dict | None = None,
-                   context: dict | None = None, rules: dict[str, dict] | None = None) -> dict:
+                   context: dict | None = None, rules: dict[str, dict] | None = None,
+                   allow_missing_evidence: bool = False) -> dict:
     """Return auditable checks, a report-compatible list of signals, and a review gate."""
     if not isinstance(metrics, dict) or metrics.get("schema_version") != "2.0":
         raise ValueError("风险判断需要 P3 生成的 metrics v2 文件")
@@ -286,7 +292,7 @@ def evaluate_rules(metrics: dict, *, activities: dict | None = None,
         if not isinstance(activities, dict) or activities.get("athlete_id") != athlete_id:
             raise ValueError("活动文件的 athlete_id 必须与指标一致")
         records = [{**item, "_day": iso_day(item["date"])} for item in activities["activities"]]
-    result = Assessment(rules if rules is not None else load_rules())
+    result = Assessment(rules if rules is not None else load_rules(), allow_missing_evidence=allow_missing_evidence)
     data_checks(result, metrics, records, answers, day)
     load_checks(result, metrics, records, answers, day)
     capacity_and_recovery_checks(result, metrics, day)
