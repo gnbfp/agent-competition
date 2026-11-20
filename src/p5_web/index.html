@@ -97,8 +97,8 @@ function render(report) {
   const top = el("section", "card");
   top.appendChild(el("p", "headline", report.summary.headline));
   const badges = el("div", "badges");
-  badges.appendChild(el("span", "badge " + report.summary.risk_level, "风险等级：" + (LEVEL_CN[report.summary.risk_level] || report.summary.risk_level)));
-  badges.appendChild(el("span", "badge", "负荷状态：" + (STATUS_CN[report.summary.load_status] || report.summary.load_status)));
+  badges.appendChild(el("span", "badge " + (report.summary.risk_level || ""), "风险等级：" + (LEVEL_CN[report.summary.risk_level] || "待评估")));
+  badges.appendChild(el("span", "badge", "负荷状态：" + (STATUS_CN[report.summary.load_status] || "数据不足")));
   badges.appendChild(el("span", "badge", "窗口：" + report.metrics.window.start + " ~ " + report.metrics.window.end));
   top.appendChild(badges);
   app.appendChild(top);
@@ -106,10 +106,11 @@ function render(report) {
   const m = el("section", "card");
   m.appendChild(el("h2", null, "关键指标"));
   const grid = el("div", "metrics");
-  grid.appendChild(metricCard("ACWR（EWMA）", report.metrics.load.acwr_ewma.toFixed(2), ""));
-  grid.appendChild(metricCard("周 TRIMP", Math.round(report.metrics.load.trimp_week), ""));
-  grid.appendChild(metricCard("VO₂max", report.metrics.capacity.vo2max.value.toFixed(1), "ml/kg/min"));
-  grid.appendChild(metricCard("静息心率偏差", (report.metrics.recovery.resting_hr_delta > 0 ? "+" : "") + report.metrics.recovery.resting_hr_delta, "bpm"));
+  const metricText = (value, format) => Number.isFinite(value) ? format(value) : "数据不足";
+  grid.appendChild(metricCard("ACWR（EWMA）", metricText(report.metrics.load.acwr_ewma, value => value.toFixed(2)), ""));
+  grid.appendChild(metricCard("周 TRIMP", metricText(report.metrics.load.trimp_week, Math.round), ""));
+  grid.appendChild(metricCard("VO₂max", metricText(report.metrics.capacity.vo2max.value, value => value.toFixed(1)), "ml/kg/min"));
+  grid.appendChild(metricCard("静息心率偏差", metricText(report.metrics.recovery.resting_hr_delta, value => (value > 0 ? "+" : "") + value), "bpm"));
   m.appendChild(grid);
   app.appendChild(m);
 
@@ -119,7 +120,12 @@ function render(report) {
   app.appendChild(risks);
 
   const plan = el("section", "card");
-  plan.appendChild(el("h2", null, "下周安排"));
+  plan.appendChild(el("h2", null, report.plan.status === "draft" ? "下周草案" : "下周安排"));
+  if (report.plan.hold_reasons && report.plan.hold_reasons.length) {
+    report.plan.hold_reasons.forEach(reason => plan.appendChild(el("p", null, reason)));
+    app.appendChild(plan);
+    return;
+  }
   const table = el("table");
   const head = el("tr");
   ["日期", "类型", "时长(分)", "目标配速(s/km)", "依据"].forEach(h => head.appendChild(el("th", null, h)));

@@ -26,3 +26,12 @@ class ContractToolTest(unittest.TestCase):
         handler = Mock(path="/api/metrics?version=99.0")
         Handler.do_GET(handler)
         self.assertEqual(handler._send.call_args.kwargs["status"], 400)
+
+    def test_report_route_preserves_v1_and_serves_a_real_v2_fixture(self) -> None:
+        for path, version in (("/api/report", "1.0"), ("/api/report?version=2.0", "2.0")):
+            with self.subTest(path=path):
+                handler = Mock(path=path)
+                Handler.do_GET(handler)
+                payload = handler._send.call_args.args[0]
+                self.assertEqual(payload["schema_version"], version)
+                self.assertEqual(payload["plan"]["schema_version"], version)

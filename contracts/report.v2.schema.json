@@ -1,0 +1,1077 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "report.json v2.0 — 指标与训练草案预览",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "generated_at",
+    "athlete_id",
+    "summary",
+    "metrics",
+    "risks",
+    "plan",
+    "evidence",
+    "agent_trace",
+    "questions",
+    "disclaimers"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "enum": [
+        "2.0"
+      ]
+    },
+    "generated_at": {
+      "type": "string"
+    },
+    "athlete_id": {
+      "type": "string"
+    },
+    "summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "headline",
+        "risk_level",
+        "load_status",
+        "plan_status"
+      ],
+      "properties": {
+        "headline": {
+          "type": "string"
+        },
+        "risk_level": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "low",
+            "medium",
+            "high",
+            null
+          ]
+        },
+        "load_status": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "undertrained",
+            "optimal",
+            "high",
+            "danger",
+            null
+          ]
+        },
+        "plan_status": {
+          "type": "string",
+          "enum": [
+            "draft",
+            "hold_for_review",
+            "awaiting_input"
+          ]
+        }
+      }
+    },
+    "metrics": {
+      "title": "metrics.json v2.0 — P3 指标计算结果",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "athlete_id",
+        "window",
+        "load",
+        "capacity",
+        "recovery",
+        "flags",
+        "load_inputs",
+        "activity_trimp"
+      ],
+      "properties": {
+        "schema_version": {
+          "type": "string",
+          "enum": [
+            "2.0"
+          ]
+        },
+        "athlete_id": {
+          "type": "string"
+        },
+        "window": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "start",
+            "end",
+            "days"
+          ],
+          "properties": {
+            "start": {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+            },
+            "end": {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+            },
+            "days": {
+              "type": "integer",
+              "minimum": 7
+            }
+          }
+        },
+        "load": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "trimp_daily",
+            "trimp_week",
+            "acwr_rolling",
+            "acwr_ewma",
+            "acwr_status",
+            "week_load_change_pct"
+          ],
+          "properties": {
+            "trimp_daily": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "date",
+                  "trimp"
+                ],
+                "properties": {
+                  "date": {
+                    "type": "string",
+                    "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                  },
+                  "trimp": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "minimum": 0
+                  }
+                }
+              }
+            },
+            "trimp_week": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "minimum": 0
+            },
+            "acwr_rolling": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "minimum": 0,
+              "maximum": 5
+            },
+            "acwr_ewma": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "minimum": 0,
+              "maximum": 5
+            },
+            "acwr_status": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "enum": [
+                "undertrained",
+                "optimal",
+                "high",
+                "danger",
+                null
+              ]
+            },
+            "week_load_change_pct": {
+              "type": [
+                "number",
+                "null"
+              ]
+            }
+          }
+        },
+        "capacity": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "vo2max",
+            "methods",
+            "estimate_range",
+            "consistency_ok",
+            "max_spread_pct",
+            "race_inputs"
+          ],
+          "properties": {
+            "vo2max": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit",
+                "method"
+              ],
+              "properties": {
+                "value": {
+                  "type": [
+                    "number",
+                    "null"
+                  ],
+                  "minimum": 20,
+                  "maximum": 90
+                },
+                "unit": {
+                  "type": "string",
+                  "enum": [
+                    "ml/kg/min"
+                  ]
+                },
+                "method": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "enum": [
+                    "uth_sorensen",
+                    null
+                  ]
+                }
+              }
+            },
+            "methods": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "method",
+                  "value"
+                ],
+                "properties": {
+                  "method": {
+                    "type": "string",
+                    "enum": [
+                      "uth_sorensen",
+                      "daniels",
+                      "riegel"
+                    ]
+                  },
+                  "value": {
+                    "type": "number",
+                    "minimum": 20,
+                    "maximum": 90
+                  }
+                }
+              }
+            },
+            "estimate_range": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "additionalProperties": false,
+              "required": [
+                "low",
+                "high"
+              ],
+              "properties": {
+                "low": {
+                  "type": "number",
+                  "minimum": 20,
+                  "maximum": 90
+                },
+                "high": {
+                  "type": "number",
+                  "minimum": 20,
+                  "maximum": 90
+                }
+              }
+            },
+            "consistency_ok": {
+              "type": [
+                "boolean",
+                "null"
+              ]
+            },
+            "max_spread_pct": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "minimum": 0,
+              "maximum": 100
+            },
+            "race_inputs": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "additionalProperties": false,
+              "required": [
+                "date",
+                "distance_m",
+                "duration_s",
+                "riegel_distance_m",
+                "riegel_duration_s",
+                "riegel_exponent"
+              ],
+              "properties": {
+                "date": {
+                  "type": "string",
+                  "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                },
+                "distance_m": {
+                  "type": "number",
+                  "minimum": 1500,
+                  "maximum": 42195
+                },
+                "duration_s": {
+                  "type": "number",
+                  "minimum": 210,
+                  "maximum": 13800
+                },
+                "riegel_distance_m": {
+                  "type": "integer",
+                  "enum": [
+                    5000,
+                    10000
+                  ]
+                },
+                "riegel_duration_s": {
+                  "type": "number",
+                  "minimum": 1
+                },
+                "riegel_exponent": {
+                  "type": "number",
+                  "minimum": 1
+                }
+              }
+            }
+          }
+        },
+        "recovery": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "resting_hr_baseline",
+            "resting_hr_baseline_days",
+            "resting_hr_delta",
+            "hr_drift_pct",
+            "hr_drift_inputs",
+            "hrv_rmssd",
+            "sleep_h_avg",
+            "sleep_days",
+            "daily"
+          ],
+          "properties": {
+            "resting_hr_baseline": {
+              "description": "新计算的基线仅使用 R02 复核范围内的历史量测。数值范围兼容旧 v2 产物。",
+              "type": [
+                "number",
+                "null"
+              ],
+              "minimum": 30,
+              "maximum": 120
+            },
+            "resting_hr_baseline_days": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 27
+            },
+            "resting_hr_delta": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "hr_drift_pct": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "hr_drift_inputs": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "additionalProperties": false,
+              "required": [
+                "date",
+                "first_hr_bpm",
+                "second_hr_bpm",
+                "first_pace_s_per_km",
+                "second_pace_s_per_km",
+                "temperature_c"
+              ],
+              "properties": {
+                "date": {
+                  "type": "string",
+                  "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                },
+                "first_hr_bpm": {
+                  "type": "number",
+                  "minimum": 30,
+                  "maximum": 250
+                },
+                "second_hr_bpm": {
+                  "type": "number",
+                  "minimum": 30,
+                  "maximum": 250
+                },
+                "first_pace_s_per_km": {
+                  "type": "number",
+                  "minimum": 120,
+                  "maximum": 1200
+                },
+                "second_pace_s_per_km": {
+                  "type": "number",
+                  "minimum": 120,
+                  "maximum": 1200
+                },
+                "temperature_c": {
+                  "type": [
+                    "number",
+                    "null"
+                  ],
+                  "minimum": -50,
+                  "maximum": 65
+                }
+              }
+            },
+            "hrv_rmssd": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "minimum": 0,
+              "maximum": 1000
+            },
+            "sleep_h_avg": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "minimum": 0,
+              "maximum": 24
+            },
+            "sleep_days": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 7
+            },
+            "daily": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "date",
+                  "resting_hr_bpm",
+                  "sleep_h",
+                  "hrv_rmssd_ms"
+                ],
+                "properties": {
+                  "date": {
+                    "type": "string",
+                    "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                  },
+                  "resting_hr_bpm": {
+                    "description": "已记录的日量测值。保留需复核的读数，是否参与统计由 R02 决定。",
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "minimum": 30,
+                    "maximum": 120
+                  },
+                  "sleep_h": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "minimum": 0,
+                    "maximum": 24
+                  },
+                  "hrv_rmssd_ms": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "minimum": 0,
+                    "maximum": 1000
+                  }
+                }
+              }
+            }
+          }
+        },
+        "flags": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "code",
+              "level",
+              "message"
+            ],
+            "properties": {
+              "code": {
+                "type": "string"
+              },
+              "level": {
+                "type": "string",
+                "enum": [
+                  "low",
+                  "medium",
+                  "high"
+                ]
+              },
+              "message": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "load_inputs": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "profile",
+            "coefficient_a",
+            "coefficient_b",
+            "resting_hr",
+            "max_hr",
+            "history_start"
+          ],
+          "properties": {
+            "profile": {
+              "type": "string",
+              "enum": [
+                "male",
+                "female"
+              ]
+            },
+            "coefficient_a": {
+              "type": "number",
+              "minimum": 0
+            },
+            "coefficient_b": {
+              "type": "number",
+              "minimum": 0
+            },
+            "resting_hr": {
+              "description": "新计算读取规则库 R02 限制此参数。数值范围兼容旧 v2 产物。",
+              "type": "integer",
+              "minimum": 30,
+              "maximum": 120
+            },
+            "max_hr": {
+              "type": "integer",
+              "minimum": 31,
+              "maximum": 250
+            },
+            "history_start": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+            }
+          }
+        },
+        "activity_trimp": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "activity_id",
+              "date",
+              "trimp",
+              "reason"
+            ],
+            "properties": {
+              "activity_id": {
+                "type": "string"
+              },
+              "date": {
+                "type": "string",
+                "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+              },
+              "trimp": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "minimum": 0
+              },
+              "reason": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "risks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "rule_id",
+          "level",
+          "category",
+          "title",
+          "evidence",
+          "action"
+        ],
+        "properties": {
+          "rule_id": {
+            "type": "string",
+            "pattern": "^R\\d{2}$"
+          },
+          "level": {
+            "type": "string",
+            "enum": [
+              "low",
+              "medium",
+              "high"
+            ]
+          },
+          "category": {
+            "type": "string",
+            "enum": [
+              "load",
+              "capacity",
+              "recovery",
+              "injury",
+              "environment",
+              "data"
+            ]
+          },
+          "title": {
+            "type": "string"
+          },
+          "evidence": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "clause",
+              "source"
+            ],
+            "properties": {
+              "clause": {
+                "type": "string"
+              },
+              "source": {
+                "type": "string"
+              },
+              "threshold": {
+                "type": "string"
+              }
+            }
+          },
+          "action": {
+            "type": "string"
+          },
+          "missing_data": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "confidence": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          }
+        }
+      }
+    },
+    "plan": {
+      "title": "plan.json v2.0 — 有自检的下周草案",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "athlete_id",
+        "week_start",
+        "status",
+        "baseline_trimp",
+        "hold_reasons",
+        "weekly_targets",
+        "days",
+        "adjustments",
+        "self_check",
+        "attempts"
+      ],
+      "properties": {
+        "schema_version": {
+          "type": "string",
+          "enum": [
+            "2.0"
+          ]
+        },
+        "athlete_id": {
+          "type": "string"
+        },
+        "week_start": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "draft",
+            "hold_for_review",
+            "awaiting_input"
+          ]
+        },
+        "baseline_trimp": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "hold_reasons": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "weekly_targets": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "additionalProperties": false,
+          "required": [
+            "load_target_trimp",
+            "sessions"
+          ],
+          "properties": {
+            "load_target_trimp": {
+              "type": "number",
+              "minimum": 0
+            },
+            "sessions": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 7
+            }
+          }
+        },
+        "days": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "date",
+              "kind",
+              "duration_s",
+              "duration_min",
+              "distance_m",
+              "reference_avg_hr_bpm",
+              "target_pace_s_per_km",
+              "rules",
+              "planned_trimp"
+            ],
+            "properties": {
+              "date": {
+                "type": "string",
+                "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+              },
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "easy",
+                  "rest"
+                ]
+              },
+              "duration_s": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 24000
+              },
+              "duration_min": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 400
+              },
+              "distance_m": {
+                "type": "number",
+                "minimum": 0
+              },
+              "reference_avg_hr_bpm": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "minimum": 30,
+                "maximum": 250
+              },
+              "target_pace_s_per_km": {
+                "type": "null"
+              },
+              "rules": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "pattern": "^R\\d{2}$"
+                }
+              },
+              "planned_trimp": {
+                "type": "number",
+                "minimum": 0
+              }
+            }
+          }
+        },
+        "adjustments": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "rule_id",
+              "reason",
+              "action"
+            ],
+            "properties": {
+              "rule_id": {
+                "type": "string",
+                "pattern": "^R\\d{2}$"
+              },
+              "reason": {
+                "type": "string"
+              },
+              "action": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "self_check": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "passed",
+            "checks"
+          ],
+          "properties": {
+            "passed": {
+              "type": "boolean"
+            },
+            "checks": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "code",
+                  "passed",
+                  "detail"
+                ],
+                "properties": {
+                  "code": {
+                    "type": "string",
+                    "enum": [
+                      "R19",
+                      "R20"
+                    ]
+                  },
+                  "passed": {
+                    "type": "boolean"
+                  },
+                  "detail": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "attempts": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "round",
+              "planned_trimp",
+              "checks"
+            ],
+            "properties": {
+              "round": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 3
+              },
+              "planned_trimp": {
+                "type": "number",
+                "minimum": 0
+              },
+              "checks": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "code",
+                    "passed",
+                    "detail"
+                  ],
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "R19",
+                        "R20"
+                      ]
+                    },
+                    "passed": {
+                      "type": "boolean"
+                    },
+                    "detail": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "evidence": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "rule_id",
+          "ref"
+        ],
+        "properties": {
+          "rule_id": {
+            "type": "string",
+            "pattern": "^R\\d{2}$"
+          },
+          "ref": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "agent_trace": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "step",
+          "tool",
+          "status"
+        ],
+        "properties": {
+          "step": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "tool": {
+            "type": "string",
+            "enum": [
+              "load_activities",
+              "compute_load",
+              "estimate_vo2max",
+              "check_risk",
+              "retrieve_evidence",
+              "ask_athlete",
+              "generate_plan",
+              "explain"
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "ok",
+              "retry",
+              "failed",
+              "skipped"
+            ]
+          },
+          "notes": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "questions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "key",
+          "rule_id",
+          "type",
+          "prompt"
+        ],
+        "properties": {
+          "key": {
+            "type": "string"
+          },
+          "rule_id": {
+            "type": "string",
+            "pattern": "^R\\d{2}$"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "boolean",
+              "choice",
+              "number"
+            ]
+          },
+          "prompt": {
+            "type": "string"
+          },
+          "choices": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "disclaimers": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}

@@ -64,7 +64,22 @@ python -m src.p4_agent.run out/metrics.json --answers data/sample/agent_answers_
 
 依据查询先尝试规则编号，再尝试唯一匹配的名称或已登记的同义词。两次找不到会标记无依据。自检会保留人工复核状态，高级别信号或关键依据缺失时进入 `hold_for_review`。附加查询未命中的结果也会记录，供答辩演示。
 
-本节点交付 `agent_run.json`。它包含复核门、规则结果与工具调用记录，可以为下一节点提供输入。节点 08 将处理正式计划、R19/R20 自检和报告契约。
+本节点交付 `agent_run.json`，其中包含人工复核状态、规则结果与工具记录。
+
+## 节点 08：生成周草案与报告
+
+```bash
+python -m src.p4_agent.report contracts/samples/metrics_v2_sample.json --activities contracts/samples/activity_sample.json --context data/sample/risk_context_sample.json -o out
+python contracts/validate_contract.py out/plan.json out/report.json
+```
+
+上述样例有待复核的风险，因此能生成正式报告，计划文件保留暂停原因和空日程。两种启动方式也都支持 `--answers`、`--interactive` 和已有的补充数据。
+
+在负荷和静息心率观测足以评估，且没有触发复核条件时，默认草案只保留近期明确标为 `easy` 的单次轻松跑。下周从指标窗口后的首个周一开始，未采用的日子留空为休息日。报告注明草案待人工确认。每日参考心率取自既有记录，用于估算 TRIMP，配速目标保持空白。
+
+可选的 `--candidate` 输入为本地 JSON，包含相同的 `athlete_id` 和七天的 `days`。每条包含 `date`、`kind`（`easy` 或 `rest`）、`duration_s`、`distance_m`、`reference_avg_hr_bpm` 和 `rules`。R19 逐日复算 TRIMP 再检验总量；R20 逐日验证适用依据。首次失败后最多重排两次，结束仍未通过便保留复核状态及检查记录。这里的 10% 是项目工程上限，随机试验并未证实 10% 法则可预防跑步伤病。[相关随机试验](https://pubmed.ncbi.nlm.nih.gov/17940147/)
+
+`contracts/samples/plan_v2_sample.json` 和 `report_v2_sample.json` 记录了模拟草案两项首轮失败、重排后通过的全过程。可运行 `python -m unittest discover -s tests -p test_plan_report.py` 复现。
 
 ## 三处必须可见的 agent 行为（答辩必看）
 

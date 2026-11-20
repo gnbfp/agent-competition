@@ -16,6 +16,7 @@ import math
 import os
 import re
 import sys
+from datetime import date, timedelta
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 SAMPLES = os.path.join(HERE, "samples")
@@ -26,6 +27,8 @@ SCHEMA_BY_PREFIX = [
     ("plan", "plan.schema.json"),
     ("report", "report.schema.json"),
 ]
+V2_SCHEMAS = {name: f"{name}.v2.schema.json" for name in ("metrics", "plan", "report")}
+PLAN_RULES_BY_KIND = {"easy": {"R04", "R05"}, "rest": {"R09"}}
 
 TYPE_CHECKS = {
     "object": lambda v: isinstance(v, dict),
@@ -123,8 +126,8 @@ def schema_for(path, version="1.0"):
     base = os.path.basename(path).lower()
     for prefix, schema_name in SCHEMA_BY_PREFIX:
         if base.startswith(prefix):
-            if prefix == "metrics" and version == "2.0":
-                schema_name = "metrics.v2.schema.json"
+            if version == "2.0":
+                schema_name = V2_SCHEMAS.get(prefix, schema_name)
             return os.path.join(HERE, schema_name)
     return None
 
@@ -172,6 +175,93 @@ def cross_metrics_v2(doc, errors):
         errors.append("$.capacity.vo2max: 数据不足或方法不一致时点估值应为空")
 
 
+def cross_plan_v2(plan, errors):
+    attempts = plan["attempts"]
+    expected_rounds = list(range(1, len(attempts) + 1))
+    if len(attempts) > 3 or [item["round"] for item in attempts] != expected_rounds:
+        errors.append("$.attempts: 仅允许连续三轮检查（首次加最多两次重排）")
+    for attempt in attempts:
+        if [item["code"] for item in attempt["checks"]] != ["R19", "R20"]:
+            errors.append("$.attempts: 每轮应检查 R19 和 R20")
+    checks = plan["self_check"]
+    if checks["checks"] != (attempts[-1]["checks"] if attempts else []):
+        errors.append("$.self_check: 结果须与最后一次检查一致")
+    if any(all(check["passed"] for check in attempt["checks"]) for attempt in attempts[:-1]):
+        errors.append("$.attempts: 自检通过后应停止重排")
+    try:
+        monday = date.fromisoformat(plan["week_start"])
+        expected_dates = [(monday + timedelta(days=offset)).isoformat() for offset in range(7)]
+        if monday.weekday() != 0:
+            errors.append("$.week_start: 下周的起始日须为周一")
+    except (OverflowError, ValueError):
+        errors.append("$.week_start: 日期无效")
+        return
+
+    days, targets = plan["days"], plan["weekly_targets"]
+    if plan["status"] != "draft":
+        if days or targets is not None or checks["passed"] or not plan["hold_reasons"]:
+            errors.append("$.plan: 暂停或待补时应说明原因，且无训练安排")
+        return
+    if [item["date"] for item in days] != expected_dates:
+        errors.append("$.days: 草案须有下周连续七天")
+    if plan["hold_reasons"] or not checks["passed"] or not attempts or not all(x["passed"] for x in checks["checks"]):
+        errors.append("$.self_check: 草案须通过 R19 和 R20")
+    baseline = plan["baseline_trimp"]
+    total = round(sum(item["planned_trimp"] for item in days), 6)
+    sessions = sum(item["kind"] == "easy" for item in days)
+    limit = next(rule["threshold"] for rule in load_json(os.path.join(HERE, "rules.json"))["rules"]
+                 if rule["rule_id"] == "R19")
+    if baseline is None or baseline <= 0 or total > round(baseline * (1 + limit), 6):
+        errors.append("$.weekly_targets: 复算周 TRIMP 后未通过 R19")
+    if targets != {"load_target_trimp": total, "sessions": sessions} or (attempts and attempts[-1]["planned_trimp"] != total):
+        errors.append("$.weekly_targets: 周负荷、次数和自检记录须与每日安排一致")
+    for item in days:
+        if not item["rules"] or not set(item["rules"]) <= PLAN_RULES_BY_KIND[item["kind"]]:
+            errors.append(f"$.days: {item['date']} 缺少适用规则，违反 R20")
+        if item["duration_min"] != round(item["duration_s"] / 60, 6):
+            errors.append(f"$.days: {item['date']} 的时长单位不一致")
+        if item["kind"] == "rest":
+            if item["duration_s"] or item["distance_m"] or item["planned_trimp"] or item["reference_avg_hr_bpm"] is not None:
+                errors.append(f"$.days: {item['date']} 休息日须为零负荷且无参考心率")
+        elif not item["duration_s"] or not item["distance_m"] or item["reference_avg_hr_bpm"] is None:
+            errors.append(f"$.days: {item['date']} 活动缺少时长、距离或参考心率")
+
+
+def cross_report_v2(doc, errors):
+    plan, metrics = doc["plan"], doc["metrics"]
+    cross_plan_v2(plan, errors)
+    cross_metrics_v2(metrics, errors)
+    if not doc["athlete_id"] == plan["athlete_id"] == metrics["athlete_id"]:
+        errors.append("$.athlete_id: 报告、计划和指标须属于同一跑者")
+    if plan["baseline_trimp"] != metrics["load"]["trimp_week"]:
+        errors.append("$.plan.baseline_trimp: 计划基线须等于同一报告的周 TRIMP")
+    if doc["summary"]["plan_status"] != plan["status"] or doc["summary"]["load_status"] != metrics["load"]["acwr_status"]:
+        errors.append("$.summary: 草案与负荷状态须与对应明细一致")
+    try:
+        end = date.fromisoformat(metrics["window"]["end"])
+        next_monday = (end + timedelta(days=7 - end.weekday())).isoformat()
+        if plan["week_start"] != next_monday:
+            errors.append("$.plan.week_start: 草案日期须是指标窗口之后的首个周一")
+    except (OverflowError, ValueError):
+        errors.append("$.metrics.window.end: 日期无效")
+    required = {tag for item in plan["days"] for tag in item["rules"]}
+    required.update(item["rule_id"] for item in doc["risks"])
+    required.update(item["code"] for item in plan["self_check"]["checks"])
+    refs = {item["rule_id"]: item["ref"] for item in doc["evidence"]}
+    if set(refs) != required or len(refs) != len(doc["evidence"]) or not all(ref.strip() for ref in refs.values()):
+        errors.append("$.evidence: 依据编号须完整且唯一，覆盖风险、训练和自检")
+    levels = {"low": 0, "medium": 1, "high": 2}
+    highest = max((risk["level"] for risk in doc["risks"]), key=levels.__getitem__, default=None)
+    if doc["summary"]["risk_level"] != highest:
+        errors.append("$.summary.risk_level: 等级须与报告中的信号一致")
+    for risk in doc["risks"]:
+        evidence = risk["evidence"]
+        if not evidence["clause"].strip() or refs.get(risk["rule_id"]) != evidence["source"]:
+            errors.append(f"$.evidence: {risk['rule_id']} 的条款或出处与引用不一致")
+        if risk["level"] == "high" and plan["status"] != "hold_for_review":
+            errors.append("$.plan: 有高级别信号时须暂停训练安排")
+
+
 def cross_checks(name, doc, errors):
     """Rules JSON Schema cannot express for this project."""
     if name.startswith("activity"):
@@ -207,7 +297,9 @@ def cross_checks(name, doc, errors):
             spread = (max(vals) - min(vals)) / max(vals) * 100
             if spread > 5 and cap.get("consistency_ok") is True:
                 errors.append("$.capacity: 三法差异 %.1f%% > 5%%，但 consistency_ok=true" % spread)
-    if name.startswith("plan"):
+    if name.startswith("plan") and doc["schema_version"] == "2.0":
+        cross_plan_v2(doc, errors)
+    elif name.startswith("plan"):
         days = [d for d in doc.get("days", []) if isinstance(d, dict)]
         dates = [d.get("date") for d in days]
         if len(dates) != len(set(dates)):
@@ -217,7 +309,9 @@ def cross_checks(name, doc, errors):
                 errors.append("$.days[%d]: 没有任何 rule_id，违反 R20 依据覆盖率" % i)
             if d.get("kind") == "rest" and (num(d.get("duration_min")) or 0) > 0:
                 errors.append("$.days[%d]: kind=rest 但 duration_min > 0" % i)
-    if name.startswith("report"):
+    if name.startswith("report") and doc["schema_version"] == "2.0":
+        cross_report_v2(doc, errors)
+    elif name.startswith("report"):
         plan = doc.get("plan") or {}
         rules_in_plan = {r for d in plan.get("days", []) if isinstance(d, dict)
                          for r in (d.get("rules") or [])}
@@ -233,9 +327,12 @@ def cross_checks(name, doc, errors):
 
 
 def validate_file(path):
+    return validate_document(path, load_json(path))
+
+
+def validate_document(path, doc):
     if not schema_for(path):
         return ["无法按文件名判断该用哪个 schema（应以 activity/metrics/plan/report 开头）"]
-    doc = load_json(path)
     version = doc.get("schema_version") if isinstance(doc, dict) else None
     schema_path = schema_for(path, version)
     errors = check(doc, load_json(schema_path))
