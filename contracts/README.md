@@ -8,23 +8,23 @@
 |---|---|
 | `activity.schema.json` | P2 解析器产出：原始活动数据 |
 | `metrics.schema.json` / `metrics.v2.schema.json` | P3 指标契约 v1 / v2。校验器按 `schema_version` 选择，当前计算命令输出 v2。 |
-| `plan.schema.json` | P4 agent 产出：周训练计划 |
-| `report.schema.json` | P4 产出、**P5 唯一消费**：完整报告（含依据链与 agent_trace） |
+| `plan.schema.json` / `plan.v2.schema.json` | P4 的计划契约 v1 / v2。v2 包含草案状态及每轮自检。 |
+| `report.schema.json` / `report.v2.schema.json` | P4 的报告契约 v1 / v2，P5 读取报告。 |
 | `samples/*.json` | 黄金样例：全队共同的分母 |
 | `validate_contract.py` | 校验器（仅标准库，不需要 pip install） |
 | `mock_api.py` | 假后端：P5 第一天就能开发 |
 | `CHANGELOG.md` | 每次契约变更记一行 |
 
-独立的指标 v2 使用 `null` 表达无法计算的数据，并保留估算和派生指标的输入。现有 `report_sample.json` 嵌入的是指标 v1。新报告接入 v2 时需同步更新报告契约和网页的缺失值展示。
+独立的指标 v2 使用 `null` 表达无法计算的数据，并保留估算和派生指标的输入。报告 v2 嵌入指标 v2 与计划 v2。旧样例仍按 v1 校验和展示。两套契约的嵌入结构由测试检查，避免各自修改后不一致。
 
-模拟 API 的 `/api/metrics` 默认返回 v1，`/api/metrics?version=2.0` 返回 v2。工具校验的是本仓库采用的 JSON Schema 子集，支持对象属性、必填项、类型、枚举、数值范围、正则与同构数组。遇到尚未实现的约束（例如 `minItems` 或 `$ref`）会直接失败，新增约束时需同时补校验实现和测试。
+模拟 API 的 `/api/metrics` 和 `/api/report` 默认返回 v1，添加 `?version=2.0` 可读 v2。工具校验的是本仓库采用的 JSON Schema 子集，支持对象属性、必填项、类型、枚举、数值范围、正则与同构数组。遇到尚未实现的约束（例如 `minItems` 或 `$ref`）会直接失败，新增约束时需同时补校验实现和测试。
 
 实际导入默认使用匿名 ID `anon_01`，样例 `ATH-001` 是固定测试 ID。配对的活动、补充量测和指标必须沿用同一个 `athlete_id`。
 
 ## 三条命令
 
 ```bash
-python contracts/validate_contract.py              # 校验 samples（应 5 个 PASS）
+python contracts/validate_contract.py              # 校验 samples（应 7 个 PASS）
 python contracts/validate_contract.py --dir out/   # 校验自己产出的数据
 python contracts/mock_api.py --port 8080 --delay 300
 ```

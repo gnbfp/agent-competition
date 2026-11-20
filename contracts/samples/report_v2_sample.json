@@ -1,0 +1,567 @@
+{
+  "schema_version": "2.0",
+  "generated_at": "2026-11-15T09:00:00+08:00",
+  "athlete_id": "anon_01",
+  "summary": {
+    "headline": "下周草案已生成，待人工确认",
+    "risk_level": "low",
+    "load_status": "optimal",
+    "plan_status": "draft"
+  },
+  "metrics": {
+    "schema_version": "2.0",
+    "athlete_id": "anon_01",
+    "window": {
+      "start": "2026-10-18",
+      "end": "2026-11-14",
+      "days": 28
+    },
+    "load_inputs": {
+      "profile": "female",
+      "coefficient_a": 0.86,
+      "coefficient_b": 1.67,
+      "resting_hr": 55,
+      "max_hr": 183,
+      "history_start": "2026-10-18"
+    },
+    "activity_trimp": [
+      {
+        "activity_id": "2026-10-19",
+        "date": "2026-10-19",
+        "trimp": 40.21934,
+        "reason": null
+      },
+      {
+        "activity_id": "2026-10-21",
+        "date": "2026-10-21",
+        "trimp": 40.21934,
+        "reason": null
+      },
+      {
+        "activity_id": "2026-10-23",
+        "date": "2026-10-23",
+        "trimp": 40.21934,
+        "reason": null
+      },
+      {
+        "activity_id": "2026-10-26",
+        "date": "2026-10-26",
+        "trimp": 40.21934,
+        "reason": null
+      },
+      {
+        "activity_id": "2026-10-28",
+        "date": "2026-10-28",
+        "trimp": 40.21934,
+        "reason": null
+      },
+      {
+        "activity_id": "2026-10-30",
+        "date": "2026-10-30",
+        "trimp": 40.21934,
+        "reason": null
+      },
+      {
+        "activity_id": "2026-11-02",
+        "date": "2026-11-02",
+        "trimp": 40.21934,
+        "reason": null
+      },
+      {
+        "activity_id": "2026-11-04",
+        "date": "2026-11-04",
+        "trimp": 40.21934,
+        "reason": null
+      },
+      {
+        "activity_id": "2026-11-06",
+        "date": "2026-11-06",
+        "trimp": 40.21934,
+        "reason": null
+      },
+      {
+        "activity_id": "2026-11-09",
+        "date": "2026-11-09",
+        "trimp": 40.21934,
+        "reason": null
+      },
+      {
+        "activity_id": "2026-11-11",
+        "date": "2026-11-11",
+        "trimp": 40.21934,
+        "reason": null
+      },
+      {
+        "activity_id": "2026-11-13",
+        "date": "2026-11-13",
+        "trimp": 40.21934,
+        "reason": null
+      }
+    ],
+    "load": {
+      "trimp_week": 120.658019,
+      "acwr_rolling": 1.0,
+      "acwr_ewma": 1.100366,
+      "week_load_change_pct": 0.0,
+      "acwr_status": "optimal",
+      "trimp_daily": [
+        {
+          "date": "2026-10-18",
+          "trimp": 0.0
+        },
+        {
+          "date": "2026-10-19",
+          "trimp": 40.21934
+        },
+        {
+          "date": "2026-10-20",
+          "trimp": 0.0
+        },
+        {
+          "date": "2026-10-21",
+          "trimp": 40.21934
+        },
+        {
+          "date": "2026-10-22",
+          "trimp": 0.0
+        },
+        {
+          "date": "2026-10-23",
+          "trimp": 40.21934
+        },
+        {
+          "date": "2026-10-24",
+          "trimp": 0.0
+        },
+        {
+          "date": "2026-10-25",
+          "trimp": 0.0
+        },
+        {
+          "date": "2026-10-26",
+          "trimp": 40.21934
+        },
+        {
+          "date": "2026-10-27",
+          "trimp": 0.0
+        },
+        {
+          "date": "2026-10-28",
+          "trimp": 40.21934
+        },
+        {
+          "date": "2026-10-29",
+          "trimp": 0.0
+        },
+        {
+          "date": "2026-10-30",
+          "trimp": 40.21934
+        },
+        {
+          "date": "2026-10-31",
+          "trimp": 0.0
+        },
+        {
+          "date": "2026-11-01",
+          "trimp": 0.0
+        },
+        {
+          "date": "2026-11-02",
+          "trimp": 40.21934
+        },
+        {
+          "date": "2026-11-03",
+          "trimp": 0.0
+        },
+        {
+          "date": "2026-11-04",
+          "trimp": 40.21934
+        },
+        {
+          "date": "2026-11-05",
+          "trimp": 0.0
+        },
+        {
+          "date": "2026-11-06",
+          "trimp": 40.21934
+        },
+        {
+          "date": "2026-11-07",
+          "trimp": 0.0
+        },
+        {
+          "date": "2026-11-08",
+          "trimp": 0.0
+        },
+        {
+          "date": "2026-11-09",
+          "trimp": 40.21934
+        },
+        {
+          "date": "2026-11-10",
+          "trimp": 0.0
+        },
+        {
+          "date": "2026-11-11",
+          "trimp": 40.21934
+        },
+        {
+          "date": "2026-11-12",
+          "trimp": 0.0
+        },
+        {
+          "date": "2026-11-13",
+          "trimp": 40.21934
+        },
+        {
+          "date": "2026-11-14",
+          "trimp": 0.0
+        }
+      ]
+    },
+    "flags": [
+      {
+        "code": "VO2_INSUFFICIENT_INPUT",
+        "level": "medium",
+        "message": "可用估算不足三条，缺少有效结果：daniels, riegel。"
+      },
+      {
+        "code": "HRV_MISSING",
+        "level": "medium",
+        "message": "截止日没有 RMSSD 量测。"
+      },
+      {
+        "code": "HR_DRIFT_MISSING",
+        "level": "medium",
+        "message": "28 日内没有带两段心率和配速的恒速跑记录。"
+      }
+    ],
+    "capacity": {
+      "vo2max": {
+        "value": null,
+        "unit": "ml/kg/min",
+        "method": null
+      },
+      "methods": [
+        {
+          "method": "uth_sorensen",
+          "value": 50.9073
+        }
+      ],
+      "estimate_range": null,
+      "consistency_ok": null,
+      "max_spread_pct": null,
+      "race_inputs": null
+    },
+    "recovery": {
+      "resting_hr_baseline": 55.0,
+      "resting_hr_baseline_days": 8,
+      "resting_hr_delta": 0.0,
+      "hr_drift_pct": null,
+      "hr_drift_inputs": null,
+      "hrv_rmssd": null,
+      "sleep_h_avg": 7.0,
+      "sleep_days": 7,
+      "daily": [
+        {
+          "date": "2026-11-06",
+          "resting_hr_bpm": 55,
+          "sleep_h": 7,
+          "hrv_rmssd_ms": null
+        },
+        {
+          "date": "2026-11-07",
+          "resting_hr_bpm": 55,
+          "sleep_h": 7,
+          "hrv_rmssd_ms": null
+        },
+        {
+          "date": "2026-11-08",
+          "resting_hr_bpm": 55,
+          "sleep_h": 7,
+          "hrv_rmssd_ms": null
+        },
+        {
+          "date": "2026-11-09",
+          "resting_hr_bpm": 55,
+          "sleep_h": 7,
+          "hrv_rmssd_ms": null
+        },
+        {
+          "date": "2026-11-10",
+          "resting_hr_bpm": 55,
+          "sleep_h": 7,
+          "hrv_rmssd_ms": null
+        },
+        {
+          "date": "2026-11-11",
+          "resting_hr_bpm": 55,
+          "sleep_h": 7,
+          "hrv_rmssd_ms": null
+        },
+        {
+          "date": "2026-11-12",
+          "resting_hr_bpm": 55,
+          "sleep_h": 7,
+          "hrv_rmssd_ms": null
+        },
+        {
+          "date": "2026-11-13",
+          "resting_hr_bpm": 55,
+          "sleep_h": 7,
+          "hrv_rmssd_ms": null
+        },
+        {
+          "date": "2026-11-14",
+          "resting_hr_bpm": 55,
+          "sleep_h": 7,
+          "hrv_rmssd_ms": null
+        }
+      ]
+    }
+  },
+  "risks": [
+    {
+      "rule_id": "R05",
+      "level": "low",
+      "category": "load",
+      "title": "ACWR 位于项目参考区间",
+      "evidence": {
+        "clause": "急慢性负荷比落在 0.8–1.3 区间时，训练负荷与当前承受能力匹配，维持当前安排即可。",
+        "source": "Gabbett TJ, 2016, Br J Sports Med（训练负荷与伤病关系）",
+        "threshold": "[0.8, 1.3]"
+      },
+      "action": "记录当前负荷区间，与主诉和其他观测一起复核。"
+    }
+  ],
+  "plan": {
+    "schema_version": "2.0",
+    "athlete_id": "anon_01",
+    "week_start": "2026-11-16",
+    "baseline_trimp": 120.658019,
+    "attempts": [
+      {
+        "round": 1,
+        "planned_trimp": 304.753027,
+        "checks": [
+          {
+            "code": "R19",
+            "passed": false,
+            "detail": "按每日参考心率复算 304.75 TRIMP，本周 120.66，项目上限 132.72。"
+          },
+          {
+            "code": "R20",
+            "passed": false,
+            "detail": "6/7 日有适用的规则依据。 待处理日期 2026-11-18"
+          }
+        ]
+      },
+      {
+        "round": 2,
+        "planned_trimp": 120.656754,
+        "checks": [
+          {
+            "code": "R19",
+            "passed": true,
+            "detail": "按每日参考心率复算 120.66 TRIMP，本周 120.66，项目上限 132.72。"
+          },
+          {
+            "code": "R20",
+            "passed": true,
+            "detail": "7/7 日有适用的规则依据。"
+          }
+        ]
+      }
+    ],
+    "adjustments": [
+      {
+        "rule_id": "R20",
+        "reason": "有日期缺少适用的规则依据。",
+        "action": "移除无依据的活动，留空为休息日供复核。"
+      },
+      {
+        "rule_id": "R19",
+        "reason": "按参考心率复算超过项目增幅上限。",
+        "action": "重新计算保留活动的负荷，必要时缩短时长。"
+      }
+    ],
+    "status": "draft",
+    "hold_reasons": [],
+    "days": [
+      {
+        "date": "2026-11-16",
+        "kind": "easy",
+        "duration_s": 3284,
+        "distance_m": 9122.22,
+        "reference_avg_hr_bpm": 150,
+        "rules": [
+          "R04"
+        ],
+        "planned_trimp": 120.656754,
+        "duration_min": 54.733333,
+        "target_pace_s_per_km": null
+      },
+      {
+        "date": "2026-11-17",
+        "kind": "rest",
+        "duration_s": 0,
+        "distance_m": 0,
+        "reference_avg_hr_bpm": null,
+        "rules": [
+          "R09"
+        ],
+        "planned_trimp": 0.0,
+        "duration_min": 0.0,
+        "target_pace_s_per_km": null
+      },
+      {
+        "date": "2026-11-18",
+        "kind": "rest",
+        "duration_s": 0,
+        "distance_m": 0,
+        "reference_avg_hr_bpm": null,
+        "rules": [
+          "R09"
+        ],
+        "planned_trimp": 0.0,
+        "duration_min": 0.0,
+        "target_pace_s_per_km": null
+      },
+      {
+        "date": "2026-11-19",
+        "kind": "rest",
+        "duration_s": 0,
+        "distance_m": 0,
+        "reference_avg_hr_bpm": null,
+        "rules": [
+          "R09"
+        ],
+        "planned_trimp": 0.0,
+        "duration_min": 0.0,
+        "target_pace_s_per_km": null
+      },
+      {
+        "date": "2026-11-20",
+        "kind": "rest",
+        "duration_s": 0,
+        "distance_m": 0,
+        "reference_avg_hr_bpm": null,
+        "rules": [
+          "R09"
+        ],
+        "planned_trimp": 0.0,
+        "duration_min": 0.0,
+        "target_pace_s_per_km": null
+      },
+      {
+        "date": "2026-11-21",
+        "kind": "rest",
+        "duration_s": 0,
+        "distance_m": 0,
+        "reference_avg_hr_bpm": null,
+        "rules": [
+          "R09"
+        ],
+        "planned_trimp": 0.0,
+        "duration_min": 0.0,
+        "target_pace_s_per_km": null
+      },
+      {
+        "date": "2026-11-22",
+        "kind": "rest",
+        "duration_s": 0,
+        "distance_m": 0,
+        "reference_avg_hr_bpm": null,
+        "rules": [
+          "R09"
+        ],
+        "planned_trimp": 0.0,
+        "duration_min": 0.0,
+        "target_pace_s_per_km": null
+      }
+    ],
+    "weekly_targets": {
+      "load_target_trimp": 120.656754,
+      "sessions": 1
+    },
+    "self_check": {
+      "passed": true,
+      "checks": [
+        {
+          "code": "R19",
+          "passed": true,
+          "detail": "按每日参考心率复算 120.66 TRIMP，本周 120.66，项目上限 132.72。"
+        },
+        {
+          "code": "R20",
+          "passed": true,
+          "detail": "7/7 日有适用的规则依据。"
+        }
+      ]
+    }
+  },
+  "evidence": [
+    {
+      "rule_id": "R04",
+      "ref": "Banister EW, 1991（TRIMP 模型）"
+    },
+    {
+      "rule_id": "R05",
+      "ref": "Gabbett TJ, 2016, Br J Sports Med（训练负荷与伤病关系）"
+    },
+    {
+      "rule_id": "R09",
+      "ref": "ACSM 运动处方原则（强度日之间保留恢复日）；训练学通行做法"
+    },
+    {
+      "rule_id": "R19",
+      "ref": "本方案工程约定（agent 自校验，见工作流程文档第五节）"
+    },
+    {
+      "rule_id": "R20",
+      "ref": "本方案工程约定 + 接口契约 C8 跨字段校验"
+    }
+  ],
+  "agent_trace": [
+    {
+      "step": 1,
+      "tool": "load_activities",
+      "status": "ok",
+      "notes": "使用同一跑者的活动记录作为规则输入。"
+    },
+    {
+      "step": 2,
+      "tool": "check_risk",
+      "status": "ok",
+      "notes": "已检查 18 项。"
+    },
+    {
+      "step": 3,
+      "tool": "retrieve_evidence",
+      "status": "ok",
+      "notes": "R05 依据匹配。"
+    },
+    {
+      "step": 4,
+      "tool": "explain",
+      "status": "ok",
+      "notes": "本轮规则评估已完成。"
+    },
+    {
+      "step": 5,
+      "tool": "generate_plan",
+      "status": "retry",
+      "notes": "第 1 轮草案自检。未通过：R19、R20。"
+    },
+    {
+      "step": 6,
+      "tool": "generate_plan",
+      "status": "ok",
+      "notes": "第 2 轮草案自检。R19、R20 通过。"
+    }
+  ],
+  "questions": [],
+  "disclaimers": [
+    "训练草案供本人或教练复核。风险信号用于项目规则展示，不构成医疗诊断。"
+  ]
+}

@@ -1,0 +1,166 @@
+{
+  "schema_version": "2.0",
+  "athlete_id": "anon_01",
+  "week_start": "2026-11-16",
+  "baseline_trimp": 120.658019,
+  "attempts": [
+    {
+      "round": 1,
+      "planned_trimp": 304.753027,
+      "checks": [
+        {
+          "code": "R19",
+          "passed": false,
+          "detail": "按每日参考心率复算 304.75 TRIMP，本周 120.66，项目上限 132.72。"
+        },
+        {
+          "code": "R20",
+          "passed": false,
+          "detail": "6/7 日有适用的规则依据。 待处理日期 2026-11-18"
+        }
+      ]
+    },
+    {
+      "round": 2,
+      "planned_trimp": 120.656754,
+      "checks": [
+        {
+          "code": "R19",
+          "passed": true,
+          "detail": "按每日参考心率复算 120.66 TRIMP，本周 120.66，项目上限 132.72。"
+        },
+        {
+          "code": "R20",
+          "passed": true,
+          "detail": "7/7 日有适用的规则依据。"
+        }
+      ]
+    }
+  ],
+  "adjustments": [
+    {
+      "rule_id": "R20",
+      "reason": "有日期缺少适用的规则依据。",
+      "action": "移除无依据的活动，留空为休息日供复核。"
+    },
+    {
+      "rule_id": "R19",
+      "reason": "按参考心率复算超过项目增幅上限。",
+      "action": "重新计算保留活动的负荷，必要时缩短时长。"
+    }
+  ],
+  "status": "draft",
+  "hold_reasons": [],
+  "days": [
+    {
+      "date": "2026-11-16",
+      "kind": "easy",
+      "duration_s": 3284,
+      "distance_m": 9122.22,
+      "reference_avg_hr_bpm": 150,
+      "rules": [
+        "R04"
+      ],
+      "planned_trimp": 120.656754,
+      "duration_min": 54.733333,
+      "target_pace_s_per_km": null
+    },
+    {
+      "date": "2026-11-17",
+      "kind": "rest",
+      "duration_s": 0,
+      "distance_m": 0,
+      "reference_avg_hr_bpm": null,
+      "rules": [
+        "R09"
+      ],
+      "planned_trimp": 0.0,
+      "duration_min": 0.0,
+      "target_pace_s_per_km": null
+    },
+    {
+      "date": "2026-11-18",
+      "kind": "rest",
+      "duration_s": 0,
+      "distance_m": 0,
+      "reference_avg_hr_bpm": null,
+      "rules": [
+        "R09"
+      ],
+      "planned_trimp": 0.0,
+      "duration_min": 0.0,
+      "target_pace_s_per_km": null
+    },
+    {
+      "date": "2026-11-19",
+      "kind": "rest",
+      "duration_s": 0,
+      "distance_m": 0,
+      "reference_avg_hr_bpm": null,
+      "rules": [
+        "R09"
+      ],
+      "planned_trimp": 0.0,
+      "duration_min": 0.0,
+      "target_pace_s_per_km": null
+    },
+    {
+      "date": "2026-11-20",
+      "kind": "rest",
+      "duration_s": 0,
+      "distance_m": 0,
+      "reference_avg_hr_bpm": null,
+      "rules": [
+        "R09"
+      ],
+      "planned_trimp": 0.0,
+      "duration_min": 0.0,
+      "target_pace_s_per_km": null
+    },
+    {
+      "date": "2026-11-21",
+      "kind": "rest",
+      "duration_s": 0,
+      "distance_m": 0,
+      "reference_avg_hr_bpm": null,
+      "rules": [
+        "R09"
+      ],
+      "planned_trimp": 0.0,
+      "duration_min": 0.0,
+      "target_pace_s_per_km": null
+    },
+    {
+      "date": "2026-11-22",
+      "kind": "rest",
+      "duration_s": 0,
+      "distance_m": 0,
+      "reference_avg_hr_bpm": null,
+      "rules": [
+        "R09"
+      ],
+      "planned_trimp": 0.0,
+      "duration_min": 0.0,
+      "target_pace_s_per_km": null
+    }
+  ],
+  "weekly_targets": {
+    "load_target_trimp": 120.656754,
+    "sessions": 1
+  },
+  "self_check": {
+    "passed": true,
+    "checks": [
+      {
+        "code": "R19",
+        "passed": true,
+        "detail": "按每日参考心率复算 120.66 TRIMP，本周 120.66，项目上限 132.72。"
+      },
+      {
+        "code": "R20",
+        "passed": true,
+        "detail": "7/7 日有适用的规则依据。"
+      }
+    ]
+  }
+}
