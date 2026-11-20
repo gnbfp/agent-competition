@@ -301,6 +301,7 @@
       ],
       "properties": {
         "resting_hr_baseline": {
+          "description": "新计算的基线仅使用 R02 复核范围内的历史量测。数值范围兼容旧 v2 产物。",
           "type": [
             "number",
             "null"
@@ -412,6 +413,7 @@
                 "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
               },
               "resting_hr_bpm": {
+                "description": "已记录的日量测值。保留需复核的读数，是否参与统计由 R02 决定。",
                 "type": [
                   "number",
                   "null"
@@ -496,6 +498,7 @@
           "minimum": 0
         },
         "resting_hr": {
+          "description": "新计算读取规则库 R02 限制此参数。数值范围兼容旧 v2 产物。",
           "type": "integer",
           "minimum": 30,
           "maximum": 120

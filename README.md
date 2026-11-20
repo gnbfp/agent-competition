@@ -17,7 +17,7 @@
 ## 仓库结构
 
 ```
-contracts/   4 份 JSON Schema + 黄金样例 + 校验器 + 假后端（契约唯一真源）
+contracts/   5 份 JSON Schema（指标兼容 v1/v2）、样例、校验器和模拟 API
 tools/       环境自检等脚本
 src/         p2_ingest（CSV→activity）· p3_metrics（→metrics）· p4_agent（→plan/report）· p5_web（只读 report）
 data/        sample（脱敏样例，可进 Git）· raw（原始导出，禁止进 Git）

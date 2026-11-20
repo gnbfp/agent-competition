@@ -36,13 +36,41 @@ TYPE_CHECKS = {
     "boolean": lambda v: isinstance(v, bool),
     "null": lambda v: v is None,
 }
+SCHEMA_KEYWORDS = {"$schema", "$comment", "title", "description", "type", "enum", "pattern",
+                   "minimum", "maximum", "required", "properties", "additionalProperties", "items"}
 
 
 def fmt_path(path):
     return "$" + path
 
 
+def schema_errors(schema, path="$schema"):
+    if not isinstance(schema, dict):
+        return [f"{path}: 仅支持对象形式的 schema"]
+    errors = [f"{path}: 不支持的 schema 关键字 {keyword!r}" for keyword in sorted(set(schema) - SCHEMA_KEYWORDS)]
+    if "additionalProperties" in schema and type(schema["additionalProperties"]) is not bool:
+        errors.append(f"{path}.additionalProperties: 仅支持布尔值")
+    properties = schema.get("properties", {})
+    if not isinstance(properties, dict):
+        errors.append(f"{path}.properties: 应为对象")
+    else:
+        for name, child in properties.items():
+            errors.extend(schema_errors(child, f"{path}.properties.{name}"))
+    if "items" in schema:
+        errors.extend(schema_errors(schema["items"], f"{path}.items"))
+    return errors
+
+
 def check(instance, schema, path="", errors=None):
+    errors = errors if errors is not None else []
+    unsupported = schema_errors(schema)
+    if unsupported:
+        errors.extend(unsupported)
+        return errors
+    return check_instance(instance, schema, path, errors)
+
+
+def check_instance(instance, schema, path, errors):
     errors = errors if errors is not None else []
 
     expected = schema.get("type")
@@ -77,11 +105,11 @@ def check(instance, schema, path="", errors=None):
                     errors.append("%s: 出现未定义字段 %r（拼写错误或未走契约变更）" % (fmt_path(path), key))
         for key, sub in props.items():
             if key in instance:
-                check(instance[key], sub, path + "." + key, errors)
+                check_instance(instance[key], sub, path + "." + key, errors)
 
     if isinstance(instance, list) and "items" in schema:
         for i, item in enumerate(instance):
-            check(item, schema["items"], path + "[%d]" % i, errors)
+            check_instance(item, schema["items"], path + "[%d]" % i, errors)
 
     return errors
 
