@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>任务分工表（2026-11-20 起）</title>
+<style>
+:root{
+  --ink:#1b1f24; --ink-soft:#4a545e; --line:#e3e8ef; --bg:#f5f7fa;
+  --accent:#0b5fff; --accent-soft:#eaf1ff; --warn:#b45309; --ok:#0a7a45;
+}
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font-family:"Microsoft YaHei","PingFang SC","Hiragino Sans GB","Segoe UI",system-ui,sans-serif;
+  font-size:16.5px; line-height:1.85; -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:1000px;margin:0 auto;padding:40px 22px 90px}
+.card{background:#fff;border:1px solid var(--line);border-radius:16px;
+  box-shadow:0 1px 2px rgba(16,24,40,.04),0 12px 32px -18px rgba(16,24,40,.18);
+  padding:52px 56px 60px}
+h1{font-size:30px;line-height:1.35;margin:0 0 6px;letter-spacing:-.3px}
+h1+blockquote{margin-top:18px}
+h2{font-size:22px;margin:52px 0 16px;padding-top:18px;border-top:1px solid var(--line);letter-spacing:-.2px}
+h2:first-of-type{border-top:0}
+h3{font-size:18.5px;margin:34px 0 12px;color:#0b1b3a}
+h3::before{content:"";display:inline-block;width:4px;height:16px;background:var(--accent);
+  border-radius:2px;margin-right:10px;vertical-align:-2px}
+p{margin:12px 0}
+strong{color:#0b1b3a}
+a{color:var(--accent);text-decoration:none;border-bottom:1px solid #bcd0ff}
+ul,ol{margin:12px 0;padding-left:26px}
+li{margin:7px 0}
+li::marker{color:var(--accent)}
+hr{border:0;border-top:1px dashed var(--line);margin:36px 0}
+blockquote{margin:20px 0;padding:16px 20px;background:var(--accent-soft);
+  border-left:4px solid var(--accent);border-radius:0 10px 10px 0;color:#123;font-size:15.5px}
+blockquote strong{color:var(--accent)}
+code{background:#f2f5f9;border:1px solid var(--line);border-radius:5px;
+  padding:1.5px 6px;font-family:"Cascadia Mono",Consolas,monospace;font-size:13.5px;color:#0b3d91}
+pre.code{overflow-x:auto;margin:18px 0;padding:16px 18px;background:#0b1220;color:#dbe6f6;
+  border-radius:10px;font-family:"Cascadia Mono",Consolas,"Courier New",monospace;
+  font-size:13px;line-height:1.6;white-space:pre}
+pre.code code{background:none;border:0;padding:0;color:inherit;font-size:inherit}
+.table-wrap{overflow-x:auto;margin:18px 0;border:1px solid var(--line);border-radius:10px}
+table{border-collapse:collapse;width:100%;font-size:14.8px;background:#fff}
+thead th{background:#f0f4fa;text-align:left;font-weight:700;color:#0b1b3a;
+  padding:11px 14px;border-bottom:1px solid var(--line);white-space:nowrap}
+tbody td{padding:11px 14px;border-bottom:1px solid #eef2f7;vertical-align:top;color:var(--ink-soft)}
+tbody tr:last-child td{border-bottom:0}
+tbody tr:nth-child(even){background:#fafbfd}
+tbody tr:hover{background:#f3f7ff}
+@media (max-width:720px){
+  .card{padding:28px 20px 36px;border-radius:12px}
+  .wrap{padding:16px 10px 60px}
+  h1{font-size:24px} h2{font-size:19px} body{font-size:15.5px}
+}
+</style>
+</head>
+<body>
+<div class="wrap"><article class="card">
+<h1 id="任务分工表-2026-11-20-起">任务分工表（2026-11-20 起）</h1>
+<div class="table-wrap"><table>
+<thead><tr><th>姓名</th><th>任务</th><th>交付物</th></tr></thead>
+<tbody>
+<tr><td><strong>戚相宜</strong>（队长）</td><td>仓库与契约维护、数据链（P2：CSV→activity.json）、真实数据、总联调、PR 评审合并</td><td>能跑通的数据管线 + 一份真实数据跑出来的报告</td></tr>
+<tr><td><strong>路成</strong></td><td>后端算法与智能体（P3 指标计算 + P4 智能体主循环与工具 + 报告生成）</td><td><code>metrics.json</code> 与 <code>report.json</code> 两个文件的生产者</td></tr>
+<tr><td><strong>张笑钰</strong></td><td>前端页面（P5 全部：报告页、导入页、可视化、演示模式）</td><td>一个能演示的网页</td></tr>
+<tr><td><strong>李婷欣</strong></td><td>项目计划书主体（第 1–5 章：背景、方案、技术、跨学科、创新点）</td><td>计划书正文 + 初赛 PDF</td></tr>
+<tr><td><strong>戴晓月</strong></td><td>计划书验证与表达（第 6–8 章：验证方案、依据清单、隐私合规 + 答辩 PPT、讲稿、视频脚本）</td><td>验证章节 + 答辩全套材料</td></tr>
+</tbody></table></div>
+<p>一句话记法：<strong>戚相宜供数据、路成出结论、张笑钰做展示、李婷欣写"是什么"、戴晓月写"凭什么信"。</strong></p>
+</article></div>
+</body>
+</html>
