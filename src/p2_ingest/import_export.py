@@ -8,10 +8,10 @@
 
 用法：
     python src/p2_ingest/import_export.py data/raw/garmin_export.csv --from garmin
-    python src/p2_ingest/import_export.py data/raw/huawei_export.csv -o out/huawei_activity.json
+    python src/p2_ingest/import_export.py data/raw/huawei_export.csv -o out/activity_huawei.json
     python src/p2_ingest/import_export.py data/raw/xxx.csv --list-formats
 
-退出码：0 成功；1 文件/格式问题；2 中间 CSV 产出了但校验有丢弃行且带了 --strict。
+退出码 0 表示成功。文件、格式或 --strict 验收失败时返回 1。
 """
 
 from __future__ import annotations
@@ -21,19 +21,21 @@ import csv
 import pathlib
 import sys
 
-import format_adapters
-import csv_parser
+if __package__:
+    from . import csv_parser, format_adapters
+    from .csv_input import CsvInputError, read_csv
+else:
+    import csv_parser
+    import format_adapters
+    from csv_input import CsvInputError, read_csv
 
 MAX_WARNINGS_SHOWN = 20
 
 
 def read_raw_csv(path: pathlib.Path) -> tuple[list[str], list[dict]]:
     """读原始导出 CSV；返回 (表头, 行字典列表)。"""
-    with path.open("r", encoding="utf-8-sig", newline="") as handle:
-        reader = csv.DictReader(handle)
-        if reader.fieldnames is None:
-            raise format_adapters.AdapterError(f"{path} 是空文件，没有表头")
-        return list(reader.fieldnames), list(reader)
+    fieldnames, rows, _ = read_csv(path)
+    return fieldnames, rows
 
 
 def write_middle_csv(path: pathlib.Path, rows: list[dict]) -> None:
@@ -56,7 +58,7 @@ def show_warnings(warnings: list[str]) -> None:
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="原始导出 CSV → 中间格式 → activity.json")
-    parser.add_argument("raw_path", help="手表/App 导出的原始 CSV")
+    parser.add_argument("raw_path", help="手表/App 导出的原始 CSV（UTF-8，兼容 BOM 和 GBK）")
     parser.add_argument("-o", "--out", default="out/activity.json", help="activity.json 输出路径")
     parser.add_argument("--from", dest="source", default=None,
                         help="强制指定格式：garmin / huawei（默认按表头自动识别）")
@@ -73,13 +75,9 @@ def main(argv: list[str] | None = None) -> int:
         return 0
 
     raw_path = pathlib.Path(args.raw_path)
-    if not raw_path.exists():
-        print(f"FAIL 找不到 {raw_path}")
-        return 1
-
     try:
-        fieldnames, rows = read_raw_csv(raw_path)
-    except format_adapters.AdapterError as exc:
+        fieldnames, rows, encoding = read_csv(raw_path)
+    except CsvInputError as exc:
         print(f"FAIL {exc}")
         return 1
     if not rows:
@@ -110,14 +108,20 @@ def main(argv: list[str] | None = None) -> int:
               "contracts/validate_contract.py 靠文件名判断用哪份 schema。")
     middle_path = (pathlib.Path(args.middle) if args.middle
                    else out_path.parent / f"{raw_path.stem}_middle.csv")
-    write_middle_csv(middle_path, adapted)
-    print(f"读入 {len(rows)} 行 → 中间格式 {len(adapted)} 行，已写出 {middle_path}")
-    show_warnings(warnings)
-
-    csv_parser_args = [str(middle_path), "-o", str(out_path), "--athlete", args.athlete]
-    if args.strict:
-        csv_parser_args.append("--strict")
-    return csv_parser.main(csv_parser_args)
+    outputs = [middle_path, out_path, out_path.with_name("data_check.md"), out_path.with_name("rejected.json")]
+    if len({path.resolve() for path in [raw_path, *outputs]}) != len(outputs) + 1:
+        print("FAIL 输入与输出路径不得重合")
+        return 1
+    try:
+        write_middle_csv(middle_path, adapted)
+        print(f"读入 {len(rows)} 行 → 中间格式 {len(adapted)} 行，已写出 {middle_path}")
+        show_warnings(warnings)
+        return csv_parser.import_rows(adapted, out_path, source_name=raw_path.name, encoding=encoding,
+                                      athlete_id=args.athlete, strict=args.strict,
+                                      adapter_warning_count=len(warnings))
+    except OSError as exc:
+        print(f"FAIL {exc}")
+        return 1
 
 
 if __name__ == "__main__":

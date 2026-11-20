@@ -149,20 +149,21 @@ def check_validator() -> None:
 
 
 # ---------------------------------------------------------------- 6/7. 编码与换行
-TEXT_SUFFIX = {".py", ".json", ".md", ".html", ".css", ".js", ".txt", ".schema"}
-SKIP_DIR = {".git", "__pycache__", ".venv", "venv", "node_modules", "data"}
+TEXT_SUFFIX = {".py", ".json", ".md", ".html", ".css", ".js", ".txt", ".schema", ".csv"}
+SKIP_DIR = {".git", "__pycache__", ".venv", "venv", "node_modules", "out", "dist"}
 
 
 def iter_text_files():
     for path in ROOT.rglob("*"):
         if not path.is_file():
             continue
-        if any(part in SKIP_DIR for part in path.parts):
+        relative = path.relative_to(ROOT)
+        if any(part in SKIP_DIR for part in relative.parts[:-1]) or relative.parts[:2] == ("data", "raw"):
             continue
         if path.suffix.lower() not in TEXT_SUFFIX:
             continue
         try:
-            if path.stat().st_size > 4 * 1024 * 1024:
+            if path.suffix.lower() != ".csv" and path.stat().st_size > 4 * 1024 * 1024:
                 continue
         except OSError:
             continue
@@ -171,17 +172,31 @@ def iter_text_files():
 
 def check_encoding() -> None:
     bom: list[str] = []
+    invalid_csv: list[str] = []
     scanned = 0
     for path in iter_text_files():
         scanned += 1
         try:
-            head = path.read_bytes()[:3]
+            content = path.read_bytes()
         except OSError:
             continue
-        if head == b"\xef\xbb\xbf":
+        if content.startswith(b"\xef\xbb\xbf"):
             bom.append(rel(path))
-    if bom:
-        add("UTF-8 无 BOM", "FAIL", f"{len(bom)} 个文件带 BOM：" + "、".join(bom[:5]))
+        elif path.suffix.lower() == ".csv":
+            try:
+                if b"\0" in content:
+                    invalid_csv.append(rel(path))
+                else:
+                    content.decode("utf-8")
+            except UnicodeDecodeError:
+                invalid_csv.append(rel(path))
+    if bom or invalid_csv:
+        details = []
+        if bom:
+            details.append(f"{len(bom)} 个文件带 BOM：" + "、".join(bom[:5]))
+        if invalid_csv:
+            details.append(f"{len(invalid_csv)} 个 CSV 不是有效 UTF-8 文本：" + "、".join(invalid_csv[:5]))
+        add("UTF-8 无 BOM", "FAIL", "；".join(details))
     else:
         add("UTF-8 无 BOM", "PASS", f"扫描 {scanned} 个文本文件")
 
