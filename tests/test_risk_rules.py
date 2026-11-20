@@ -154,3 +154,14 @@ class RiskRulesTest(unittest.TestCase):
         )
         self.assertEqual(run.returncode, 0, run.stdout + run.stderr)
         self.assertEqual(json.loads(run.stdout), lookup_evidence("R15", load_rules()))
+
+    def test_direct_script_supports_evaluation_outside_repo_root(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            output = Path(tmp) / "risk_checks.json"
+            run = subprocess.run(
+                [sys.executable, "-B", str(ROOT / "src/p4_agent/risk_rules.py"),
+                 "evaluate", str(METRICS), "-o", str(output)],
+                cwd=tmp, capture_output=True, text=True, encoding="utf-8",
+            )
+            self.assertEqual(run.returncode, 0, run.stdout + run.stderr)
+            self.assertEqual(len(load_json(output)["checks"]), 18)

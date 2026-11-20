@@ -41,4 +41,4 @@ python contracts/mock_api.py --port 8080 --delay 300
 
 - 时长 `_s` 秒；距离 `_m` 米；配速 `_s_per_km` **秒/公里**（6'00" = 360）
 - 心率 bpm 整数；占比 0–100；比率是小数（ACWR 1.62 不是 162%）
-- 日期 `YYYY-MM-DD`；时间戳 ISO 8601 带 `+08:00`；文件编码 UTF-8（读 Excel 导出的 CSV 用 `utf-8-sig`）
+- 日期使用 `YYYY-MM-DD`，时间戳使用带 `+08:00` 的 ISO 8601。仓库文本和生成的中间文件使用 UTF-8 无 BOM，本地 CSV 入口兼容 UTF-8 BOM 和 GBK。
