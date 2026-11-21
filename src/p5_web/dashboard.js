@@ -5,6 +5,7 @@ const $ = (id) => document.getElementById(id);
 const controls = $("local-controls");
 const csvForm = $("csv-form");
 const answerForm = $("answer-form");
+const aiForm = $("ai-form");
 const requestLimit = 2 * 1024 * 1024;
 const decisions = {
   draft: ["草案待确认", ""],
@@ -19,6 +20,9 @@ const countNames = {input_rows: "总活动行", accepted_rows: "已接纳", skip
 let busy = false;
 let currentReport = null;
 let currentUpload = null;
+let reportId = null;
+let aiConnection = null;
+let aiRequest = null;
 
 function element(tag, value, className) {
   const node = document.createElement(tag);
@@ -46,6 +50,74 @@ async function request(url, options) {
   const data = await response.json();
   if (!response.ok) throw new Error(data.message || `请求失败（${response.status}）`);
   return data;
+}
+
+function setAiStatus(message, error = false) {
+  $("ai-status").textContent = message;
+  $("ai-status").classList.toggle("error", error);
+}
+
+async function analyzeCurrentReport() {
+  if (!aiConnection || !reportId) return;
+  aiRequest?.abort();
+  const controller = new AbortController();
+  aiRequest = controller;
+  const result = $("ai-result");
+  result.textContent = "";
+  result.hidden = true;
+  $("ai-model").textContent = "";
+  $("ai-actions").hidden = false;
+  $("ai-retry").disabled = true;
+  setAiStatus("模型正在分析这份报告…");
+  try {
+    const response = await request("/api/ai", {
+      method: "POST", headers: {"Content-Type": "application/json"}, signal: controller.signal,
+      body: JSON.stringify({report_id: reportId, ...aiConnection}),
+    });
+    if (aiRequest !== controller || response.report_id !== reportId) return;
+    result.textContent = response.analysis;
+    result.hidden = false;
+    $("ai-model").textContent = aiConnection.model;
+    setAiStatus("本次报告的模型解读");
+    $("ai-settings").open = false;
+  } catch (error) {
+    if (aiRequest === controller) setAiStatus(error.message || "AI 分析暂不可用。", true);
+  } finally {
+    if (aiRequest === controller) {
+      aiRequest = null;
+      $("ai-retry").disabled = false;
+    }
+  }
+}
+
+function registerAiControls() {
+  aiForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const {api_key, base_url, model} = aiForm.elements;
+    aiConnection = {api_key: api_key.value.trim(), base_url: base_url.value.trim(), model: model.value.trim()};
+    api_key.value = "";
+    analyzeCurrentReport();
+  });
+  $("ai-retry").addEventListener("click", analyzeCurrentReport);
+  $("ai-disconnect").addEventListener("click", () => {
+    aiRequest?.abort();
+    aiRequest = null;
+    aiConnection = null;
+    $("ai-model").textContent = "";
+    $("ai-result").textContent = "";
+    $("ai-result").hidden = true;
+    $("ai-actions").hidden = true;
+    aiForm.elements.api_key.value = "";
+    setAiStatus("AI 已断开。");
+  });
+}
+
+function showSnapshot({report, import_quality, report_id}) {
+  reportId = report_id;
+  renderReport(report);
+  renderQuality(import_quality);
+  $("ai-panel").hidden = !reportId;
+  analyzeCurrentReport();
 }
 
 async function readJSON(file) {
@@ -95,8 +167,7 @@ async function run(makePayload) {
       method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify(payload),
     });
     currentUpload = payload.mode === "csv" ? payload : null;
-    renderReport(result.report);
-    renderQuality(result.import_quality);
+    showSnapshot(result);
     showStatus("报告已更新。");
   } catch (error) {
     showStatus(`${error.message || "生成报告失败。"}${currentReport ? " 上一次成功的报告仍可查看。" : ""}`, true);
@@ -305,6 +376,7 @@ function renderReport(report) {
 async function init() {
   if (live) {
     controls.hidden = false;
+    registerAiControls();
     $("demo").addEventListener("click", () => run(() => ({mode: "demo"})));
     $("review").addEventListener("click", () => run(() => ({mode: "review"})));
     csvForm.addEventListener("submit", (event) => {
@@ -338,9 +410,7 @@ async function init() {
   setBusy(true);
   try {
     if (live) {
-      const {report, import_quality} = await request("/api/snapshot");
-      renderReport(report);
-      renderQuality(import_quality);
+      showSnapshot(await request("/api/snapshot"));
     } else {
       renderReport(await request("http://127.0.0.1:8080/api/report"));
     }

@@ -60,6 +60,25 @@
         <div class="overview-top"><div><p id="window" class="eyebrow"></p><h2 id="headline"></h2></div><span class="pill" id="decision"></span></div>
         <div class="metrics" id="metrics"></div>
       </section>
+      <section class="panel ai-panel" id="ai-panel" hidden>
+        <div class="section-title"><h2>AI 实时分析</h2><span class="eyebrow" id="ai-model"></span></div>
+        <details id="ai-settings">
+          <summary>连接 API</summary>
+          <form id="ai-form" autocomplete="off">
+            <label>API 基础地址 <input name="base_url" type="url" value="https://api.openai.com/v1" required maxlength="512"></label>
+            <label>模型名称 <input name="model" placeholder="例如 gpt-5-mini" required maxlength="160"></label>
+            <label>API 密钥 <input name="api_key" type="password" required maxlength="512"></label>
+            <p class="muted">启用后，每次报告更新会向该 API 发送汇总负荷、规则信号和待补项。密钥仅保留在当前标签页。</p>
+            <button class="primary" type="submit">连接并分析</button>
+          </form>
+        </details>
+        <p id="ai-status" class="run-status" role="status" aria-live="polite"></p>
+        <p id="ai-result" class="ai-result" hidden></p>
+        <div id="ai-actions" class="ai-actions" hidden>
+          <button type="button" id="ai-retry">重新分析</button>
+          <button type="button" id="ai-disconnect">断开 AI</button>
+        </div>
+      </section>
       <section class="panel" id="load-panel" hidden>
         <div class="section-title"><h2>训练负荷趋势</h2><span class="eyebrow">逐日 TRIMP</span></div>
         <div class="chart"><canvas id="load-chart" aria-label="逐日训练负荷折线图" role="img"></canvas><p id="chart-empty" class="empty" hidden>暂无可用的负荷记录。</p></div>
