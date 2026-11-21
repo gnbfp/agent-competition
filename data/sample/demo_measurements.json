@@ -1,0 +1,59 @@
+{
+  "athlete_id": "ATH-001",
+  "daily": [
+    {
+      "date": "2026-11-14",
+      "resting_hr_bpm": 55,
+      "sleep_h": 7,
+      "hrv_rmssd_ms": 48
+    },
+    {
+      "date": "2026-11-13",
+      "resting_hr_bpm": 55,
+      "sleep_h": 7,
+      "hrv_rmssd_ms": 48
+    },
+    {
+      "date": "2026-11-12",
+      "resting_hr_bpm": 55,
+      "sleep_h": 7,
+      "hrv_rmssd_ms": 48
+    },
+    {
+      "date": "2026-11-11",
+      "resting_hr_bpm": 55,
+      "sleep_h": 7,
+      "hrv_rmssd_ms": 48
+    },
+    {
+      "date": "2026-11-10",
+      "resting_hr_bpm": 55,
+      "sleep_h": 7,
+      "hrv_rmssd_ms": 48
+    },
+    {
+      "date": "2026-11-09",
+      "resting_hr_bpm": 55,
+      "sleep_h": 7,
+      "hrv_rmssd_ms": 48
+    },
+    {
+      "date": "2026-11-08",
+      "resting_hr_bpm": 55,
+      "sleep_h": 7,
+      "hrv_rmssd_ms": 48
+    },
+    {
+      "date": "2026-11-07",
+      "resting_hr_bpm": 55,
+      "sleep_h": 7,
+      "hrv_rmssd_ms": 48
+    },
+    {
+      "date": "2026-11-06",
+      "resting_hr_bpm": 55,
+      "sleep_h": 7,
+      "hrv_rmssd_ms": 48
+    }
+  ]
+}

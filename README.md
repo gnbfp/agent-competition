@@ -19,7 +19,7 @@
 ```
 contracts/   7 份 JSON Schema（指标、计划及报告兼容 v1/v2）、样例、校验器和模拟 API
 tools/       环境自检等脚本
-src/         p2_ingest（CSV→activity）· p3_metrics（→metrics）· p4_agent（→plan/report）· p5_web（只读 report）
+src/         p2_ingest（CSV→activity）· p3_metrics（→metrics）· p4_agent（→plan/report）· p5_web（本机报告与演示）
 data/        sample（脱敏样例，可进 Git）· raw（原始导出，禁止进 Git）
 docs/        文档、AI 使用留痕、答辩材料
 tests/       各模块最小测试
@@ -31,9 +31,11 @@ tests/       各模块最小测试
 python -m src.pipeline --demo --serve
 ```
 
-在浏览器打开终端打印的本机预览地址。该案例从模拟 CSV 重新生成报告，计划显示待人工复核。只生成文件可省略 `--serve`，按 Ctrl+C 可停止预览。每次结果独立存放在 `out/pipeline/run-*/`，包括 `activity.json`、`metrics.json`、`plan.json`、`report.json` 和导入体检。输入或校验失败时，终端会标明步骤，本次运行不会发布。
+在浏览器打开终端打印的本机预览地址。初始报告使用模拟 CSV，可展开 R15 查看复核依据。点击「运行草案演示」可查看逐日 TRIMP、7 天下周草案，以及候选计划因超量和缺依据被打回后通过自检的记录。两个演示均可断网运行。
 
-使用自己的 CSV，把下方参数替换为本地文件及对应量测。命令中的日期和心率仅用于说明参数格式。
+可在页面展开「导入自己的 CSV」，填入计算截止日、静息心率、个人最大心率和 TRIMP 系数。导入成功后可直接回答本轮追问并复算。每次成功的报告和导入体检独立存放在 `out/pipeline/run-*/`。页面导入失败时会保留上一次成功的报告。
+
+也可以从命令行导入。命令中的日期和心率是示例参数。只生成文件可省略 `--serve`，按 Ctrl+C 可停止预览。
 
 ```powershell
 python -m src.pipeline data/raw/my_export.csv --as-of 2026-11-14 --trimp-profile female --resting-hr 55 --max-hr 183 --measurements data/raw/measurements.json --context data/raw/context.json --serve
