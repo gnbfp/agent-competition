@@ -27,6 +27,8 @@ tests/       各模块最小测试
 
 ## 一条命令跑完演示
 
+准备 Python 3.12.x 和浏览器，从解压后的项目根目录运行。若 Windows 的 `python` 指向其他版本，可用 `py -3.12`。
+
 ```powershell
 python -m src.pipeline --demo --serve
 ```
@@ -44,6 +46,8 @@ python -m src.pipeline data/raw/my_export.csv --as-of 2026-11-14 --trimp-profile
 支持自动识别中间格式、Garmin 与华为，也可用 `--source` 指定。仅在导出覆盖完整时提供 `--history-start`。已知有丢弃或旁路时，本次按不完整历史处理；`--strict` 则在导入阶段直接停止。补充 JSON 的 `athlete_id` 须与 `--athlete` 一致，默认是 `anon_01`。
 
 环境要求为 Python 3.12.x、Git ≥ 2.40，无第三方依赖。可用 `python tools/check_env.py` 和 `python contracts/validate_contract.py` 自检。独立联调页面的模拟接口仍可用，见 [P5 使用说明](src/p5_web/README.md)。
+
+从干净环境复验、处理端口占用或排练答辩时，可使用[交付验收说明](docs/交付验收.md)和[现场演示脚本](docs/答辩/现场演示脚本.md)。
 
 ## 文档
 
