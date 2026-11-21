@@ -56,7 +56,8 @@
 
 <script>
 // P5 约定：不自己算指标，只渲染 /api/report 返回的内容。
-const API = "http://127.0.0.1:8080/api/report";
+const LIVE = window.location.pathname === "/live";
+const API = LIVE ? "/api/report" : "http://127.0.0.1:8080/api/report";
 const app = document.getElementById("app");
 
 const LEVEL_CN = { high: "高危", medium: "注意", low: "提示" };
@@ -148,6 +149,10 @@ function renderError(message) {
   const box = el("section", "card error");
   box.appendChild(el("h2", null, "读不到报告数据"));
   box.appendChild(el("p", null, message));
+  if (LIVE) {
+    app.appendChild(box);
+    return;
+  }
   const tip = el("p", null, "先起假后端：");
   tip.appendChild(el("code", null, "python contracts/mock_api.py --port 8080"));
   box.appendChild(tip);
@@ -156,7 +161,13 @@ function renderError(message) {
 }
 
 fetch(API)
-  .then(r => { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
+  .then(async r => {
+    if (!r.ok) {
+      const details = await r.json().catch(() => null);
+      throw new Error(details?.message || "HTTP " + r.status);
+    }
+    return r.json();
+  })
   .then(render)
   .catch(err => renderError(String(err && err.message || err)));
 </script>

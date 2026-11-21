@@ -220,10 +220,14 @@ def parse_rows(rows: list[dict]) -> tuple[list[dict], list[tuple[int, str]], lis
 
 def read_middle_csv(path: pathlib.Path) -> tuple[list[dict], str]:
     fieldnames, rows, encoding = read_csv(path)
+    validate_middle_headers(fieldnames)
+    return rows, encoding
+
+
+def validate_middle_headers(fieldnames: list[str]) -> None:
     missing = [c for c in REQUIRED_FIELDS if c not in fieldnames]
     if missing:
         raise CsvInputError(f"表头缺列：{', '.join(missing)}（见 docs/CSV中间格式.md）")
-    return rows, encoding
 
 
 def load_csv(path: pathlib.Path) -> list[dict]:
@@ -264,7 +268,8 @@ def write_data_check(path: pathlib.Path, rows: list[dict], activities: list[dict
 
 
 def import_rows(rows: list[dict], out_path: pathlib.Path, *, source_name: str, encoding: str,
-                athlete_id: str, strict: bool, adapter_warning_count: int = 0) -> int:
+                athlete_id: str, strict: bool, adapter_warning_count: int = 0,
+                quality_path: pathlib.Path | None = None) -> int:
     if out_path.name.lower() in {"rejected.json", "data_check.md"}:
         print("FAIL activity 输出路径与导入附属文件重名")
         return 1
@@ -305,6 +310,13 @@ def import_rows(rows: list[dict], out_path: pathlib.Path, *, source_name: str, e
     write_data_check(report_path, rows, activities, skipped, rejected, warnings,
                      encoding=encoding, adapter_warning_count=adapter_warning_count)
     print(f"数据体检报告已写出 {report_path}")
+    if quality_path is not None:
+        counts = {
+            "input_rows": len(rows), "accepted_rows": len(activities), "skipped_rows": len(skipped),
+            "incomplete_rows": sum(any(not _text(row, key) for key in REQUIRED_FIELDS) for row in rows),
+            "device_anomaly_rows": len(rejected),
+        }
+        quality_path.write_text(json.dumps(counts, indent=2) + "\n", encoding="utf-8", newline="\n")
 
     if strict and (skipped or rejected):
         print("结论：--strict 模式下不允许丢弃行。")

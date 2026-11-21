@@ -139,6 +139,8 @@ def generate_plan(metrics: dict, assessment: dict, rules: dict[str, dict], *, ac
         return withheld("hold_for_review", [f"规则评估需要人工复核。{codes}"])
     if assessment["status"] == "awaiting_input":
         return withheld("awaiting_input", ["规则评估仍有追问待答。"])
+    if any(item["code"] == "P2_IMPORT_PARTIAL" for item in metrics["flags"]):
+        return withheld("awaiting_input", ["本次导入有被丢弃或旁路的活动，请复核记录完整性。"])
     if any(lookup_evidence(code, rules) is None for code in ("R19", "R20")):
         return withheld("hold_for_review", ["计划自检规则缺少依据。"])
     states = {item["rule_id"]: item["status"] for item in assessment["checks"]}

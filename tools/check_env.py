@@ -61,6 +61,8 @@ REQUIRED_FILES = [
     "src/p4_agent/run.py",
     "src/p4_agent/planner.py",
     "src/p4_agent/report.py",
+    "src/pipeline.py",
+    "src/report_server.py",
     "data/sample/agent_answers_sample.json",
     "docs/AI使用留痕.md",
     "tools/check_env.py",
