@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import base64
 import csv
 import io
 import json
@@ -15,10 +16,36 @@ from pathlib import Path
 from types import SimpleNamespace
 
 from contracts.validate_contract import load_json, validate_file
+from src.pipeline import SAMPLE, browser_run
 from src.report_server import report_handler
 
 
 ROOT = Path(__file__).resolve().parents[1]
+
+
+def request(handler_type, route, host="127.0.0.1:8080", *, data=None, origin=None):
+    method = "POST" if data is not None else "GET"
+    handler = object.__new__(handler_type)
+    handler.server = SimpleNamespace(server_port=8080)
+    handler.requestline = f"{method} {route} HTTP/1.1"
+    handler.request_version = "HTTP/1.1"
+    handler.path = route
+    handler.headers = {"Host": host}
+    handler.wfile = io.BytesIO()
+    if method == "POST":
+        payload = json.dumps(data).encode()
+        handler.headers.update({"Content-Type": "application/json", "Content-Length": str(len(payload))})
+        if origin is not None:
+            handler.headers["Origin"] = origin
+        handler.connection = SimpleNamespace(settimeout=lambda _: None)
+        handler.rfile = io.BytesIO(payload)
+        handler.do_POST()
+    else:
+        handler.do_GET()
+    handler.wfile.seek(0)
+    with HTTPResponse(SimpleNamespace(makefile=lambda *_: handler.wfile)) as response:
+        response.begin()
+        return response.status, response.headers, response.read()
 
 
 class PipelineTest(unittest.TestCase):
@@ -111,33 +138,64 @@ class PipelineTest(unittest.TestCase):
 
         handler_type = report_handler(path)
 
-        def request(route, host="127.0.0.1:8080"):
-            handler = object.__new__(handler_type)
-            handler.server = SimpleNamespace(server_port=8080)
-            handler.requestline = f"GET {route} HTTP/1.1"
-            handler.request_version = "HTTP/1.1"
-            handler.path = route
-            handler.headers = {"Host": host}
-            handler.wfile = io.BytesIO()
-            handler.do_GET()
-            handler.wfile.seek(0)
-            with HTTPResponse(SimpleNamespace(makefile=lambda *_: handler.wfile)) as response:
-                response.begin()
-                return response.status, response.headers, response.read()
-
-        status, headers, body = request("/api/report")
+        status, headers, body = request(handler_type, "/api/report")
         self.assertEqual(status, 200)
         self.assertEqual(headers["Cache-Control"], "no-store")
         self.assertEqual(json.loads(body), expected)
-        self.assertEqual(request("/")[1]["Location"], "/live")
-        self.assertIn(b"window.location.pathname", request("/live")[2])
-        self.assertEqual(request("/api/health")[0], 200)
-        self.assertEqual(request("/activity.json")[0], 404)
-        self.assertEqual(request("/api/report", "other.example")[0], 400)
+        self.assertEqual(request(handler_type, "/")[1]["Location"], "/live")
+        self.assertIn(b"dashboard.js", request(handler_type, "/live")[2])
+        self.assertIn(b"window.location.pathname", request(handler_type, "/dashboard.js")[2])
+        self.assertEqual(request(handler_type, "/api/health")[0], 200)
+        self.assertEqual(request(handler_type, "/activity.json")[0], 404)
+        self.assertEqual(request(handler_type, "/api/report", "other.example")[0], 400)
         path.write_text("{", encoding="utf-8")
-        status, _, body = request("/api/report")
+        status, _, body = request(handler_type, "/api/report")
         self.assertEqual(status, 503)
         self.assertEqual(json.loads(body)["error"], "report_unavailable")
         path.unlink()
-        self.assertEqual(request("/api/report")[0], 404)
-        self.assertEqual(request("/api/health")[0], 503)
+        self.assertEqual(request(handler_type, "/api/report")[0], 404)
+        self.assertEqual(request(handler_type, "/api/health")[0], 503)
+
+    def test_browser_submissions_publish_only_successful_same_origin_runs(self):
+        first = self.require_run(self.run_pipeline("--demo"))
+        server = report_handler(first / "report.json", on_run=lambda payload: browser_run(payload, self.output))
+        previous = json.loads(request(server, "/api/snapshot")[2])
+        self.assertEqual(previous["report"]["plan"]["status"], "hold_for_review")
+        self.assertEqual(previous["import_quality"]["device_anomaly_rows"], 1)
+
+        def submit(payload, origin="http://127.0.0.1:8080"):
+            return request(server, "/api/run", data=payload, origin=origin)
+
+        self.assertEqual(submit({"mode": "demo"}, None)[0], 403)
+        self.assertEqual(submit({"mode": "demo"}, "https://other.example")[0], 403)
+        self.assertEqual(submit({"mode": "csv", "csv": "not base64"})[0], 422)
+        self.assertEqual(json.loads(request(server, "/api/snapshot")[2]), previous)
+        self.assertEqual(list(self.output.iterdir()), [first])
+
+        status, _, body = submit({"mode": "demo"})
+        self.assertEqual(status, 200, body)
+        result = json.loads(body)
+        plan = result["report"]["plan"]
+        self.assertEqual(plan["status"], "draft")
+        self.assertEqual(len(plan["days"]), 7)
+        self.assertEqual([check["passed"] for check in plan["attempts"][0]["checks"]], [False, False])
+        self.assertTrue(plan["self_check"]["passed"])
+        self.assertEqual(result["import_quality"]["accepted_rows"], 12)
+        self.assertEqual(json.loads(request(server, "/api/snapshot")[2]), result)
+        self.assertEqual(len(list(self.output.iterdir())), 2)
+
+    def test_browser_csv_preserves_gbk_and_reuses_the_p4_answer_flow(self):
+        sample = (SAMPLE / "huawei_export_sample.csv").read_text(encoding="utf-8")
+        payload = {"mode": "csv", "csv": base64.b64encode(sample.encode("gbk")).decode(),
+                   "options": {"as_of": "2026-11-17", "resting_hr": 55, "max_hr": 190,
+                               "trimp_profile": "female"}}
+        first = browser_run(payload, self.output)
+        self.assertIn("输入编码：GBK", (first / "data_check.md").read_text(encoding="utf-8"))
+        report = load_json(first / "report.json")
+        self.assertIn("pain_reported", {question["key"] for question in report["questions"]})
+
+        second = browser_run({**payload, "answers": {"pain_reported": True}}, self.output)
+        report = load_json(second / "report.json")
+        self.assertEqual(report["plan"]["status"], "hold_for_review")
+        self.assertIn("R15", {risk["rule_id"] for risk in report["risks"]})
+        self.assertEqual(report["plan"]["days"], [])

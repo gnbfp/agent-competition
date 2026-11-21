@@ -1,175 +1,81 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh-CN">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>运动生理闭环智能体 · 报告页（P5 起点）</title>
-<style>
-  :root { --ink:#0f172a; --soft:#475569; --line:#e2e8f0; --bg:#f6f8fb; --accent:#0b5fff;
-          --high:#dc2626; --med:#d97706; --low:#059669; }
-  * { box-sizing: border-box; }
-  body { margin:0; font-family:"Segoe UI","Microsoft YaHei",system-ui,sans-serif; color:var(--ink); background:var(--bg); }
-  header { background:#fff; border-bottom:1px solid var(--line); padding:18px 24px; }
-  header h1 { margin:0; font-size:18px; }
-  header p { margin:4px 0 0; color:var(--soft); font-size:13px; }
-  main { max-width:1040px; margin:24px auto 60px; padding:0 20px; display:grid; gap:16px; }
-  .card { background:#fff; border:1px solid var(--line); border-radius:10px; padding:20px; }
-  .headline { font-size:22px; font-weight:700; line-height:1.45; margin:0 0 10px; }
-  .badges { display:flex; gap:8px; flex-wrap:wrap; }
-  .badge { font-size:12px; padding:3px 10px; border-radius:999px; border:1px solid var(--line); color:var(--soft); }
-  .badge.high { border-color:var(--high); color:var(--high); }
-  .badge.medium { border-color:var(--med); color:var(--med); }
-  .badge.low { border-color:var(--low); color:var(--low); }
-  .metrics { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:12px; }
-  .metric { border:1px solid var(--line); border-radius:8px; padding:12px 14px; }
-  .metric .k { font-size:12px; color:var(--soft); }
-  .metric .v { font-size:22px; font-weight:700; margin-top:4px; }
-  .metric .u { font-size:12px; color:var(--soft); margin-left:3px; font-weight:400; }
-  h2 { font-size:15px; margin:0 0 14px; }
-  .risk { border-left:3px solid var(--line); padding:10px 14px; margin-bottom:12px; background:#fbfcfe; border-radius:0 8px 8px 0; }
-  .risk.high { border-left-color:var(--high); }
-  .risk.medium { border-left-color:var(--med); }
-  .risk.low { border-left-color:var(--low); }
-  .risk .t { font-weight:600; margin-bottom:6px; }
-  .risk .t code { font:12px ui-monospace,Consolas,monospace; background:#eef2f7; padding:1px 6px; border-radius:4px; margin-right:8px; }
-  .risk .e { font-size:13px; color:var(--soft); line-height:1.6; }
-  .risk .a { font-size:13px; margin-top:6px; }
-  .error { border-color:#fecaca; background:#fff1f2; color:#9f1239; }
-  .error code { background:#fff; padding:2px 6px; border-radius:4px; font-size:12px; }
-  table { width:100%; border-collapse:collapse; font-size:13px; }
-  th, td { text-align:left; padding:8px 10px; border-bottom:1px solid var(--line); }
-  th { color:var(--soft); font-weight:600; }
-  footer { text-align:center; color:var(--soft); font-size:12px; padding:0 20px 30px; }
-</style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>跑步训练报告</title>
+  <link rel="stylesheet" href="./dashboard.css">
+  <script src="./dashboard.js" defer></script>
 </head>
 <body>
-<header>
-  <h1>本周训练报告</h1>
-  <p>数据源：<code>GET /api/report</code>（假后端 contracts/mock_api.py）· 页面只显示，不计算任何指标</p>
-</header>
-
-<main id="app">
-  <section class="card"><p>正在读取 report.json …</p></section>
-</main>
-
-<footer>本页为 P5 起点：只消费 report.json，页面上的每个数字都必须能在 JSON 里找到出处。</footer>
-
-<script>
-// P5 约定：不自己算指标，只渲染 /api/report 返回的内容。
-const LIVE = window.location.pathname === "/live";
-const API = LIVE ? "/api/report" : "http://127.0.0.1:8080/api/report";
-const app = document.getElementById("app");
-
-const LEVEL_CN = { high: "高危", medium: "注意", low: "提示" };
-const STATUS_CN = { undertrained: "训练不足", optimal: "负荷合理", high: "负荷偏高", danger: "高危" };
-
-function el(tag, cls, text) {
-  const node = document.createElement(tag);
-  if (cls) node.className = cls;
-  if (text !== undefined) node.textContent = text;
-  return node;
-}
-
-function metricCard(label, value, unit) {
-  const box = el("div", "metric");
-  box.appendChild(el("div", "k", label));
-  const v = el("div", "v", String(value));
-  if (unit) v.appendChild(el("span", "u", unit));
-  box.appendChild(v);
-  return box;
-}
-
-function riskCard(risk) {
-  const box = el("div", "risk " + (risk.level || "low"));
-  const title = el("div", "t");
-  title.appendChild(el("code", null, risk.rule_id));
-  title.appendChild(document.createTextNode(risk.title || ""));
-  box.appendChild(title);
-  if (risk.evidence) {
-    box.appendChild(el("div", "e", risk.evidence.clause + "（依据：" + risk.evidence.source + "）"));
-  }
-  if (risk.action) box.appendChild(el("div", "a", "→ " + risk.action));
-  return box;
-}
-
-function render(report) {
-  app.innerHTML = "";
-
-  const top = el("section", "card");
-  top.appendChild(el("p", "headline", report.summary.headline));
-  const badges = el("div", "badges");
-  badges.appendChild(el("span", "badge " + (report.summary.risk_level || ""), "风险等级：" + (LEVEL_CN[report.summary.risk_level] || "待评估")));
-  badges.appendChild(el("span", "badge", "负荷状态：" + (STATUS_CN[report.summary.load_status] || "数据不足")));
-  badges.appendChild(el("span", "badge", "窗口：" + report.metrics.window.start + " ~ " + report.metrics.window.end));
-  top.appendChild(badges);
-  app.appendChild(top);
-
-  const m = el("section", "card");
-  m.appendChild(el("h2", null, "关键指标"));
-  const grid = el("div", "metrics");
-  const metricText = (value, format) => Number.isFinite(value) ? format(value) : "数据不足";
-  grid.appendChild(metricCard("ACWR（EWMA）", metricText(report.metrics.load.acwr_ewma, value => value.toFixed(2)), ""));
-  grid.appendChild(metricCard("周 TRIMP", metricText(report.metrics.load.trimp_week, Math.round), ""));
-  grid.appendChild(metricCard("VO₂max", metricText(report.metrics.capacity.vo2max.value, value => value.toFixed(1)), "ml/kg/min"));
-  grid.appendChild(metricCard("静息心率偏差", metricText(report.metrics.recovery.resting_hr_delta, value => (value > 0 ? "+" : "") + value), "bpm"));
-  m.appendChild(grid);
-  app.appendChild(m);
-
-  const risks = el("section", "card");
-  risks.appendChild(el("h2", null, "本周风险（" + report.risks.length + " 条）"));
-  report.risks.forEach(r => risks.appendChild(riskCard(r)));
-  app.appendChild(risks);
-
-  const plan = el("section", "card");
-  plan.appendChild(el("h2", null, report.plan.status === "draft" ? "下周草案" : "下周安排"));
-  if (report.plan.hold_reasons && report.plan.hold_reasons.length) {
-    report.plan.hold_reasons.forEach(reason => plan.appendChild(el("p", null, reason)));
-    app.appendChild(plan);
-    return;
-  }
-  const table = el("table");
-  const head = el("tr");
-  ["日期", "类型", "时长(分)", "目标配速(s/km)", "依据"].forEach(h => head.appendChild(el("th", null, h)));
-  table.appendChild(head);
-  (report.plan.days || []).forEach(d => {
-    const tr = el("tr");
-    tr.appendChild(el("td", null, d.date));
-    tr.appendChild(el("td", null, d.kind));
-    tr.appendChild(el("td", null, String(d.duration_min)));
-    tr.appendChild(el("td", null, d.target_pace_s_per_km === null ? "—" : String(d.target_pace_s_per_km)));
-    tr.appendChild(el("td", null, (d.rules || []).join(" ")));
-    table.appendChild(tr);
-  });
-  plan.appendChild(table);
-  app.appendChild(plan);
-}
-
-function renderError(message) {
-  app.innerHTML = "";
-  const box = el("section", "card error");
-  box.appendChild(el("h2", null, "读不到报告数据"));
-  box.appendChild(el("p", null, message));
-  if (LIVE) {
-    app.appendChild(box);
-    return;
-  }
-  const tip = el("p", null, "先起假后端：");
-  tip.appendChild(el("code", null, "python contracts/mock_api.py --port 8080"));
-  box.appendChild(tip);
-  box.appendChild(el("p", null, "再用另一个终端起本页：python -m http.server 8000 -d src/p5_web"));
-  app.appendChild(box);
-}
-
-fetch(API)
-  .then(async r => {
-    if (!r.ok) {
-      const details = await r.json().catch(() => null);
-      throw new Error(details?.message || "HTTP " + r.status);
-    }
-    return r.json();
-  })
-  .then(render)
-  .catch(err => renderError(String(err && err.message || err)));
-</script>
+  <header class="masthead">
+    <div class="masthead-inner">
+      <h1>跑步训练报告</h1>
+      <a class="jump" href="#weekly">查看下周安排 <span aria-hidden="true">↓</span></a>
+    </div>
+  </header>
+  <main class="workspace">
+    <aside class="sidebar">
+      <section class="panel controls" id="local-controls" hidden>
+        <h2>离线演示</h2>
+        <div class="actions">
+          <button class="primary" type="button" id="demo">运行草案演示</button>
+          <button type="button" id="review">运行复核演示</button>
+        </div>
+        <details class="import-box">
+          <summary>导入自己的 CSV</summary>
+          <form id="csv-form">
+            <label>CSV 文件 <input required type="file" accept=".csv,text/csv" name="csv"></label>
+            <div class="field-grid">
+              <label>计算截止日 <input required type="date" name="as_of"></label>
+              <label>数据起始日 <input type="date" name="history_start"></label>
+              <label>静息心率 <input required type="number" name="resting_hr" inputmode="numeric"></label>
+              <label>个人最大心率 <input required type="number" name="max_hr" inputmode="numeric"></label>
+            </div>
+            <label>TRIMP 系数 <select name="trimp_profile" required><option value="">请选择</option><option value="female">女性系数</option><option value="male">男性系数</option></select></label>
+            <details class="supplements">
+              <summary>来源与补充资料</summary>
+              <label>CSV 来源 <select name="source"><option value="auto">自动识别</option><option value="middle">中间格式</option><option value="garmin">Garmin</option><option value="huawei">华为</option></select></label>
+              <label>匿名 ID <input name="athlete" value="anon_01" maxlength="40" pattern="[A-Za-z0-9_\-]+"></label>
+              <label>补充量测 JSON <input type="file" accept=".json,application/json" name="measurements"></label>
+              <label>规则上下文 JSON <input type="file" accept=".json,application/json" name="context"></label>
+            </details>
+            <button class="primary" type="submit">导入并生成报告</button>
+          </form>
+        </details>
+        <p id="run-status" class="run-status" role="status" aria-live="polite"></p>
+      </section>
+      <section id="quality" class="panel" hidden>
+        <h2>导入体检</h2><dl id="quality-stats" class="quality-stats"></dl>
+      </section>
+      <section class="panel" id="followup" hidden>
+        <h2>需要补充的信息</h2>
+        <form id="answer-form"><div id="questions"></div><button class="primary" type="submit">提交答复并复算</button></form>
+        <p id="question-note" class="muted"></p>
+      </section>
+    </aside>
+    <section class="report" id="report" aria-label="训练分析">
+      <p id="initial-error" class="panel" role="alert" hidden></p>
+      <section class="panel overview" id="overview" hidden>
+        <div class="overview-top"><div><p id="window" class="eyebrow"></p><h2 id="headline"></h2></div><span class="pill" id="decision"></span></div>
+        <div class="metrics" id="metrics"></div>
+      </section>
+      <section class="panel" id="load-panel" hidden>
+        <div class="section-title"><h2>训练负荷趋势</h2><span class="eyebrow">逐日 TRIMP</span></div>
+        <div class="chart"><canvas id="load-chart" aria-label="逐日训练负荷折线图" role="img"></canvas><p id="chart-empty" class="empty" hidden>暂无可用的负荷记录。</p></div>
+        <p class="muted">断点表示当日负荷未知，零值表示已确认无训练负荷。</p>
+        <details id="load-values"><summary>查看逐日数值</summary><ul id="load-list" class="load-list"></ul></details>
+      </section>
+      <section class="panel" id="risk-panel" hidden>
+        <div class="section-title"><h2>信号与依据</h2><span class="eyebrow" id="risk-count"></span></div>
+        <div id="risk-list"></div>
+      </section>
+      <section class="panel" id="weekly" hidden>
+        <div class="section-title"><h2>下周安排</h2><span class="eyebrow" id="week-start"></span></div>
+        <div id="week-content"></div>
+        <details id="attempts" hidden><summary>查看计划自检记录</summary><div id="attempt-list"></div></details>
+      </section>
+    </section>
+  </main>
 </body>
 </html>

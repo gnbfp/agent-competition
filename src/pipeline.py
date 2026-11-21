@@ -3,7 +3,10 @@
 from __future__ import annotations
 
 import argparse
+import base64
+import binascii
 import json
+import re
 import sys
 from contextlib import contextmanager
 from datetime import datetime, timedelta, timezone
@@ -29,6 +32,7 @@ from src.report_server import serve_report
 ROOT = Path(__file__).resolve().parents[1]
 SAMPLE = ROOT / "data" / "sample"
 LOCAL_TIME = timezone(timedelta(hours=8))
+MAX_BROWSER_CSV = 2 * 1024 * 1024
 
 
 class PipelineError(RuntimeError):
@@ -180,6 +184,81 @@ def parse_args(argv: list[str] | None) -> argparse.Namespace:
     return args
 
 
+def browser_run(payload: dict, out_dir: Path) -> Path:
+    """Run one browser submission with local-only inputs and server-owned paths."""
+    if not isinstance(payload, dict):
+        raise ValueError("提交内容应为 JSON 对象。")
+    mode = payload.get("mode")
+    if mode in ("demo", "review"):
+        if set(payload) != {"mode"}:
+            raise ValueError("示例运行使用固定参数。")
+        args = parse_args(["--demo", "-o", str(out_dir)])
+        if mode == "demo":
+            args.csv = SAMPLE / "demo_activity.csv"
+            args.history_start = "2026-10-18"
+            args.measurements = SAMPLE / "demo_measurements.json"
+            args.context = SAMPLE / "demo_context.json"
+            args.candidate = SAMPLE / "demo_candidate.json"
+        return run_pipeline(args)
+
+    if mode != "csv" or set(payload) - {"mode", "csv", "options", "measurements", "context", "answers"}:
+        raise ValueError("请选择 CSV 或演示案例。")
+    encoded, options = payload.get("csv"), payload.get("options")
+    if not isinstance(encoded, str) or len(encoded) > (MAX_BROWSER_CSV + 2) // 3 * 4:
+        raise ValueError("CSV 不得超过 2 MB。")
+    try:
+        content = base64.b64decode(encoded, validate=True)
+    except (ValueError, binascii.Error):
+        raise ValueError("CSV 无法解码。") from None
+    if not content or len(content) > MAX_BROWSER_CSV:
+        raise ValueError("CSV 为空或超过 2 MB。")
+    if not isinstance(options, dict) or set(options) - {
+        "athlete", "source", "as_of", "history_start", "trimp_profile", "resting_hr", "max_hr",
+    }:
+        raise ValueError("导入参数无效。")
+    athlete = options.get("athlete", "anon_01")
+    source = options.get("source", "auto")
+    profile = options.get("trimp_profile")
+    resting, peak = options.get("resting_hr"), options.get("max_hr")
+    if not isinstance(athlete, str) or not re.fullmatch(r"[A-Za-z0-9_-]{1,40}", athlete):
+        raise ValueError("匿名 ID 应为 1–40 位字母、数字、下划线或连字符。")
+    if source not in ("auto", "middle", "garmin", "huawei") or profile not in ("female", "male"):
+        raise ValueError("请选择有效的 CSV 来源和 TRIMP 系数。")
+    if type(resting) is not int or type(peak) is not int:
+        raise ValueError("请核对静息心率和个人最大心率。")
+    as_of = options.get("as_of")
+    history = options.get("history_start")
+    parse_date(as_of)
+    if history is not None:
+        parse_date(history)
+
+    try:
+        with TemporaryDirectory(prefix="p5-input-") as work:
+            directory = Path(work)
+            csv_path = directory / "upload.csv"
+            csv_path.write_bytes(content)
+            paths = {}
+            for key in ("measurements", "context", "answers"):
+                supplied = payload.get(key)
+                paths[key] = None
+                if supplied is None:
+                    continue
+                if not isinstance(supplied, dict):
+                    raise ValueError("补充资料和答复应为 JSON 对象。")
+                if key == "answers":
+                    supplied = {"athlete_id": athlete, "answers": supplied}
+                paths[key] = directory / f"{key}.json"
+                paths[key].write_text(json.dumps(supplied, ensure_ascii=False, allow_nan=False),
+                                      encoding="utf-8")
+            args = argparse.Namespace(csv=csv_path, source=source, athlete=athlete, as_of=as_of,
+                                      history_start=history, trimp_profile=profile, resting_hr=resting,
+                                      max_hr=peak, out_dir=out_dir, strict=False, interactive=False,
+                                      candidate=None, **paths)
+            return run_pipeline(args)
+    except OSError:
+        raise ValueError("暂时无法处理本地导入文件。") from None
+
+
 def main(argv: list[str] | None = None) -> int:
     args = parse_args(argv)
     try:
@@ -188,7 +267,7 @@ def main(argv: list[str] | None = None) -> int:
         print(f"已生成 {report.resolve()}", flush=True)
         if args.serve:
             with stage("本地预览"):
-                serve_report(report, args.port)
+                serve_report(report, args.port, on_run=lambda payload: browser_run(payload, args.out_dir))
     except PipelineError as exc:
         print(f"FAIL {exc}", file=sys.stderr)
         return 1

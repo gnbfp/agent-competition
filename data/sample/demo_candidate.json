@@ -1,0 +1,12 @@
+{
+  "athlete_id": "ATH-001",
+  "days": [
+    {"date": "2026-11-16", "kind": "rest", "duration_s": 0, "distance_m": 0, "reference_avg_hr_bpm": null, "rules": ["R09"]},
+    {"date": "2026-11-17", "kind": "easy", "duration_s": 3600, "distance_m": 10000, "reference_avg_hr_bpm": 130, "rules": ["R04", "R05"]},
+    {"date": "2026-11-18", "kind": "easy", "duration_s": 3600, "distance_m": 10000, "reference_avg_hr_bpm": 130, "rules": []},
+    {"date": "2026-11-19", "kind": "easy", "duration_s": 3600, "distance_m": 10000, "reference_avg_hr_bpm": 130, "rules": ["R04", "R05"]},
+    {"date": "2026-11-20", "kind": "rest", "duration_s": 0, "distance_m": 0, "reference_avg_hr_bpm": null, "rules": ["R09"]},
+    {"date": "2026-11-21", "kind": "easy", "duration_s": 3600, "distance_m": 10000, "reference_avg_hr_bpm": 130, "rules": ["R04", "R05"]},
+    {"date": "2026-11-22", "kind": "rest", "duration_s": 0, "distance_m": 0, "reference_avg_hr_bpm": null, "rules": ["R09"]}
+  ]
+}
