@@ -7,8 +7,10 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from threading import Lock
 from urllib.parse import urlparse
+from uuid import uuid4
 
 from contracts.validate_contract import load_json, validate_document
+from src.ai_analysis import AnalysisError, analyze_report
 
 
 WEB = Path(__file__).resolve().parent / "p5_web"
@@ -19,7 +21,7 @@ COUNT_KEYS = ("input_rows", "accepted_rows", "skipped_rows", "incomplete_rows", 
 
 
 def report_handler(report_path: Path, *, on_run=None) -> type[BaseHTTPRequestHandler]:
-    report_path = report_path.resolve()
+    current = (report_path.resolve(), uuid4().hex)
     run_lock = Lock()
 
     def get_report(path: Path) -> dict:
@@ -47,7 +49,8 @@ def report_handler(report_path: Path, *, on_run=None) -> type[BaseHTTPRequestHan
             self.send_header("Cache-Control", "no-store")
             self.send_header("X-Content-Type-Options", "nosniff")
             self.send_header("Content-Security-Policy", "default-src 'none'; script-src 'self'; "
-                             "style-src 'self'; connect-src 'self'; base-uri 'none'; frame-ancestors 'none'")
+                             "style-src 'self'; connect-src 'self'; base-uri 'none'; "
+                             "form-action 'none'; frame-ancestors 'none'")
             if location:
                 self.send_header("Location", location)
             self.end_headers()
@@ -84,11 +87,11 @@ def report_handler(report_path: Path, *, on_run=None) -> type[BaseHTTPRequestHan
                 self.send_json(404, {"error": "not_found", "message": "页面或接口不存在。"})
 
         def send_report(self, route: str) -> None:
-            path = report_path
+            path, report_id = current
             try:
                 report = get_report(path)
                 if route == "/api/snapshot":
-                    report = {"report": report, "import_quality": get_summary(path)}
+                    report = {"report": report, "import_quality": get_summary(path), "report_id": report_id}
                 elif route == "/api/health":
                     report = {"ok": True, "mode": "local", "schema_version": "2.0"}
             except FileNotFoundError:
@@ -100,11 +103,11 @@ def report_handler(report_path: Path, *, on_run=None) -> type[BaseHTTPRequestHan
                 self.send_json(200, report)
 
         def do_POST(self):
-            nonlocal report_path
             if not self.valid_host():
                 return
-            if urlparse(self.path).path != "/api/run" or on_run is None:
-                self.send_json(404, {"error": "not_found", "message": "导入接口不可用。"})
+            route = urlparse(self.path).path
+            if route != "/api/ai" and (route != "/api/run" or on_run is None):
+                self.send_json(404, {"error": "not_found", "message": "请求接口不可用。"})
                 return
             if self.headers.get("Origin") != f"http://{self.headers.get('Host')}":
                 self.send_json(403, {"error": "bad_origin", "message": "请从本机预览页提交。"})
@@ -117,22 +120,47 @@ def report_handler(report_path: Path, *, on_run=None) -> type[BaseHTTPRequestHan
                 size = int(self.headers.get("Content-Length", "0"))
             except ValueError:
                 size = 0
-            if not 0 < size <= MAX_REQUEST:
+            if not 0 < size <= (4096 if route == "/api/ai" else MAX_REQUEST):
                 self.send_json(413, {"error": "bad_size", "message": "提交内容为空或太大。"})
                 return
+            self.connection.settimeout(15)
+            try:
+                raw = self.rfile.read(size)
+                if len(raw) != size:
+                    raise ValueError("主体长度不一致")
+                payload = json.loads(raw)
+            except (OSError, RecursionError, ValueError):
+                self.send_json(400, {"error": "invalid_json", "message": "无法读取完整的 JSON 请求。"})
+                return
+            if route == "/api/ai":
+                self.send_analysis(payload)
+            else:
+                self.run_report(payload)
+
+        def send_analysis(self, payload):
+            path, report_id = current
+            if not isinstance(payload, dict) or set(payload) != {"report_id", "api_key", "base_url", "model"}:
+                self.send_json(400, {"error": "invalid_analysis_request", "message": "AI 连接参数不完整。"})
+                return
+            if payload["report_id"] != report_id:
+                self.send_json(409, {"error": "stale_report", "message": "本机报告已更新，请刷新页面后再分析。"})
+                return
+            try:
+                analysis = analyze_report(get_report(path), payload)
+            except AnalysisError as exc:
+                self.send_json(exc.status, {"error": "ai_failed", "message": str(exc)})
+                return
+            except (OSError, ValueError, KeyError, TypeError, OverflowError):
+                self.send_json(503, {"error": "report_unavailable", "message": "本次报告无法读取或未通过校验。"})
+                return
+            self.send_json(200, {"report_id": report_id, "analysis": analysis})
+
+        def run_report(self, payload):
+            nonlocal current
             if not run_lock.acquire(blocking=False):
                 self.send_json(409, {"error": "run_in_progress", "message": "已有导入任务正在运行。"})
                 return
             try:
-                self.connection.settimeout(15)
-                try:
-                    raw = self.rfile.read(size)
-                    if len(raw) != size:
-                        raise ValueError("主体长度不一致")
-                    payload = json.loads(raw)
-                except (OSError, RecursionError, ValueError):
-                    self.send_json(400, {"error": "invalid_json", "message": "无法读取完整的 JSON 请求。"})
-                    return
                 try:
                     path = Path(on_run(payload)) / "report.json"
                     report = get_report(path)
@@ -143,8 +171,9 @@ def report_handler(report_path: Path, *, on_run=None) -> type[BaseHTTPRequestHan
                 except (OSError, KeyError, TypeError):
                     self.send_json(503, {"error": "report_unavailable", "message": "本次报告暂不可用。"})
                     return
-                report_path = path
-                self.send_json(200, {"report": report, "import_quality": summary})
+                report_id = uuid4().hex
+                current = (path, report_id)
+                self.send_json(200, {"report": report, "import_quality": summary, "report_id": report_id})
             finally:
                 run_lock.release()
 

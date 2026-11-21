@@ -45,6 +45,10 @@ input, select { width: 100%; min-width: 0; padding: 7px; border: 1px solid var(-
 .run-status, .muted { font-size: .84rem; color: var(--muted); }
 .run-status:not(:empty), #question-note:not(:empty) { margin-top: 10px; }
 .run-status.error { color: #9b3026; }
+.ai-panel form { max-width: 480px; }
+.ai-result { white-space: pre-wrap; overflow-wrap: anywhere; margin-top: 10px; }
+.ai-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.ai-panel .eyebrow { overflow-wrap: anywhere; }
 .quality-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 12px 0 0; }
 .quality-stats div { background: var(--paper); border-radius: 8px; padding: 6px 10px; }
 .quality-stats dt { color: var(--muted); font-size: .8rem; }

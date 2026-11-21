@@ -14,6 +14,7 @@ from datetime import date, timedelta
 from http.client import HTTPResponse
 from pathlib import Path
 from types import SimpleNamespace
+from unittest.mock import patch
 
 from contracts.validate_contract import load_json, validate_file
 from src.pipeline import SAMPLE, browser_run
@@ -199,3 +200,22 @@ class PipelineTest(unittest.TestCase):
         self.assertEqual(report["plan"]["status"], "hold_for_review")
         self.assertIn("R15", {risk["rule_id"] for risk in report["risks"]})
         self.assertEqual(report["plan"]["days"], [])
+
+    @patch("src.report_server.analyze_report", return_value="已解读。")
+    def test_ai_request_matches_the_current_report_and_requires_same_origin(self, analyze):
+        run = self.require_run(self.run_pipeline("--demo"))
+        server = report_handler(run / "report.json", on_run=lambda payload: browser_run(payload, self.output))
+        snapshot = json.loads(request(server, "/api/snapshot")[2])
+        options = {"report_id": snapshot["report_id"], "api_key": "fake-token",
+                   "base_url": "https://example.com/v1", "model": "mock-model"}
+        self.assertEqual(request(server, "/api/ai", data=options, origin="https://other.example")[0], 403)
+        analyze.assert_not_called()
+        origin = "http://127.0.0.1:8080"
+        status, _, body = request(server, "/api/ai", data=options, origin=origin)
+        self.assertEqual(status, 200)
+        self.assertEqual(json.loads(body), {"report_id": snapshot["report_id"], "analysis": "已解读。"})
+        self.assertEqual(analyze.call_args.args[0], snapshot["report"])
+        self.assertEqual(json.loads(request(server, "/api/snapshot")[2]), snapshot)
+        self.assertEqual(request(server, "/api/run", data={"mode": "demo"}, origin=origin)[0], 200)
+        self.assertEqual(request(server, "/api/ai", data=options, origin=origin)[0], 409)
+        analyze.assert_called_once()

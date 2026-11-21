@@ -14,6 +14,22 @@ python -m src.pipeline --demo --serve
 
 页面从报告读取指标和规则。图表以断点显示缺数据，以零值显示已确认的零负荷；逐日数值可在图表下方展开查看。导入失败保留最近一份成功报告。
 
+## AI 实时分析
+
+在本机预览页展开「连接 API」，选择支持 Chat Completions 的 HTTPS 地址和可用模型。
+
+| 服务 | API 基础地址 | 模型示例 |
+|---|---|---|
+| OpenAI | `https://api.openai.com/v1` | `gpt-5-mini` |
+| DeepSeek | `https://api.deepseek.com` | `deepseek-flash` |
+| 其他兼容服务 | 服务商提供的 HTTPS 基础地址 | 账户可调用的模型名称 |
+
+填入自己的 API 密钥，点击「连接并分析」。模型会解读当前报告，随后每次生成新报告都调用一次，按服务商规则计费。页面保留原有指标和计划。需要停止后续请求时，点击「断开 AI」或关闭标签页。配置和模型解读保留在当前标签页内。
+
+模型收到的内容包括负荷汇总、可用天数、规则信号和待补项类型。原始 CSV、个人标识、具体会话日期和手工补答原文保存在本机。API 授权失败、无网络或限流时，页面显示错误并继续提供本机报告。
+
+[OpenAI 接口说明](https://developers.openai.com/api/reference/resources/chat/subresources/completions/methods/create) · [DeepSeek 接口说明](https://api-docs.deepseek.com/)
+
 ## 独立调试
 
 页面也可读取模拟报告。分别运行下列命令，再打开 `http://127.0.0.1:8000`。实时导入和补答使用前面的 `--serve` 入口。

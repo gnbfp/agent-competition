@@ -23,6 +23,7 @@
 | 2026-11-20 | P4/P5 | `src/p4_agent/`、`contracts/`、`src/p5_web/index.html`、`tests/test_plan_report.py` | Codex | 按维护者委托实现节点 08 | 补草案生成、逐日自检和重排，并接通新旧报告契约及缺失指标展示 | `python tools/check_env.py`、`python contracts/validate_contract.py`、`python -m unittest discover -s tests`，模拟超限、缺依据与人工复核 |
 | 2026-11-20 | P2–P5 | `src/pipeline.py`、`src/report_server.py`、`tests/test_pipeline.py` | Codex | 按维护者委托实现节点 09 | 串起 CSV 到报告的单命令流程，校验后发布本次产物，并提供本机报告接口 | `python -m src.pipeline --demo`、`python tools/check_env.py`、`python -m unittest discover -s tests` |
 | 2026-11-21 | P5 | `src/p5_web/`、`src/pipeline.py`、`src/report_server.py` | Codex | 按维护者委托实现节点 10 | 接入本机导入和补答，展示逐日负荷、规则依据与计划重排，补充模拟案例 | `python -m unittest discover -s tests`，用 `--demo --serve` 在浏览器演练草案、复核和导入 |
+| 2026-11-21 | P5 | `src/ai_analysis.py`、`src/report_server.py`、`src/p5_web/` | Codex | 按维护者要求加入 API 模型实时分析 | 从合法报告提取汇总字段，加入标签页密钥配置、报告更新和重新分析 | 用模拟 API 验证授权、摘要范围、刷新与断开，复跑全部单测和契约 |
 | 2026-11-21 | 交付 | `README.md`、`docs/交付验收.md`、`docs/答辩/现场演示脚本.md`、`docs/版本与标签.md` | Codex | 按维护者委托完成节点 12 | 补齐独立启动、验收和现场演示步骤，从 Git 历史恢复版本台账编码 | 在解压目录复跑环境、规则、契约与单测，在只允许本机请求的 Edge 中走完三条演示路径 |
 | 2026-11-18 | P2 | `src/p2_ingest/format_adapters.py`、`src/p2_ingest/import_export.py` | DeepSeek | 写"Garmin / 华为导出 → CSV 中间格式"的列名映射与单位归一（时长、配速、距离、心率），并要求解析失败只降级为缺失、不中断整份文件 | 原提交未记录人工修改，节点 02 接手续改见下行记录 | 原分支 40 项单测通过，Garmin 和华为模拟导出生成的 activity JSON 均通过契约校验 |
 | 2026-11-18 | P2 | `tests/test_format_adapters.py`、`docs/P2_导入适配说明.md` | DeepSeek | 生成适配器的单测骨架、样例数据与说明文档 | 原提交未记录人工修改，节点 02 接手续改见下行记录 | 原分支 40 项单测通过。两个样例均为模拟数据，已在适配说明中标注 |
