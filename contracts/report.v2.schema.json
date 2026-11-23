@@ -561,28 +561,44 @@
           ],
           "properties": {
             "profile": {
-              "type": "string",
+              "type": [
+                "string",
+                "null"
+              ],
               "enum": [
                 "male",
-                "female"
+                "female",
+                null
               ]
             },
             "coefficient_a": {
-              "type": "number",
+              "type": [
+                "number",
+                "null"
+              ],
               "minimum": 0
             },
             "coefficient_b": {
-              "type": "number",
+              "type": [
+                "number",
+                "null"
+              ],
               "minimum": 0
             },
             "resting_hr": {
               "description": "新计算读取规则库 R02 限制此参数。数值范围兼容旧 v2 产物。",
-              "type": "integer",
+              "type": [
+                "integer",
+                "null"
+              ],
               "minimum": 30,
               "maximum": 120
             },
             "max_hr": {
-              "type": "integer",
+              "type": [
+                "integer",
+                "null"
+              ],
               "minimum": 31,
               "maximum": 250
             },
@@ -1072,6 +1088,37 @@
       "items": {
         "type": "string"
       }
+    },
+    "running": {
+      "type": "object",
+      "required": [
+        "week",
+        "month",
+        "daily",
+        "window",
+        "notes"
+      ],
+      "properties": {
+        "week": {
+          "type": "object"
+        },
+        "month": {
+          "type": "object"
+        },
+        "daily": {
+          "type": "array"
+        },
+        "window": {
+          "type": "object"
+        },
+        "notes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": false
     }
   }
 }

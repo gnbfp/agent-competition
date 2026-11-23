@@ -43,7 +43,8 @@ SPORT_MAP = {
     "other": "other", "走": "other", "徒步": "other", "hike": "other", "其他": "other",
 }
 SOURCE_ALLOWED = {"garmin", "coros", "huawei", "keep", "manual", "csv"}
-REQUIRED_FIELDS = ("date", "sport", "duration_s", "distance_m", "avg_hr", "max_hr")
+REQUIRED_FIELDS = ("date", "sport", "duration_s", "distance_m")
+OPTIONAL_HEART_FIELDS = ("avg_hr", "max_hr")
 OPTIONAL_FIELDS = ("start_time", "elevation_gain_m", "avg_pace_s_per_km", "rpe", "sleep_h", "pain", "source")
 
 HR_RANGE = (30, 230)
@@ -130,9 +131,9 @@ def build_activity(row: dict, athlete_seq: int) -> tuple[dict, list[str]]:
     avg_hr = _opt_int(row, "avg_hr", *HR_RANGE)
     max_hr = _opt_int(row, "max_hr", *HR_MAX_RANGE)
     if avg_hr is None or max_hr is None:
-        raise RowError("avg_hr / max_hr 缺失（不猜，整行丢弃）")
+        warnings.append("本条运动缺少完整心率记录；保留距离和时间，TRIMP 不参与计算")
 
-    if avg_hr > max_hr:
+    if avg_hr is not None and max_hr is not None and avg_hr > max_hr:
         raise DeviceAnomalyError(
             f"心率不合理（avg {avg_hr} > max {max_hr}），按 R02 不入库，写入 rejected.json"
         )
@@ -255,7 +256,7 @@ def write_data_check(path: pathlib.Path, rows: list[dict], activities: list[dict
         "", "## 输入缺失字段", "",
     ]
     counts = [(field, sum(not _text(row, field) for row in rows))
-              for field in (*REQUIRED_FIELDS, *OPTIONAL_FIELDS)]
+              for field in (*REQUIRED_FIELDS, *OPTIONAL_HEART_FIELDS, *OPTIONAL_FIELDS)]
     lines.extend([f"- `{field}`：{count} 行" for field, count in counts if count] or ["无。"])
     lines.extend(["", "## 丢弃记录", ""])
     lines.extend([f"- 第 {index} 行：{reason}" for index, reason in skipped] or ["无。"])
@@ -313,7 +314,7 @@ def import_rows(rows: list[dict], out_path: pathlib.Path, *, source_name: str, e
     if quality_path is not None:
         counts = {
             "input_rows": len(rows), "accepted_rows": len(activities), "skipped_rows": len(skipped),
-            "incomplete_rows": sum(any(not _text(row, key) for key in REQUIRED_FIELDS) for row in rows),
+            "incomplete_rows": sum(any(not _text(row, key) for key in (*REQUIRED_FIELDS, *OPTIONAL_HEART_FIELDS)) for row in rows),
             "device_anomaly_rows": len(rejected),
         }
         quality_path.write_text(json.dumps(counts, indent=2) + "\n", encoding="utf-8", newline="\n")

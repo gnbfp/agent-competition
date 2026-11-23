@@ -1,0 +1,30 @@
+{
+  "name": "RunWise AI · 跑步训练决策中心",
+  "short_name": "RunWise AI",
+  "description": "本地规则引擎驱动的跑步训练分析与计划演示",
+  "start_url": "/live",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#f5f7f6",
+  "theme_color": "#102b28",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

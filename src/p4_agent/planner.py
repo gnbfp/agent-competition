@@ -52,23 +52,41 @@ def candidate_days(document: dict, athlete_id: str, week: list[str]) -> list[dic
     return [dict(item) for item in days]
 
 
+def _is_easy_reference(item: dict) -> bool:
+    return (item.get("sport") == "run" and not item.get("device_anomaly")
+            and not item.get("discard_reason") and as_number(item.get("distance_m")) not in (None, 0)
+            and type(item.get("duration_s")) is int and item["duration_s"] > 0
+            and type(item.get("avg_hr")) is int and item["avg_hr"] > 0)
+
+
+def _easy_slot(day: str, item: dict) -> dict:
+    return {"date": day, "kind": "easy", "duration_s": item["duration_s"],
+            "distance_m": item["distance_m"], "reference_avg_hr_bpm": item["avg_hr"],
+            "rules": ["R04", "R05"]}
+
+
 def draft_from_history(week: list[str], as_of: date, activities: dict | None, context: dict | None) -> list[dict]:
     recent = defaultdict(list)
     for item in (activities or {}).get("activities", []):
         recent[item["date"]].append(item)
     tags = (context or {}).get("session_types") or {}
+
+    # Session labels apply to a whole date. A mixed or unlabelled day
+    # cannot establish which activity was an easy run.
+    weekday_reference = {}
+    for offset in range(28):
+        source_day = as_of - timedelta(days=offset)
+        date_key = source_day.isoformat()
+        if tags.get(date_key) != ["easy"]:
+            continue
+        items = recent.get(date_key, [])
+        if len(items) == 1 and _is_easy_reference(items[0]):
+            weekday_reference.setdefault(source_day.weekday(), items[0])
+
     days = []
-    for offset, day in enumerate(week):
-        prior_day = (as_of - timedelta(days=6 - offset)).isoformat()
-        items = recent[prior_day]
-        slot = rest_day(day)
-        if tags.get(prior_day) == ["easy"] and len(items) == 1:
-            item = items[0]
-            if item["sport"] == "run" and not item.get("device_anomaly") and item["distance_m"] > 0:
-                slot = {"date": day, "kind": "easy", "duration_s": item["duration_s"],
-                        "distance_m": item["distance_m"], "reference_avg_hr_bpm": item["avg_hr"],
-                        "rules": ["R04", "R05"]}
-        days.append(slot)
+    for day in week:
+        reference = weekday_reference.get(iso_day(day).weekday())
+        days.append(_easy_slot(day, reference) if reference else rest_day(day))
     return days
 
 

@@ -42,7 +42,7 @@ class ImportQualityTest(unittest.TestCase):
         self.require_success(run_script("contracts/validate_contract.py", self.out))
         report = self.out.with_name("data_check.md").read_text(encoding="utf-8")
         self.assertIn("输入编码：GBK", report)
-        self.assertIn("入库 3 条，丢弃 2 条", report)
+        self.assertIn("入库 5 条，丢弃 0 条", report)
         self.assertIn("`avg_hr`：2 行", report)
 
     def test_middle_csv_report_separates_bad_rows_and_device_anomalies(self) -> None:

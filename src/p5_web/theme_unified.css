@@ -1,0 +1,420 @@
+/* RunWise AI V3.5 - unified visual language
+   Palette: one midnight-navy foundation, one restrained aqua accent.
+   Semantic amber is reserved for risks; emerald marks successful states.
+   Motion belongs to large content surfaces, never action controls.
+   Load after the historical component CSS to supersede scattered gradients. */
+:root {
+  --ui-bg: #f0f5f7;
+  --ui-surface: #fff;
+  --ui-raised: #eaf1f5;
+  --ui-ink: #193144;
+  --ui-subtle: #475d6d;
+  --ui-stroke: #c5d5df;
+  --ui-accent: #126d80;
+  --ui-accent-hi: #286e93;
+  --ui-shadow: 0 16px 36px rgba(22,48,67,.08);
+}
+:root.dark {
+  color-scheme: dark;
+  --bg: #0d1b27;
+  --surface: #142838;
+  --surface-2: #1a3243;
+  --text: #f0f7fa;
+  --muted: #b6cbd8;
+  --line: #3b586a;
+  --brand: #84d4df;
+  --brand-2: #d0f3f7;
+  --mint: #244b58;
+  --warn-bg: #3c3340;
+  --red: #ee988f;
+  --shadow: 0 16px 36px rgba(3,11,21,.19);
+  --ui-bg: #0d1b27;
+  --ui-surface: #142838;
+  --ui-raised: #1a3243;
+  --ui-ink: #f0f7fa;
+  --ui-subtle: #b6cbd8;
+  --ui-stroke: #3b586a;
+  --ui-accent: #84d4df;
+  --ui-accent-hi: #70b7d4;
+  --ui-shadow: 0 18px 38px rgba(3,11,21,.19);
+}
+/* Flat, accessible controls. No shifting colors on text, pills, or mini buttons. */
+:root.dark :is(.button,.button-primary,.button-soft,.button-outline,.icon-button,
+  .pro-button,.panel-pill,.hero-action,.step,.step.active,.step.done,
+  .nav-link.active,.mobile-nav a.active,.segment,.segment button,
+  .report-badge,.hero-status,.plan-pending-badge,.ai-fold-state,
+  #data-quality-count,.pain-review-entry,.runner-kpi .pro-button),
+:root:not(.dark) :is(.button,.button-primary,.button-soft,.button-outline,.icon-button,
+  .pro-button,.panel-pill,.hero-action,.step,.step.active,.step.done,
+  .nav-link.active,.mobile-nav a.active,.segment,.segment button,
+  .report-badge,.hero-status,.plan-pending-badge,.ai-fold-state,
+  #data-quality-count,.pain-review-entry) {
+  background-image: none !important;
+  animation: none !important;
+  background-size: auto !important;
+  text-shadow: none !important;
+}
+:root.dark :is(.button-primary,.hero-action) {
+  background: #126778 !important;
+  color: #fff !important;
+  border: 1px solid #3b97a6 !important;
+  box-shadow: 0 6px 14px rgba(2,18,29,.16) !important;
+}
+:root.dark :is(.button-soft,.button-outline,.icon-button,.pro-button,
+  .pain-review-entry,.button:not(.button-primary):not(.hero-action)) {
+  background: #243f51 !important;
+  border: 1px solid #537386 !important;
+  color: #f0f7fa !important;
+  box-shadow: none !important;
+}
+:root.dark :is(.button-primary,.button-soft,.button-outline,.pro-button,.icon-button,.pain-review-entry):hover {
+  filter: brightness(1.12);
+  transform: translateY(-1px);
+}
+:root.dark :is(.panel-pill,.report-badge,.hero-status,.hero-status.hold,
+  .hero-status.pending,.plan-pending-badge,.ai-fold-state,#data-quality-count,
+  .section-actions .panel-pill,#import-panel .panel-pill) {
+  background: #283f52 !important;
+  border: 1px solid #5d7d91 !important;
+  color: #e5f2f7 !important;
+  box-shadow: none !important;
+  padding: 5px 11px !important;
+  font-size: 12px !important;
+}
+:root.dark .hero-status.hold,
+:root.dark .plan-pending-badge { border-color:#b28d6c !important; color:#f6dfc2 !important; }
+:root.dark .step,
+:root.dark #import-panel .step,
+:root.dark #import-panel .step.done {
+  background:#21394b !important;
+  color:#cadbe5 !important;
+  border:1px solid #45677d !important;
+  box-shadow:none !important;
+}
+:root.dark #import-panel .step.active {
+  background:#31566b !important;
+  border-color:#73a8ba !important;
+  color:#fff !important;
+}
+:root.dark #import-panel .step b {background:#294a5d !important;color:#fff !important;border:1px solid #7191a4 !important}
+:root.dark #import-panel .step.active b {background:#157b8a !important;color:#fff !important}
+:root.dark :is(.nav-link.active,.mobile-nav a.active) {
+  background: #1d3c4b !important;
+  color: #f2f8fc !important;
+  border: 1px solid #466c7e !important;
+  box-shadow: inset 3px 0 #75c4d3 !important;
+}
+:root.dark .nav-link.active .nav-icon {color:#a5e5ec !important}
+:root.dark .nav-link:hover {background:#234354 !important;color:#fff !important}
+:root.dark .nav-link {color:#bfced9 !important}
+:root.dark .app-sidebar {background:#0c1a26 !important;border-right:1px solid #2d4659}
+:root.dark .topbar {background:#10212e !important;border-bottom:1px solid #304f60}
+:root.dark .brand-ai {color:#82d4df !important}
+:root.dark .brand-mark {background:#1b8291 !important;color:#f0fdff !important}
+:root.dark .side-note {background:#173544 !important;border-color:#3b5a6d !important}
+:root.dark .side-note small {color:#b6ced9 !important}
+:root.dark .sidebar-bottom .side-footer {color:#b0c6d0 !important}
+
+/* Background: low-key but real movement, with related navy/cyan tones. */
+@keyframes rw35-ambient {
+  0% { background-position: 0% 28%; }
+  50% { background-position: 100% 75%; }
+  100% { background-position: 0% 28%; }
+}
+@keyframes rw35-surface {
+  0% {background-position:0% 40%}
+  50% {background-position:100% 70%}
+  100% {background-position:0% 40%}
+}
+:root.dark .main-column {
+  background:linear-gradient(125deg,
+    #0e202c 0%,#122e3b 22%,#173448 42%,#182d40 62%,#112633 78%,#0e202c 100%) !important;
+  background-size:250% 250% !important;
+  animation:rw35-ambient 32s ease-in-out infinite !important;
+}
+:root.dark .main-column::before {display:none !important}
+:root.dark .main-content {color:#edf6fa !important}
+:root.dark .main-footer {color:#b2c5d0 !important}
+:root.dark .page-intro h1 span {
+  color:#a4dce7 !important;background:none !important;
+  -webkit-text-fill-color:currentColor !important;
+  animation:none !important;
+}
+:root.dark .page-intro .intro-sub,
+:root.dark .page-intro .eyebrow {color:#b6cbd8 !important}
+:root.dark :is(.section-eyebrow,.runner-eyebrow,.section-tag) {color:#a7d4e4 !important}
+:root.dark :is(.section-sub,.report-small,.report-copy,.runner-period,.metric-footer,.metric-unit,
+   .plan-note,.chart-insight,.chart-bottom,.preview-note,.muted) {color:#c6d6df !important}
+:root.dark .control-ribbon {
+  background:#172c3a !important;border:1px solid #3f6070 !important;
+  box-shadow:var(--ui-shadow) !important;
+}
+:root.dark .ribbon-icon {background:#244757 !important;color:#b0e4ed !important}
+
+/* Major panels: a shared color family and shared surfaces, no rainbow blocks. */
+:root.dark :is(.panel,.runner-home,.advanced-toggle,#weekly,.review-panel,
+  .risk-panel,.history-panel,.import-panel,.followup-panel,.running-panel,.load-panel,
+  #focus-panel,#timeline-panel,#data-quality) {
+  background:#172d3c !important;
+  border:1px solid #466475 !important;
+  box-shadow:0 14px 30px rgba(5,16,28,.13) !important;
+}
+:root.dark :is(.panel,.runner-home,.advanced-toggle) {
+  border-radius:18px !important;
+}
+/* The primary visual anchors receive the *same* gentle cyan/navy motion. */
+:root.dark :is(.decision-hero,.review-lead,.review-section.review-summary,
+  .review-section.review-advice) {
+  background-image:linear-gradient(115deg,
+    #173e56 0%,#21516e 23%,#27556b 45%,#1e435c 65%,#225575 82%,#173e56 100%) !important;
+  background-color:#1a435a !important;
+  background-size:240% 240% !important;
+  animation:rw35-surface 19s ease-in-out infinite !important;
+  border:1px solid #688ea6 !important;
+  border-left:4px solid #78c6d6 !important;
+  box-shadow:0 15px 30px rgba(5,16,28,.17) !important;
+  color:#f4faff !important;
+}
+:root.dark .decision-hero {min-height:198px !important;border-radius:18px !important}
+:root.dark .decision-hero .hero-head h2,
+:root.dark :is(.review-lead,.review-summary,.review-advice) :is(h3,p,li,.report-copy,.review-section-intro) {
+  color:#f4faff !important;opacity:1 !important;
+}
+:root.dark :is(.review-summary,.review-advice)::before {display:none !important}
+:root.dark .review-section.review-summary {
+  background-image:linear-gradient(115deg,#1d4059,#26516a,#304f67,#24536d,#1d4059) !important;
+  animation-duration:22s !important;
+}
+:root.dark .review-section.review-advice {
+  background-image:linear-gradient(115deg,#1b4358,#23556b,#235c73,#214c63,#1b4358) !important;
+  animation-duration:23s !important;
+  border-left-color:#8bd4d4 !important;
+}
+:root.dark .review-section.review-summary :is(.pro-button),
+:root.dark .review-section.review-advice :is(.pro-button) {
+  background:#183b4f !important;border-color:#7aa7bd !important;color:#eff8fe !important;
+}
+:root.dark .review-panel :is(.runner-report-stat,.runner-report-stat:nth-child(2),
+ .runner-report-stat:nth-child(3),.runner-report-stat:nth-child(4)) {
+  background:#20394b !important;border:1px solid #4a687b !important;
+  box-shadow:none !important;
+}
+:root.dark .review-panel .runner-report-stat::before {
+  background:#6aaec2 !important;animation:none !important;
+}
+:root.dark .review-panel .runner-report-stat :is(strong,span,small) {color:#ecf6fa !important}
+
+/* KPI system: identical slate cards, one thin aqua rule. */
+:root.dark .runner-home {
+  background:#172e3e !important;border-color:#476777 !important;
+}
+:root.dark .runner-home::before {
+  background:#61b6c6 !important;animation:none !important;height:3px !important;
+}
+:root.dark .runner-home .runner-kpi,
+:root.dark .runner-home .runner-kpi:nth-child(n) {
+  background:#203949 !important;border:1px solid #46687a !important;
+  box-shadow:none !important;
+}
+:root.dark .runner-home .runner-kpi:hover {border-color:#7bb5c5 !important;transform:translateY(-2px)}
+:root.dark .runner-home .runner-kpi :is(strong,span,small) {color:#edf7fb !important}
+:root.dark .runner-home .runner-kpi .runner-kpi-number small{color:#c5dbe5 !important}
+
+/* Progressively quieter analytical modules. Distinct *accents*, not unrelated palettes. */
+:root.dark :is(#running-panel,#load-panel,#history-panel,#import-panel,
+ #risk-panel,#weekly,#focus-panel,#timeline-panel,#data-quality,#ai-panel,#followup) {
+  background:linear-gradient(145deg,#182e3d 0%,#1b3445 48%,#1b3040 100%) !important;
+  border-color:#466779 !important;
+}
+/* Override all old glows and colorful pseudo-elements. */
+:root.dark :is(#load-panel,#history-panel,#import-panel,#ai-panel,#followup)::before,
+:root.dark :is(#load-panel,#history-panel,#import-panel,#ai-panel,#followup)::after {
+  content:none !important;display:none !important;animation:none !important;
+}
+:root.dark :is(#load-panel,#history-panel,#import-panel,#ai-panel,#followup)>.section-header {
+  background:rgba(255,255,255,.035) !important;
+  border:1px solid #496578 !important;
+  color:#edf6fb !important;
+}
+:root.dark :is(#load-panel,#history-panel,#import-panel,#ai-panel,#followup)>.section-header :is(h2,.section-eyebrow,.section-sub) {
+  color:#eaf5fa !important;
+}
+:root.dark :is(.advanced-toggle,#load-panel) {
+  background:linear-gradient(145deg,#1a3142,#1d3c4e,#1b3447) !important;
+}
+:root.dark .advanced-toggle::before{content:none !important;display:none !important}
+:root.dark .advanced-toggle > summary {color:#f1f7fb !important}
+:root.dark :is(.metric,.advanced-toggle .metric,.running-chart-wrap,.chart-wrap,.chart-bottom,
+  .day,.signal,.signal-detail,.history-row,.compare-box,.wizard-page,.quality-box,.dropzone,
+  .timeline-entry,.plan-bottom,.review-panel .review-fold,.review-panel .review-section:not(.review-summary):not(.review-advice)) {
+  background:#203849 !important;
+  border:1px solid #456477 !important;
+  color:#ecf6fb !important;
+  box-shadow:none !important;
+}
+:root.dark .review-panel .review-fold > summary,
+:root.dark .review-panel .review-fold:nth-of-type(even)>summary {
+  background:#213b4e !important;color:#f2f9fc !important;
+}
+:root.dark .review-panel .review-fold>.review-section {
+  background:#1c3344 !important;border-top-color:#4b6e80 !important;
+}
+:root.dark .review-panel .review-fold[open] {border-color:#6e9aac !important}
+:root.dark :is(.signal .rule-code,.metric-mini-icon,.section-tag,.ribbon-icon) {
+  background:#295365 !important;color:#c9eaf1 !important;
+}
+:root.dark .runner-home .pro-button,
+:root.dark .pro-button,
+:root.dark .section-actions .pro-button {color:#e5f5fa !important;border-color:#598295 !important;background:#1d3a4c !important}
+:root.dark .pro-button:hover {background:#2c5368 !important}
+
+/* Weekly plan / pending status: semantic warning uses a warm icon only. */
+:root.dark .plan-pending,
+:root.dark #weekly .plan-pending {
+  background:#223747 !important;
+  border:1px solid #547184 !important;
+  border-left:4px solid #d6a269 !important;
+  color:#f1f7fa !important;
+}
+:root.dark .plan-pending::before {content:none !important;display:none !important}
+:root.dark .plan-pending-side {background:#1e3646 !important;border-color:#4c6b7c !important}
+:root.dark .plan-pending-icon {background:#675037 !important;color:#ffdbab !important;border-color:#9e7955 !important}
+:root.dark :is(.plan-pending-body,.plan-pending-side) :is(h3,h4,p,li,summary) {color:#e9f5fa !important}
+:root.dark .day.easy {background:#204453 !important;border-color:#4e8190 !important}
+:root.dark .day.rest {background:#213645 !important;border-color:#486479 !important}
+:root.dark .day.easy .day-symbol {background:#2c6170 !important;color:#e4f7fa !important}
+
+/* Risk: distinguish reference notices from actual warnings. */
+:root.dark #risk-panel .signal {
+  background:#223a4c !important;
+  border:1px solid #526f83 !important;
+  border-left:4px solid #6eb4c5 !important;
+}
+:root.dark #risk-panel .signal:has(.signal-warning),
+:root.dark #risk-panel .signal.warning,
+:root.dark #risk-panel .signal.high {
+  border-left-color:#d6a269 !important;
+}
+:root.dark .risk-panel :is(.signal-detail,.signal-body){color:#eaf5fa !important}
+:root.dark :is(.risk-panel,.review-panel) .pain-review-entry {
+  background:#17596d !important;border-color:#5795ab !important;color:white !important;
+}
+
+/* History and import: calm inner cards, no competing gradients. */
+:root.dark #history-panel :is(.history-row,.compare-box){background:#203a4e !important;border-color:#4a7084 !important}
+:root.dark #history-panel .history-row:hover {background:#2a485d !important;border-color:#75a6b8 !important}
+:root.dark #history-panel :is(.history-row strong,.history-row small,.empty){color:#e4f1f7 !important}
+:root.dark #import-panel :is(.wizard-page,.dropzone,.quality-box,.csv-preview,.disclosure) {
+  background:#1e3749 !important;border-color:#4c7082 !important;color:#ecf5fb !important;
+}
+:root.dark #import-panel :is(.dropzone small,.dropzone strong,.dropzone #selected-file) {
+  background:none !important;background-image:none !important;color:#d6e5ef !important;animation:none !important;
+}
+:root.dark #import-panel input,
+:root.dark #import-panel select,
+:root.dark #followup :is(input,select) {
+  background:#152e40 !important;border-color:#557487 !important;color:#f0f8fb !important;
+}
+:root.dark #import-panel :is(.preview-stat div,.preview-scroll th) {background:#284657 !important;color:#eef7fa !important}
+
+/* AI fold / technical modal use the same surface family. */
+:root.dark #ai-panel {background:#172f40 !important;border-color:#52768a !important}
+:root.dark .ai-fold-trigger {background:#244052 !important;color:#edf7fa !important}
+:root.dark .ai-fold-trigger:hover {background:#2d4e61 !important}
+:root.dark .ai-fold-content {background:#192f41 !important;color:#eaf5f9 !important}
+:root.dark #ai-panel :is(.ai-intro,.ai-result,.disclosure) {
+  background:#203c4f !important;border-color:#50768a !important;color:#edf6fb !important;
+}
+:root.dark .ai-fold-label :is(strong,small){color:#dceef4 !important}
+:root.dark .ai-fold-icon {background:#31576b !important;color:#e6f7fa !important;border-color:#618fa1 !important}
+:root.dark .pro-dialog {background:#162d3e !important;color:#f0f8fb !important;border-color:#66889c !important}
+:root.dark .pro-dialog-head {background:#1b3546 !important;border-color:#486b7e !important}
+:root.dark .pro-dialog :is(.pro-data-item,.pro-method,.pro-limit,.pro-compare) {
+  background:#223e50 !important;border-color:#4f7082 !important;color:#edf7fa !important;
+}
+:root.dark .pro-dialog :is(.pro-lead,.pro-insight,.pro-explanation,.pro-notice,.pro-data-item dt,.pro-method p,.pro-limit p){color:#d3e4ed !important}
+:root.dark .pro-dialog :is(h2,h3,.pro-data-item dd){color:#f2f9fb !important}
+:root.dark .pro-dialog .pro-insight{background:#1f4458 !important;border-left-color:#77bfca !important}
+:root.dark .pro-dialog .pro-bar{background:#4ba5b7 !important}
+
+/* Gentle highlight borders, not a new background color for every module. */
+:root.dark :is(.review-panel .review-toolbar,.ai-intro,.quality-box,.review-glossary,.review-source) {
+  background:#1e394b !important;border-color:#4c6d7f !important;color:#e8f3f8 !important;
+}
+:root.dark .review-panel .review-fold .report-copy {color:#e1eff6 !important}
+:root.dark .review-panel .review-fold-hint {color:#b9d2dc !important}
+:root.dark .local-indicator {color:#c2dce5 !important}
+
+/* Light mode uses the same hue family, without dark-card styles leaking in. */
+:root:not(.dark) .main-column {background:linear-gradient(135deg,#edf5f7,#f3f7f9,#e9f1f5) !important;background-size:180% 180% !important;animation:rw35-ambient 36s ease-in-out infinite}
+:root:not(.dark) :is(.decision-hero,.review-lead) {background:linear-gradient(115deg,#20506a,#286b86,#285f7d,#20506a) !important;color:#fff !important;border-color:#6694a7 !important;background-size:230% 230% !important;animation:rw35-surface 21s ease-in-out infinite !important}
+:root:not(.dark) .review-section.review-summary,
+:root:not(.dark) .review-section.review-advice {background:linear-gradient(115deg,#e7f2f6,#dbeef2,#e2eff5,#e7f2f6) !important;animation:none !important;color:#17384c !important;border-color:#9bbdc8 !important}
+:root:not(.dark) .review-summary::before,:root:not(.dark) .review-advice::before{display:none !important}
+:root:not(.dark) :is(.review-summary,.review-advice) :is(h3,p,li,.report-copy,.review-section-intro) {color:#17384c !important}
+:root:not(.dark) .review-panel .runner-report-stat:nth-child(n) {background:#edf4f7 !important;border-color:#b8cbd7 !important}
+:root:not(.dark) .review-panel .runner-report-stat:nth-child(n) :is(strong,span,small){color:#193b50 !important}
+:root:not(.dark) .runner-home .runner-kpi:nth-child(n) {background:#edf4f7 !important;border-color:#bdcfda !important}
+:root:not(.dark) :is(.button-primary,.hero-action) {background:#126778 !important;color:#fff !important;box-shadow:none !important}
+
+/* Reduced-motion, animation toggle and printing. */
+html.motion-paused .main-column,
+html.motion-paused :is(.decision-hero,.review-lead,.review-summary,.review-advice) {animation-play-state:paused !important}
+@media(prefers-reduced-motion:reduce){
+ :root.dark .main-column,:root:not(.dark) .main-column,
+ :is(.decision-hero,.review-lead,.review-summary,.review-advice) {animation:none !important}
+}
+@media print{
+  .main-column,:root.dark .main-column,:root:not(.dark) .main-column{background:#fff !important;animation:none !important}
+  :root.dark :is(.decision-hero,.review-lead,.review-summary,.review-advice),
+  :root:not(.dark) :is(.decision-hero,.review-lead,.review-summary,.review-advice){background:#f2f6f8 !important;color:#183749 !important;border-color:#a2b9c5 !important;animation:none !important}
+  :is(.review-summary,.review-advice,.review-lead) :is(h3,p,li,.report-copy,.report-small,.review-section-intro){color:#183749 !important}
+}
+
+
+/* Final component corrections discovered in visual audit. */
+:root.dark #history-panel .button-soft,
+:root.dark #load-panel .button-soft,
+:root.dark #import-panel .button-primary,
+:root.dark #history-panel .history-row .button-soft{
+  background:#24495c !important;
+  border-color:#64899a !important;
+  color:#f0f7fa !important;
+  box-shadow:none !important;
+  background-image:none !important;
+  animation:none !important;
+}
+:root.dark #import-panel .button-primary,
+:root.dark #history-panel .button-soft:hover,
+:root.dark #load-panel .button-soft:hover{background:#126778 !important;border-color:#448f9e !important}
+:root.dark #load-panel .segment button.selected{background:#315f73 !important;color:#f2f9fc !important;border-color:#73a6ba !important}
+:root.dark #load-panel .segment{background:#1e3546 !important}
+:root.dark .legend-dot{background:#74c7d8 !important}
+:root.dark .chart-tooltip{background:#1d3c4d !important;border-color:#6796a6 !important;color:#f2f8fa !important}
+:root.dark #running-panel .running-panel-note{color:#c7d9e2 !important}
+:root.dark #focus-panel .focus-graphic{
+  grid-column:1;width:88px;height:88px;min-height:88px;
+  background:#274d62 !important;
+  box-shadow:none !important;border:1px solid #597e90;
+}
+:root.dark #focus-panel .focus-graphic span{
+  background:#267d8e !important;color:#fff !important;box-shadow:none !important;
+}
+#focus-panel{grid-template-columns:96px minmax(0,1fr) !important;gap:18px !important;align-items:center !important}
+#focus-panel .section-header{grid-column:1/-1 !important}
+#focus-panel .focus-copy{grid-column:2;align-self:center;min-width:0;display:grid;gap:8px}
+#focus-panel .focus-copy h3{font-size:20px;line-height:1.4;margin:0}
+#focus-panel .focus-copy>p{margin:0;line-height:1.7;font-size:13px;color:var(--muted)}
+#focus-panel .focus-copy .focus-caption{font-size:12px !important;color:var(--muted);grid-column:auto}
+:root.dark .tiny-check{color:#82d5dc !important}
+@media(max-width:540px){
+ #focus-panel{grid-template-columns:70px minmax(0,1fr) !important;gap:12px !important}
+ :root.dark #focus-panel .focus-graphic{width:64px;height:64px;min-height:64px;border-radius:15px}
+ :root.dark #focus-panel .focus-graphic span{width:40px;height:40px;font-size:23px}
+ #focus-panel .focus-copy h3{font-size:16px}
+}
+
+.demo-choices summary {cursor:pointer;list-style:none}
+.demo-choices[open] .ribbon-actions {margin-top:.65rem;flex-wrap:wrap}
+#import-status:empty {display:none}
+#import-status.error {border-inline-start:3px solid currentColor;padding:.65rem 1rem;font-weight:650}

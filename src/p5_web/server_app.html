@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0d1b27">
+  <meta name="description" content="RunWise AI 跑步训练助手：训练负荷、风险评估、7 天计划及训练报告。">
+  <title>RunWise AI · 跑步训练助手 V3.5 修订版</title>
+  <link rel="icon" type="image/svg+xml" href="/icon.svg">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <link rel="stylesheet" href="/dashboard.css">
+  <link rel="stylesheet" href="/professional_analysis.css">
+  <link rel="stylesheet" href="/page_navigation.css">
+  <link rel="stylesheet" href="/theme_unified.css">
+  <script src="/training_review.js" defer></script>
+  <script src="/professional_analysis.js" defer></script>
+  <script src="/page_navigation.js" defer></script>
+  <script src="/dashboard.js" defer></script>
+  <script src="/readability.js" defer></script>
+</head>
+<body>
+  <a href="#main" class="skip-link">跳到主要内容</a>
+  <div class="app-shell" id="app-shell">
+    <aside class="app-sidebar" id="app-sidebar">
+      <a class="brand" href="#overview" aria-label="RunWise AI 首页"><span class="brand-mark">↗</span><span><b>runwise<span class="brand-ai">.ai</span></b><small>跑步训练助手</small></span></a>
+      <p class="nav-caption">训练助手</p>
+      <nav class="side-nav" aria-label="主要导航">
+        <a href="#overview" class="nav-link active"><span class="nav-icon">◫</span>训练概况</a>
+        <a href="#running-panel" class="nav-link"><span class="nav-icon">⌁</span>跑步趋势</a>
+        <a href="#load-panel" class="nav-link"><span class="nav-icon">∿</span>进阶分析</a>
+        <a href="#weekly" class="nav-link"><span class="nav-icon">▦</span>七天计划</a>
+        <a href="#risk-panel" class="nav-link"><span class="nav-icon">◇</span>风险提醒</a>
+        <a href="#review-panel" class="nav-link" id="review-nav"><span class="nav-icon">▤</span>我的训练报告</a>
+        <a href="#history-panel" class="nav-link" id="history-nav"><span class="nav-icon">◷</span>历史报告</a>
+        <a href="#import-panel" class="nav-link" id="import-nav"><span class="nav-icon">⇧</span>上传数据</a>
+      </nav>
+      <div class="sidebar-bottom">
+        <div class="side-note"><span class="online-dot"></span><span>本机训练分析<br><small><span id="processing-mode">训练指标在本机计算</span></small></span></div>
+        <div class="side-footer">RUNWISE STUDIO <span>V3.5 修订版</span></div>
+      </div>
+    </aside>
+    <div class="main-column">
+      <header class="topbar">
+        <div class="topbar-title"><button class="icon-button mobile-menu" type="button" id="menu-toggle" aria-label="打开导航" aria-expanded="false">☰</button><span class="crumb">RUNWISE</span><span class="crumb-slash">/</span><strong id="rw-page-label">训练概况</strong></div>
+        <div class="top-actions">
+          <span class="local-indicator"><span class="online-dot"></span>本地运行</span><span class="mode-indicator" id="data-mode">正在读取报告</span>
+          <button class="icon-button motion-button" type="button" id="motion-toggle" aria-label="暂停动态渐变" title="暂停背景动态渐变" aria-pressed="true">◈</button>
+          <button class="icon-button font-size-button" type="button" id="text-size-toggle" aria-label="切换较大字体" title="字体太小？点击放大文字" aria-pressed="false">A+</button>
+          <button class="icon-button" type="button" id="theme-toggle" aria-label="切换深浅色模式" title="切换深浅色模式">☾</button>
+          <div class="export-wrap"><button class="button button-outline" type="button" id="export-toggle" aria-expanded="false">导出报告 <span aria-hidden="true">⌄</span></button>
+            <div class="export-menu" id="export-menu" hidden>
+              <button type="button" id="export-png">训练负荷图 PNG</button><button type="button" id="export-review">完整训练报告 HTML</button><button type="button" id="export-html">原始数字表格（高级）</button><button type="button" id="export-json">机器数据 JSON</button><button type="button" id="export-running-csv">每日跑步数据 CSV</button><button type="button" id="export-csv">每日负荷 CSV</button><button type="button" id="export-print">打印 / 保存 PDF</button>
+            </div>
+          </div>
+        </div>
+      </header>
+      <main id="main" class="main-content">
+        <div class="page-intro"><div><p class="eyebrow overline">训练记录 <span class="overline-rule"></span></p><h1>个人训练<span>概览</span></h1><p class="intro-sub">跑量、配速、心率和训练趋势</p></div><div class="intro-meta"><span class="mini-sun">✳</span><span>我的训练情况<br><small id="today-label">训练情况</small></span></div></div>
+        <div id="initial-error" class="notice danger" role="alert" hidden></div>
+        <section class="control-ribbon" id="local-controls" hidden aria-label="试一试软件如何判断">
+          <a class="button button-primary" href="#import-panel">导入我的跑步记录</a>
+          <details class="demo-choices"><summary class="button button-outline">体验示例</summary>
+            <div class="ribbon-actions"><button id="demo" type="button" class="button button-soft">七天计划示例</button><button id="review" type="button" class="button button-soft">人工复核示例</button><button id="missing-demo" type="button" class="button button-soft">资料不足示例</button></div>
+          </details><p id="run-status" class="run-status" role="status" aria-live="polite"></p>
+        </section>
+        <section id="overview" class="overview-layout" hidden aria-label="训练概况">
+          <section class="runner-home" aria-label="本周跑步数据"><div class="runner-home-head"><div><span class="runner-eyebrow">最近 7 天</span><h2>本周跑步数据</h2></div><span class="runner-period" id="runner-period">—</span></div><div class="runner-kpis" id="runner-kpis"></div><p class="runner-caveat" id="runner-caveat"></p></section>
+          <div class="decision-hero"><div class="hero-decor hero-decor-one"></div><div class="hero-decor hero-decor-two"></div><div class="hero-content"><div class="hero-kicker"><span class="hero-pulse"></span>分析结果 <span class="hero-divider"></span><span id="window">—</span></div><div class="hero-head"><div><p class="hero-label">训练计划状态</p><h2 id="headline">正在加载…</h2><p id="decision-desc" class="hero-desc"></p></div><span class="hero-status" id="decision">分析中</span></div><nav class="hero-cta" aria-label="分析结果操作"><a id="hero-plan-link" class="hero-action" href="#weekly">查看下周计划</a><a id="hero-report-link" class="hero-secondary" href="#review-panel">训练报告</a><a id="hero-risk-link" class="hero-secondary" href="#risk-panel">风险提醒</a></nav></div><div class="hero-art" aria-hidden="true"><div class="hero-ring ring-a"></div><div class="hero-ring ring-b"></div><div class="hero-ring ring-c"></div><span class="hero-art-core">↗</span></div></div>
+          <details class="advanced-toggle"><summary>进阶训练指标 · 负荷与恢复</summary><div class="metrics" id="metrics"></div></details>
+        </section>
+        <div class="content-grid">
+          <section class="panel full-span running-panel" id="running-panel" hidden>
+            <div class="section-header"><div><div class="section-eyebrow">跑步记录</div><h2>跑步趋势</h2><p class="section-sub">每日跑量、配速和平均心率。空白表示缺少记录。</p></div><div class="segment" role="group" aria-label="切换跑步趋势"><button type="button" class="selected" data-running-mode="distance" aria-pressed="true">跑量</button><button type="button" data-running-mode="pace" aria-pressed="false">配速</button><button type="button" data-running-mode="heart" aria-pressed="false">心率</button></div></div>
+            <div class="running-chart-wrap"><canvas id="running-chart" tabindex="0" aria-label="跑步趋势图" role="img"></canvas><p id="running-empty" class="empty" hidden>当前没有可以展示的记录。</p></div>
+            <div class="running-chart-actions"><span id="running-explanation">距离单位：公里</span><button id="running-chart-export" type="button" class="button button-soft">保存图片 PNG</button></div>
+          </section>
+          <section class="panel load-panel" id="load-panel" hidden>
+            <div class="section-header"><div><div class="section-eyebrow">训练记录</div><h2>每天的训练量 <span class="section-tag">含训练强度</span></h2><p class="section-sub">逐日训练负荷变化；数据点可查看日期与数值。</p></div><div class="segment" role="group" aria-label="选择趋势时间范围"><button type="button" data-period="7" aria-pressed="false">7 天</button><button type="button" data-period="28" aria-pressed="true" class="selected">28 天</button><button type="button" data-period="all" aria-pressed="false">全部</button></div></div>
+            <div class="chart-wrap"><canvas id="load-chart" role="img" tabindex="0" aria-label="每日训练负荷图，使用鼠标或方向键查看数据点"></canvas><div id="chart-tooltip" class="chart-tooltip" hidden></div><p id="chart-empty" class="empty" hidden>暂无可用的负荷记录。</p></div>
+            <div class="chart-bottom"><button id="chart-download" type="button" class="button button-soft">保存图表为图片</button><span><i class="legend-dot"></i>每日训练负荷</span><span id="chart-insight">曲线断开表示缺少数据；显示 0 不一定是休息</span></div>
+            <details id="load-values" class="disclosure"><summary>查看完整逐日数据</summary><ul id="load-list" class="load-list"></ul></details>
+          </section>
+          <section class="panel focus-panel" id="focus-panel" hidden>
+            <div class="section-header"><div><div class="section-eyebrow">本次分析</div><h2>重点事项</h2></div><span class="panel-icon">◎</span></div>
+            <div class="focus-graphic" id="focus-graphic"><span>↗</span></div><div class="focus-copy"><h3 id="focus-title">等待分析</h3><p id="focus-description">等待训练数据</p><p class="focus-caption"><span class="tiny-check">✓</span> <span id="focus-footnote">所有训练建议均需人工确认</span></p></div>
+          </section>
+          <section class="panel weekly-panel full-span" id="weekly" hidden>
+            <div class="section-header"><div><div class="section-eyebrow">训练日程</div><h2>下周训练安排</h2><p class="section-sub" id="week-start"></p></div><span class="panel-pill" id="week-badge">训练计划状态</span></div>
+            <div id="week-content"></div>
+            <div class="plan-bottom" id="plan-bottom"><span>计划需本人或教练确认。</span><button class="text-button" type="button" id="plan-adjust" hidden>调整训练日期 ↗</button></div>
+          </section>
+          <section class="panel timeline-panel full-span" id="timeline-panel" hidden>
+            <div class="section-header"><div><div class="section-eyebrow">计划检查过程</div><h2>计划检查记录</h2><p class="section-sub">训练草案的检查记录</p></div><span class="panel-pill" id="timeline-status">决策记录</span></div>
+            <div class="attempt-timeline" id="attempt-list"></div>
+            <details id="attempts" class="disclosure" hidden><summary>查看原始自检明细</summary><div id="attempt-raw"></div></details>
+          </section>
+          <section class="panel risk-panel full-span" id="risk-panel" hidden>
+            <div class="section-header"><div><div class="section-eyebrow">风险评估</div><h2>身体状态与风险提醒</h2><p class="section-sub">风险等级、判断依据及处理建议。</p></div><span class="panel-pill" id="risk-count">—</span></div>
+            <div id="risk-list" class="risk-grid"></div>
+          </section>
+
+          <section class="panel full-span review-panel" id="review-panel" hidden>
+            <div class="section-header"><div><div class="section-eyebrow">训练分析</div><h2>我的跑步训练报告</h2><p class="section-sub">训练表现、恢复情况、风险评估与后续建议</p></div><span class="panel-pill">本机计算</span></div>
+            <div class="review-toolbar"><span>训练分析 · 本次记录</span><div><button class="button button-primary" id="review-export-html" type="button">保存完整报告</button><button class="button button-outline" id="review-print" type="button">打印或保存 PDF</button></div></div>
+            <div id="review-content" aria-live="polite"></div>
+            <section class="feedback-box" id="feedback-panel" hidden><div class="section-header"><div><div class="section-eyebrow">计划和实际训练对比</div><h3>训练执行记录（试用）</h3><p class="section-sub">仅手动记录在此浏览器内，不上传、不参与心率训练负荷或风险规则复算；设备共享时请勿输入真实个人健康信息。</p></div></div>
+              <form id="feedback-form" class="feedback-fields"><label>训练日期<select name="date" id="feedback-day" required></select></label><label>实际训练时长（分钟）<input type="number" name="minutes" min="0" max="1440" step="1" required></label><label>今天有多累（0 轻松—10 很累）<input type="number" name="rpe" min="0" max="10" step="1" required></label><button type="submit" id="feedback-submit" class="button button-primary">保存本地执行记录</button></form>
+              <div id="feedback-summary" class="feedback-summary"></div><p id="feedback-status" class="report-small" role="status"></p><button id="feedback-clear" class="text-button" type="button">清除此训练周的本地记录</button>
+            </section>
+          </section>
+          <section class="panel quality-panel full-span" id="data-quality" hidden>
+            <div class="section-header"><div><div class="section-eyebrow">数据质量</div><h2>数据完整性与可信度</h2><p class="section-sub">数据缺失、异常记录与计算限制。</p></div><span class="panel-pill" id="data-quality-count">质量说明</span></div>
+            <div id="data-quality-list" class="quality-flags"></div>
+          </section>
+          <section class="panel ai-panel full-span" id="ai-panel" hidden>
+            <details class="ai-fold" id="ai-fold">
+              <summary class="ai-fold-trigger"><span class="ai-fold-icon" aria-hidden="true">✧</span><span class="ai-fold-label"><strong>AI 训练解读</strong><small>选配 · 点击展开问答与连接设置</small></span><span class="ai-fold-state" id="ai-model">未连接</span><span class="ai-fold-chevron" aria-hidden="true">⌄</span></summary>
+              <div class="ai-fold-content"><p class="ai-fold-note">需要连接外部 AI 服务；本地训练分析与报告不依赖此功能。</p>
+            <div class="ai-intro"><span class="ai-illustration">✳</span><div><strong>报告问答（可选）</strong><p>连接外部模型后可根据本次报告提问；报告生成不依赖此功能。</p></div></div>
+            <details id="ai-settings" class="disclosure"><summary>配置 API 连接</summary><form id="ai-form" autocomplete="off"><div class="field-grid"><label>API 基础地址<input name="base_url" type="url" value="https://api.openai.com/v1" required maxlength="512" placeholder="https://api.openai.com/v1"></label><label>模型名称<input name="model" placeholder="例如 gpt-5-mini" required maxlength="160"></label></div><label>API 密钥<input name="api_key" type="password" required maxlength="512" autocomplete="off"></label><p class="muted">API 调用可能产生费用。发送本周跑量、次数、时长、平均配速与心率，以及负荷、风险规则和计划状态；密钥只存于当前标签页内存。模型回复不替代规则校验。</p><div class="form-actions"><button type="submit" class="button button-primary">连接并分析</button><label class="inline-check"><input type="checkbox" id="ai-auto"> 报告更新时自动分析（可能收费）</label></div></form></details>
+            <p id="ai-status" class="run-status" role="status" aria-live="polite"></p><div id="ai-result" class="ai-result" hidden></div>
+            <form id="ai-ask-form" class="ai-ask-form" hidden><label>针对本次报告追问一句<input name="question" maxlength="250" required placeholder="例如：为什么系统不建议我增加跑量？"></label><button type="submit" class="button button-soft">发送追问 ↗</button><p class="muted">单轮追问，每次都将问题与报告摘要发至所选模型，可能产生费用；请勿输入真实姓名或其他私密信息。</p></form><div id="ai-answer" class="ai-result" hidden></div>
+            <div id="ai-actions" class="ai-actions" hidden><button type="button" id="ai-retry" class="button button-soft">重新分析</button><button type="button" id="ai-disconnect" class="button button-outline">断开连接</button></div>
+              </div>
+            </details>
+          </section>
+          <section class="panel history-panel full-span" id="history-panel" hidden>
+            <div class="section-header"><div><div class="section-eyebrow">历史记录</div><h2>历史记录与对比</h2><p class="section-sub">这里显示本机最近 18 份报告，可按来源、跑步次数和分析截止日区分。</p></div><button type="button" class="button button-soft" id="history-refresh">刷新列表 ↻</button></div>
+            <div id="history-list" class="history-list"><p class="empty">正在读取本机历史…</p></div>
+            <div id="compare-box" class="compare-box" hidden></div>
+          </section>
+          <section class="panel import-panel full-span" id="import-panel" hidden>
+            <div class="section-header"><div><div class="section-eyebrow">数据导入</div><h2>导入训练记录</h2><p class="section-sub">上传 CSV，检查数据并生成报告。文件由本机程序处理。</p></div><span class="panel-pill">仅在本机分析</span></div>
+            <div class="wizard-progress" id="wizard-progress" aria-label="导入步骤"><span class="step active"><b>01</b> 选择文件</span><span class="step"><b>02</b> 数据预览</span><span class="step"><b>03</b> 计算参数</span></div>
+            <section id="plan-supplements" class="disclosure" hidden aria-labelledby="supplement-title">
+              <h3 id="supplement-title" tabindex="-1">填写七日计划缺失资料</h3>
+              <p id="supplement-guidance" class="section-sub"></p>
+              <form id="plan-supplement-form">
+                <div class="field-grid">
+                  <label>个人静息心率（次/分）<input type="number" min="30" max="110" name="resting_hr"></label>
+                  <label>个人最高心率（次/分）<input type="number" min="100" max="250" name="max_hr"></label>
+                  <label>心率负荷计算系数<select name="trimp_profile"><option value="">尚未提供</option><option value="female">女性系数</option><option value="male">男性系数</option></select></label>
+                  <label>已确认记录完整的起始日<input type="date" name="history_start"><small>仅在确认这段时间的训练记录完整时填写。</small></label>
+                </div>
+                <details id="daily-measurements"><summary>补充逐日静息心率</summary>
+                  <p>按实测日期填写。系统需要截止日读数和历史基线，空白项保留原记录。</p>
+                  <div class="field-grid" id="daily-resting-inputs"></div>
+                </details>
+                <button type="submit" class="button button-primary">保存资料并重新计算</button>
+                <p role="status" aria-live="polite" id="supplement-status"></p>
+              </form>
+            </section>
+            <form id="csv-form">
+              <div class="wizard-page" data-step="0"><label class="dropzone" id="dropzone" for="csv-file"><span class="upload-icon">⇧</span><strong>拖拽 CSV 到这里，或点击选择文件</strong><small>中间格式 / Garmin / 华为 · CSV 上限 2 MB</small><span id="selected-file">尚未选择文件</span><input id="csv-file" required type="file" accept=".csv,text/csv" name="csv"></label><div class="wizard-actions"><a class="text-button" href="/sample.csv" download>下载演示 CSV ↗</a><button type="button" class="button button-primary" id="wizard-next-0">下一步 · 预览数据 →</button></div></div>
+              <div class="wizard-page" data-step="1" hidden><div id="csv-preview" class="csv-preview"></div><div class="wizard-actions"><button type="button" class="button button-outline wizard-back">← 上一步</button><button type="button" class="button button-primary" id="wizard-next-1">下一步 · 配置参数 →</button></div></div>
+              <div class="wizard-page" data-step="2" hidden><div class="field-grid"><label>计算截止日<input required type="date" name="as_of"><small id="date-range-note" class="field-note" role="status">上传 CSV 后会自动建议最后一个有效日期，请确认。</small></label><label>历史起始日（确认完整时才填）<input type="date" name="history_start"></label><label>静息心率（次/分，可留空）<input type="number" min="30" max="110" name="resting_hr" inputmode="numeric" placeholder="例如 55"></label><label>最高心率（次/分，可留空）<input type="number" min="100" max="250" name="max_hr" inputmode="numeric" placeholder="例如 183"></label><label>负荷计算系数（有心率资料时填写）<small class="field-note">用于训练负荷计算；不确定时请先阅读项目说明。</small><select name="trimp_profile"><option value="">请选择</option><option value="female">女性系数</option><option value="male">男性系数</option></select></label><label>CSV 格式<select name="source"><option value="auto">自动识别</option><option value="middle">中间格式</option><option value="garmin">Garmin</option><option value="huawei">华为</option></select></label></div><details class="disclosure supplements"><summary>更多资料（可选）</summary><div class="field-grid"><label>匿名 ID<input name="athlete" value="anon_01" maxlength="40" pattern="[A-Za-z0-9_\-]+"></label><label>补充量测 JSON<input type="file" accept=".json,application/json" name="measurements"></label><label>规则上下文 JSON<input type="file" accept=".json,application/json" name="context"></label></div></details><p class="muted">没有心率数据也可以生成跑量、配速和基础训练报告；留空心率参数时不会计算心率训练负荷，也不会自动生成七天训练计划。历史覆盖范围不确定时请留空，缺少记录不按零计算。</p><div class="wizard-actions"><button type="button" class="button button-outline wizard-back">← 上一步</button><button type="submit" class="button button-primary">生成训练报告 ↗</button></div></div>
+            </form>
+            <p id="import-status" role="status" aria-live="polite"></p>
+            <div id="quality" class="quality-box" hidden><h3>导入质量检查</h3><dl id="quality-stats" class="quality-stats"></dl></div>
+          </section>
+          <section class="panel followup-panel full-span" id="followup" hidden><div class="section-header"><div><div class="section-eyebrow">尚缺的资料</div><h2>需要补充的信息</h2></div></div><p class="section-sub" id="question-note"></p><form id="answer-form"><div id="questions" class="field-grid"></div><button class="button button-primary" type="submit">提交答复并重新计算 ↗</button></form></section>
+        </div>
+        <footer class="main-footer"><span>RUNWISE AI <span class="footer-sep">·</span> 个人训练分析</span><span>仅作训练决策辅助 · 非医疗诊断</span></footer>
+      </main>
+    </div>
+  </div>
+  <div id="drawer-overlay" class="drawer-overlay" hidden></div><aside class="detail-drawer" id="detail-drawer" role="dialog" aria-modal="true" aria-label="训练日详情" hidden><div class="drawer-top"><span class="section-eyebrow">当天训练详情</span><button type="button" class="icon-button" id="drawer-close" aria-label="关闭详情">✕</button></div><div id="drawer-content"></div></aside>
+  <dialog id="pro-dialog" class="pro-dialog" aria-labelledby="pro-title" aria-describedby="pro-description">
+    <div class="pro-dialog-head"><div><small id="pro-description">当前数据 · 技术指标与计算依据</small><h2 id="pro-title">专业分析</h2></div><button id="pro-close" type="button" class="pro-close" aria-label="关闭专业分析">✕</button></div>
+    <div id="pro-content" class="pro-dialog-body"></div>
+  </dialog>
+  <nav class="mobile-nav" aria-label="移动端快捷导航"><a href="#overview"><span>◫</span>概览</a><a href="#running-panel"><span>⌁</span>趋势</a><a href="#weekly"><span>▦</span>计划</a><a href="#review-panel"><span>▤</span>报告</a><a href="#import-panel" id="mobile-import"><span>⇧</span>导入</a></nav>
+  <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+</body>
+</html>
