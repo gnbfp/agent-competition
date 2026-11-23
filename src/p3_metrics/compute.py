@@ -99,7 +99,11 @@ def compute_load(document: dict, *, as_of: date, history_start: date | None,
         raise ValueError("活动文档缺少 athlete_id 或 activities 列表")
     if history_start is not None and history_start > as_of:
         raise ValueError("历史覆盖起始日不得晚于计算日")
-    a, b = trimp_coefficients(resting_hr, max_hr, profile)
+    heart_configured = resting_hr is not None and max_hr is not None and profile in TRIMP_COEFFICIENTS
+    if heart_configured:
+        a, b = trimp_coefficients(resting_hr, max_hr, profile)
+    else:
+        a, b = None, None
 
     window_start = as_of - timedelta(days=CHRONIC_DAYS - 1)
     days = [window_start + timedelta(days=offset) for offset in range(CHRONIC_DAYS)]
@@ -121,6 +125,8 @@ def compute_load(document: dict, *, as_of: date, history_start: date | None,
         value = None
         if record.get("device_anomaly"):
             reason = "设备异常"
+        elif not heart_configured:
+            reason = "缺少个人心率计算参数，无法计算训练负荷"
         else:
             try:
                 value = trimp(record.get("duration_s"), record.get("avg_hr"),
@@ -201,8 +207,14 @@ def compute_metrics(document: dict, *, as_of: date, history_start: date | None,
     output = compute_load(document, as_of=as_of, history_start=history_start,
                           resting_hr=resting_hr, max_hr=max_hr, profile=profile)
     daily, race, steady = normalized_measurements(measurements, output["athlete_id"])
-    capacity_values, capacity_flags = capacity(resting_hr, max_hr, race, as_of,
-                                               rule_thresholds()["R13"] * 100)
+    if resting_hr is None or max_hr is None:
+        capacity_values = {"vo2max": {"value": None, "unit": "ml/kg/min", "method": None},
+                           "methods": [], "estimate_range": None, "consistency_ok": None,
+                           "max_spread_pct": None, "race_inputs": None}
+        capacity_flags = [("VO2_INSUFFICIENT_INPUT", "缺少个人心率参数，无法估算有氧能力。")]
+    else:
+        capacity_values, capacity_flags = capacity(resting_hr, max_hr, race, as_of,
+                                                   rule_thresholds()["R13"] * 100)
     recovery_values, recovery_flags = recovery(document["activities"], daily, steady, as_of,
                                                rule_thresholds()["R02"]["resting_hr_bpm"])
     output["flags"].extend({"code": code, "level": "medium", "message": message}

@@ -196,11 +196,12 @@ class HuaweiSampleTest(unittest.TestCase):
     def test_pace_min_sec_parsed(self) -> None:
         self.assertEqual(self.adapted[0]["avg_pace_s_per_km"], "344")
 
-    def test_rows_without_hr_dropped_by_parser(self) -> None:
+    def test_rows_without_hr_preserve_distance_time(self) -> None:
         activities, skipped, rejected, _ = csv_parser.parse_rows(self.adapted)
-        self.assertEqual(len(activities), 3)
-        self.assertEqual(len(skipped), 2)
+        self.assertEqual(len(activities), 5)
+        self.assertEqual(len(skipped), 0)
         self.assertEqual(rejected, [])
+        self.assertEqual(sum(a["avg_hr"] is None for a in activities), 2)
 
 
 class ZeroHrTest(unittest.TestCase):
@@ -214,8 +215,10 @@ class ZeroHrTest(unittest.TestCase):
         self.assertEqual(adapted[0]["max_hr"], "")
         self.assertTrue(any("视为缺失" in w for w in warnings))
         activities, skipped, _, _ = csv_parser.parse_rows(adapted)
-        self.assertEqual(activities, [])
-        self.assertEqual(len(skipped), 1)
+        self.assertEqual(len(activities), 1)
+        self.assertIsNone(activities[0]["avg_hr"])
+        self.assertIsNone(activities[0]["max_hr"])
+        self.assertEqual(len(skipped), 0)
 
 
 class CommandLineTest(unittest.TestCase):
@@ -281,8 +284,9 @@ class CommandLineTest(unittest.TestCase):
             self.assertIn("第 2 行 平均心率", run.stdout)
             self.assertIn("不是有限数值：'inf'", run.stdout)
             activities = json.loads(out.read_text(encoding="utf-8"))["activities"]
-            self.assertEqual(len(activities), 1)
+            self.assertEqual(len(activities), 2)
             self.assertEqual(activities[0]["avg_pace_s_per_km"], 298)
+            self.assertTrue(any(item["avg_hr"] is None for item in activities))
             validator = subprocess.run(
                 [sys.executable, str(ROOT / "contracts" / "validate_contract.py"), str(out)],
                 cwd=ROOT, capture_output=True, text=True, encoding="utf-8",

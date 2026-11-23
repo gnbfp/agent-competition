@@ -118,12 +118,14 @@ class RobustnessTest(unittest.TestCase):
         self.assertEqual(activities[0]["duration_s"], 1800)
         self.assertEqual(activities[0]["rpe"], 6)
 
-    def test_missing_hr_row_dropped(self) -> None:
+    def test_missing_hr_keeps_running_record(self) -> None:
         body = "2026-11-12,,run,1800,5000,,170,,5,,,garmin\n"
-        activities, skipped, _, _ = self.run_rows(body)
-        self.assertEqual(activities, [])
-        self.assertEqual(len(skipped), 1)
-        self.assertIn("avg_hr", skipped[0][1])
+        activities, skipped, _, warnings = self.run_rows(body)
+        self.assertEqual(len(activities), 1)
+        self.assertIsNone(activities[0]["avg_hr"])
+        self.assertEqual(activities[0]["distance_m"], 5000)
+        self.assertEqual(skipped, [])
+        self.assertTrue(any("TRIMP" in w for w in warnings))
 
     def test_unknown_sport_dropped(self) -> None:
         body = "2026-11-12,,滑板,1800,5000,150,170,,5,,,garmin\n"

@@ -1,0 +1,26 @@
+/* RunWise V2.9 · fixed navigation + one screen per destination */
+@media(min-width:901px){.app-shell{display:block!important}.app-sidebar{position:fixed!important;top:0;bottom:0;left:0;width:236px;height:100dvh;overflow-y:auto;overscroll-behavior:contain}.main-column{margin-left:236px;min-width:0}}
+@media(min-width:901px) and (max-width:1200px){.app-sidebar{width:215px}.main-column{margin-left:215px}}
+@media(max-width:900px){.main-column{margin-left:0}}
+.rw-stage{position:relative;min-height:min(540px,70vh);width:100%;isolation:isolate}.rw-page{width:100%;min-width:0}.rw-page[hidden]{display:none!important}
+.rw-page-body{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:22px;align-items:start}
+.rw-page-body>*{grid-column:1/-1;min-width:0}
+.rw-page-body .focus-panel{max-width:100%}
+.rw-page-body .panel{width:100%;margin:0}
+.rw-page-body .overview-layout{margin:0}
+.rw-page-body .page-intro{margin-bottom:3px}
+.rw-page-body .notice{margin-bottom:4px}
+.rw-page-body .panel:empty{display:none}
+.rw-page.rw-slide-forward{animation:rwPageForward .34s cubic-bezier(.16,.78,.24,1) both}
+.rw-page.rw-slide-back{animation:rwPageBack .34s cubic-bezier(.16,.78,.24,1) both}
+@keyframes rwPageForward{from{transform:translateX(42px);opacity:0}to{transform:translateX(0);opacity:1}}
+@keyframes rwPageBack{from{transform:translateX(-42px);opacity:0}to{transform:translateX(0);opacity:1}}
+.side-nav a.active{font-weight:800}.mobile-nav a.active{color:var(--brand);font-weight:850}
+@media(max-width:650px){.rw-page-body{gap:15px}.rw-stage{min-height:65vh}}
+@media(prefers-reduced-motion:reduce){.rw-page.rw-slide-forward,.rw-page.rw-slide-back{animation:none!important}}
+/* Print a report independently of the currently selected view. */
+@media print{.app-shell{display:block!important}.main-column{margin:0!important}.rw-stage{min-height:0}.rw-page{display:none!important}.rw-page[data-page="review"]{display:block!important}.rw-page[data-page="review"] .review-panel{display:block!important}.rw-page[data-page="review"] .ai-panel{display:none!important}.rw-page-body{display:block!important}.main-content{width:100%!important}}
+
+/* V2.9.1: let footer follow actual content height instead of reserving a tall stage */
+.rw-stage{min-height:0}
+@media(max-width:650px){.rw-stage{min-height:0}}

@@ -21,6 +21,7 @@ from contracts.validate_contract import load_json, validate_document
 from src.p2_ingest import csv_parser, format_adapters, import_export
 from src.p2_ingest.csv_input import read_csv
 from src.p3_metrics.compute import TRIMP_COEFFICIENTS, compute_metrics, parse_date
+from src.p3_metrics.running_summary import compute_running_summary
 from src.p4_agent.evidence import load_rules
 from src.p4_agent.followup import prompt_answers
 from src.p4_agent.planner import generate_plan
@@ -129,15 +130,36 @@ def run_pipeline(args: argparse.Namespace) -> Path:
                         prompt_answers if args.interactive else None)
             rules = load_rules()
             assessment = run_agent(metrics, activities=activity, context=context, answerer=answerer, rules=rules)
+            # Persist the normalized observation context for later explicit human review.
+            # Only record observations that the rule engine actually accepted; this does
+            # not mark any safety risk as approved or create a training prescription.
+            checks = {item["rule_id"]: item for item in assessment["checks"]}
+            observed_pain = checks["R15"]["observed"].get("pain_reported")
+            if type(observed_pain) is bool:
+                context["pain_reported"] = observed_pain
+            observed_hr_source = checks["R03"]["observed"].get("source")
+            if observed_hr_source is not None:
+                context["max_hr_source"] = observed_hr_source
+            sleep_observed = checks["R16"]["observed"]
+            if sleep_observed.get("supplemented_dates"):
+                sleep = dict(context.get("sleep_readings") or {})
+                for date_key in sleep_observed["supplemented_dates"]:
+                    sleep[date_key] = sleep_observed["daily_sleep_h"][date_key]
+                context["sleep_readings"] = sleep
+            (work / "context.json").write_text(
+                json.dumps(context, ensure_ascii=False, indent=2, allow_nan=False) + "\n", encoding="utf-8")
 
         with stage("P4 计划与报告"):
             plan = generate_plan(metrics, assessment, rules, activities=activity, context=context,
                                  candidate=read_object(args.candidate))
             timestamp = datetime.now(LOCAL_TIME).replace(microsecond=0).isoformat()
-            report = build_report(metrics, assessment, plan, rules, generated_at=timestamp)
+            running = compute_running_summary(activity, as_of, history_start if not partial else None)
+            report = build_report(metrics, assessment, plan, rules, generated_at=timestamp, running=running)
             write_document(work / "plan.json", plan)
             write_document(work / "report.json", report)
         with stage("发布产物"):
+            source_kind = "demo" if getattr(args, "demo", False) else "csv"
+            (work / "source.json").write_text(json.dumps({"kind": source_kind}), encoding="utf-8")
             run_id = f"run-{datetime.now(LOCAL_TIME):%Y%m%d-%H%M%S}-{uuid4().hex[:12]}"
             result = args.out_dir / run_id
             work.rename(result)
@@ -177,8 +199,8 @@ def parse_args(argv: list[str] | None) -> argparse.Namespace:
             parser.error("--demo 使用复现参数，请单独运行或传入自己的 CSV")
         for key, value in demo.items():
             setattr(args, key, value)
-    elif any(getattr(args, key) is None for key in ("csv", "as_of", "trimp_profile", "resting_hr", "max_hr")):
-        parser.error("请使用 --demo，或提供 CSV、--as-of、--trimp-profile、--resting-hr 和 --max-hr")
+    elif any(getattr(args, key) is None for key in ("csv", "as_of")):
+        parser.error("请使用 --demo，或提供 CSV 和 --as-of；心率资料可留空生成基础报告")
     args.source = args.source or "auto"
     args.athlete = args.athlete or csv_parser.DEFAULT_ATHLETE
     return args
@@ -189,20 +211,22 @@ def browser_run(payload: dict, out_dir: Path) -> Path:
     if not isinstance(payload, dict):
         raise ValueError("提交内容应为 JSON 对象。")
     mode = payload.get("mode")
-    if mode in ("demo", "review"):
+    if mode in ("demo", "review", "missing"):
         if set(payload) != {"mode"}:
             raise ValueError("示例运行使用固定参数。")
         args = parse_args(["--demo", "-o", str(out_dir)])
-        if mode == "demo":
+        if mode in ("demo", "missing"):
             args.csv = SAMPLE / "demo_activity.csv"
             args.history_start = "2026-10-18"
             args.measurements = SAMPLE / "demo_measurements.json"
             args.context = SAMPLE / "demo_context.json"
             args.candidate = SAMPLE / "demo_candidate.json"
+            if mode == "missing":
+                args.measurements = None  # Intentionally incomplete: the agent must ask, never invent.
         return run_pipeline(args)
 
     if mode != "csv" or set(payload) - {"mode", "csv", "options", "measurements", "context", "answers"}:
-        raise ValueError("请选择 CSV 或演示案例。")
+        raise ValueError("请选择手动 CSV 上传或内置功能演示。")
     encoded, options = payload.get("csv"), payload.get("options")
     if not isinstance(encoded, str) or len(encoded) > (MAX_BROWSER_CSV + 2) // 3 * 4:
         raise ValueError("CSV 不得超过 2 MB。")
@@ -222,10 +246,14 @@ def browser_run(payload: dict, out_dir: Path) -> Path:
     resting, peak = options.get("resting_hr"), options.get("max_hr")
     if not isinstance(athlete, str) or not re.fullmatch(r"[A-Za-z0-9_-]{1,40}", athlete):
         raise ValueError("匿名 ID 应为 1–40 位字母、数字、下划线或连字符。")
-    if source not in ("auto", "middle", "garmin", "huawei") or profile not in ("female", "male"):
-        raise ValueError("请选择有效的 CSV 来源和 TRIMP 系数。")
-    if type(resting) is not int or type(peak) is not int:
-        raise ValueError("请核对静息心率和个人最大心率。")
+    if source not in ("auto", "middle", "garmin", "huawei") or profile not in (None, "female", "male"):
+        raise ValueError("请选择有效的 CSV 来源和计算系数。")
+    if resting is not None and (type(resting) is not int or not 30 <= resting <= 110):
+        raise ValueError("静息心率须在 30–110 之间。")
+    if peak is not None and (type(peak) is not int or not 100 <= peak <= 250):
+        raise ValueError("最大心率须在 100–250 之间。")
+    if resting is not None and peak is not None and peak <= resting:
+        raise ValueError("最大心率应高于静息心率。")
     as_of = options.get("as_of")
     history = options.get("history_start")
     parse_date(as_of)

@@ -20,7 +20,7 @@ from src.p4_agent.run import answers_from_file, run_agent
 
 
 def build_report(metrics: dict, assessment: dict, plan: dict, rules: dict[str, dict],
-                 *, generated_at: str) -> dict:
+                 *, generated_at: str, running: dict | None = None) -> dict:
     risks = assessment["risks"]
     refs = {tag for day in plan["days"] for tag in day["rules"]}
     refs.update(risk["rule_id"] for risk in risks)
@@ -45,6 +45,7 @@ def build_report(metrics: dict, assessment: dict, plan: dict, rules: dict[str, d
     levels = {"low": 0, "medium": 1, "high": 2}
     risk_level = max((item["level"] for item in risks), key=levels.__getitem__, default=None)
     return {
+        **({"running": running} if running is not None else {}),
         "schema_version": "2.0", "generated_at": generated_at, "athlete_id": metrics["athlete_id"],
         "summary": {"headline": title[plan["status"]], "risk_level": risk_level,
                     "load_status": metrics["load"]["acwr_status"], "plan_status": plan["status"]},

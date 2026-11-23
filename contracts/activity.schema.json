@@ -77,12 +77,18 @@
             "minimum": 0
           },
           "avg_hr": {
-            "type": "integer",
+            "type": [
+              "integer",
+              "null"
+            ],
             "minimum": 30,
             "maximum": 230
           },
           "max_hr": {
-            "type": "integer",
+            "type": [
+              "integer",
+              "null"
+            ],
             "minimum": 30,
             "maximum": 250
           },
